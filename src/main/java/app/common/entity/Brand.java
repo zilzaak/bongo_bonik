@@ -12,5 +12,7 @@ import lombok.Setter;
 @Getter
 @Entity
 public class Brand extends BaseEntity{
-    private String title;
+    private String name;
+    private Long orgId;
+    private String  orgName;
 }

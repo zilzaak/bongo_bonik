@@ -13,7 +13,8 @@ import lombok.Setter;
 @Getter
 @Entity
 public class ProductModel extends BaseEntity{
-    private String title;
-
+    private String name;
+    private Long orgId;
+    private String orgName;
 
 }

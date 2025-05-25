@@ -12,8 +12,8 @@ import lombok.Setter;
 @Getter
 @Entity
 public class UnitOfMeasure extends BaseEntity{
-
-    private String title;
+    private String name;
     private Long productCat;
-
+    private Long orgId;
+    private String orgName;
 }
