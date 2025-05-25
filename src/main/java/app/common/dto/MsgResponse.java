@@ -24,7 +24,7 @@ public class MsgResponse {
         this.data = data;
         this.success = success;
     }
-    MsgResponse(String message, boolean success ){
+    public MsgResponse(String message, boolean success){
         this.message = message;
         this.success = success;
     }
