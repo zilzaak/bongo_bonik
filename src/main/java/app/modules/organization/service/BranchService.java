@@ -73,4 +73,8 @@ public class BranchService {
     public MsgResponse edit(CommonDTO dto) {
         return  create(dto);
     }
+
+    public MsgResponse getList(Map<String, String> params) {
+        return null;
+    }
 }

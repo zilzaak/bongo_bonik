@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/organization")
 public class OrganizationController {
@@ -52,6 +54,23 @@ public class OrganizationController {
             response = branchService.edit(dto);
         }
 
+        return new ResponseEntity<>(response , HttpStatus.OK);
+    }
+
+    @GetMapping("/list")
+    ResponseEntity<?> getList(@RequestParam Map<String,String> params)
+            throws RuntimeException{
+        MsgResponse response = new MsgResponse();
+        if(params.isEmpty()){
+            throw new RuntimeException("Under which entity you will create is not given");
+        }
+
+        if(params.get("entity").equalsIgnoreCase("Organization")){
+            response = orgService.getList(params);
+        }
+        else if(params.get("entity").equalsIgnoreCase("Branch")){
+            response = branchService.getList(params);
+        }
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
