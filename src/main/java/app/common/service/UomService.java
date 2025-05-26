@@ -3,10 +3,13 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.entity.ProductCat;
 import app.common.entity.ProductSize;
 import app.common.entity.UnitOfMeasure;
+import app.common.repo.ProductCatRepo;
 import app.common.repo.ProductSizeRepo;
 import app.common.repo.UnitOfMeasureRepo;
+import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,25 +29,60 @@ public class UomService {
     @Autowired
     private OrgRepo orgRepo;
 
+    @Autowired
+    private ProductCatRepo catRepo;
+
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getName()==null || dto.getOrgId()==null){
+        if(dto.getName()==null || dto.getProductCatIds()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , Organization are required");
+            mp.put("message","Name , Product category are required");
             return mp;
         }
 
-        String orgName = orgRepo.getName(dto.getOrgId());
-        dto.setOrgName(orgName);
+        List<String> cats = CommonUtil.bulkStrToList(dto.getProductCatIds());
+        List<Long> catIdLst = CommonUtil.strListToLong(cats);
 
-        if(dto.getId()==null){
-            if(uomRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
+        Long orgId=null;
+        for(Long id : catIdLst){
+
+            ProductCat pcat = catRepo.findById(id).orElse(null);
+            if(pcat==null){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message","product category not exist with id"+id);
                 return mp;
             }
+            if(orgId==null){
+                orgId=pcat.getOrgId();
+            }else{
+                if(!orgId.equals(pcat.getOrgId())){
+                    mp.put("hasError",true);
+                    mp.put("message","product "+pcat.getName()+" is not under same organization");
+                    return mp;
+                }
+            }
+
+        }
+
+        String orgName = orgRepo.getName(orgId);
+        dto.setOrgName(orgName);
+        dto.setOrgId(orgId);
+
+        List<String> existCats = uomRepo.getExistCat(dto.getName(),dto.getOrgId());
+
+        if(dto.getId()==null){
+            for(String m : existCats){
+                   for(String k : cats){
+                       if(m.contains(k)){
+                           mp.put("hasError",true);
+                           mp.put("message","product cat already assigned for selected UOM");
+                           return mp;
+                       }
+                   }
+               }
+
 
         }else{
             UnitOfMeasure uom = uomRepo.findById(dto.getId()).orElse(null);
@@ -52,15 +91,21 @@ public class UomService {
                 mp.put("message","Db data not found for edit");
                 return mp;
             }
-            if(uomRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
-                mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
-                return mp;
+            existCats = uomRepo.getExistCatExceptId(dto.getName(),dto.getOrgId(),dto.getId());
+            for(String m : existCats){
+                for(String k : cats){
+                    if(m.contains(k)){
+                        mp.put("hasError",true);
+                        mp.put("message","product cat already assigned for selected UOM");
+                        return mp;
+                    }
+                }
             }
 
             mp.put("uom",uom);
 
         }
+
         return mp;
     }
 
@@ -75,6 +120,7 @@ public class UomService {
             oum.setName(dto.getName());
             oum.setOrgName(dto.getOrgName());
             oum.setOrgId(dto.getOrgId());
+            oum.setProductCatIds(dto.getProductCatIds());
         }else{
             oum = (UnitOfMeasure) mp.get("oum");
             BeanUtils.copyProperties(dto,oum,"created","updated");
@@ -84,6 +130,7 @@ public class UomService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
+        uomRepo.deleteById(dto.getId());
         return null;
     }
 
