@@ -115,6 +115,35 @@ public class CommonController {
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
+    @PostMapping("/list")
+    ResponseEntity<?> getList(@RequestParam Map<String,String> params)
+            throws RuntimeException{
+        MsgResponse response = new MsgResponse();
+        if(params.isEmpty()){
+            throw new RuntimeException("Under which entity you will create is not given");
+        }
+        if(params.containsKey("Brand")){
+            response = brandService.getList(params);
+        }
+        else if(params.containsKey("ProductCat")){
+            response = catService.getList(params);
+        }
+        else if(params.containsKey("ProductModel")){
+            response = modelService.getList(params);
+        }
+        else if(params.containsKey("ProductColor")){
+            response = colorService.getList(params);
+        }
+        else if(params.containsKey("ProductSize")){
+            response = sizeService.getList(params);
+        }
+        else if(params.containsKey("UnitOfMeasure")){
+            response = uomService.getList(params);
+        }
+
+        return new ResponseEntity<>(response ,HttpStatus.OK);
+    }
+
 
 
 }

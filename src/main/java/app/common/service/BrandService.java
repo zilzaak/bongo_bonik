@@ -68,4 +68,9 @@ public class BrandService {
     public MsgResponse delete(CommonDTO dto) {
         return null;
     }
+
+    public MsgResponse getList(Map<String, String> params) {
+
+        return null;
+    }
 }
