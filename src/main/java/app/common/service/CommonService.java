@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommonService {
 
-    @Autowired
-    private BrandRepo brandRepo;
+   @Autowired
+   private BrandRepo brandRepo;
     @Autowired
     private ProductCatRepo catRepo;
     @Autowired

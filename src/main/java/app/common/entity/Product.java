@@ -1,6 +1,6 @@
 package app.common.entity;
 
-import app.modules.organization.entity.Organization;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -15,12 +15,7 @@ import lombok.Setter;
 @Entity
 public class Product extends BaseEntity{
 
-    @ManyToOne
-    private Organization org;
-
-    private String name;
-    private String fullName;
-    private String code;
+    private String title;
 
     @ManyToOne
     private ProductCat cat;
@@ -37,15 +32,13 @@ public class Product extends BaseEntity{
     @ManyToOne
     private ProductColor color;
 
-    private Short quantityPerUnit;//10,20,30
+    private Short quantityPerUnit; // in case of medicine  or baby toy or cosmetics or
 
     @ManyToOne
-    private UnitOfMeasure uom;//KG,LITER,ETC
+    private UnitOfMeasure uom;
 
-    private String arrangePattern;//BOX_PACKET_SINGLE
+    private String productPattern;
 
     private Long parentId;
-
-//   name = name+brand+model+color+size+quantityPerUnit+uom
 
 }

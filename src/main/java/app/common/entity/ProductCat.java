@@ -10,10 +10,7 @@ import lombok.*;
 @Entity
 public class ProductCat extends BaseEntity {
 
-    private Long orgId;
-    private String orgName;
-
-    private String name;
+    private String title;
     private Long parentId;
 
 }

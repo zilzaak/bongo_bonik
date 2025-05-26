@@ -1,10 +1,7 @@
 package app.common.controller;
 
 
-import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
-import app.common.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,45 +11,11 @@ import java.util.Map;
 @RequestMapping("/common")
 public class CommonController {
 
-    @Autowired
-    private ProductModelService modelService;
-    @Autowired
-    private ProductCatService catService;
-    @Autowired
-    private BrandService brandService;
-    @Autowired
-    private ProductColorService colorService;
-    @Autowired
-    private ProductSizeService sizeService;
-    @Autowired
-    private UomService uomService;
-
 
   @PostMapping("/create")
-  ResponseEntity<?> create(@RequestBody CommonDTO dto)
+  ResponseEntity<?> create(@RequestBody Map<String,Object> map)
           throws RuntimeException{
       MsgResponse response = new MsgResponse();
-      if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-          throw new RuntimeException("Under which entity you will create is not given");
-      }
-      if(dto.getEntity().equalsIgnoreCase("Brand")){
-          response = brandService.create(dto);
-      }
-      else if(dto.getEntity().equalsIgnoreCase("ProductCat")){
-          response = catService.create(dto);
-      }
-      else if(dto.getEntity().equalsIgnoreCase("ProductModel")){
-          response = modelService.create(dto);
-      }
-      else if(dto.getEntity().equalsIgnoreCase("ProductColor")){
-          response = colorService.create(dto);
-      }
-      else if(dto.getEntity().equalsIgnoreCase("ProductSize")){
-          response = sizeService.create(dto);
-      }
-      else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
-          response = uomService.create(dto);
-      }
 
       return new ResponseEntity<>(response ,HttpStatus.OK);
   }

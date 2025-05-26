@@ -13,8 +13,6 @@ import lombok.Setter;
 @Getter
 @Entity
 public class ProductColor extends BaseEntity{
-    private String name;
-    private Long orgId;
-    private String orgName;
+    private String title;
 
 }
