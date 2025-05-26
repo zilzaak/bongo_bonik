@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProductModelRepo extends JpaRepository<ProductModel,Long> {
 
-    boolean existsByNameAndOrgId(String name, Long orgId);
+    boolean existsByNameAndBrandId(String name, Long brandId);
 
-    boolean existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> list);
+    boolean existsByNameAndBrandIdAndIdNotIn(String name, Long brandId, List<Long> list);
 }

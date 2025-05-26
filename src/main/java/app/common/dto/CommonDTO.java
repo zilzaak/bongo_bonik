@@ -9,7 +9,18 @@ public class CommonDTO {
     private Long id;
     private String name;
     private Long orgId;
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
+
+    private Long brandId;
     private String orgName;
+    private String brandName;
 
     private String phone;
 
@@ -64,6 +75,10 @@ public class CommonDTO {
         return orgId;
     }
 
+    public String getBrandName() {
+        return brandName;
+    }
+
     public String getOrgName() {
         return orgName;
     }
@@ -80,5 +95,9 @@ public class CommonDTO {
 
     public void setOrgName(String orgName) {
         this.orgName = orgName!=null?orgName.trim().toUpperCase():null;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName!=null?brandName.trim().toUpperCase():null;
     }
 }

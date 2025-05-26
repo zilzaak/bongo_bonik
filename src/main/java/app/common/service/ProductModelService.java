@@ -5,6 +5,7 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.entity.Brand;
 import app.common.entity.ProductModel;
+import app.common.repo.BrandRepo;
 import app.common.repo.ProductModelRepo;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
@@ -22,23 +23,27 @@ public class ProductModelService {
     private ProductModelRepo modelRepo;
 
     @Autowired
+    private BrandRepo brandRepo;
+    @Autowired
     private OrgRepo orgRepo;
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getName()==null || dto.getOrgId()==null){
+        if(dto.getName()==null ||  dto.getBrandId()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , Organization are required");
+            mp.put("message","Name , brand is required are required");
             return mp;
         }
 
-        String orgName = orgRepo.getName(dto.getOrgId());
-        dto.setOrgName(orgName);
+        Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
+        dto.setOrgName(brand.getOrgName());
+        dto.setOrgId(brand.getOrgId());
+        dto.setBrandName(brand.getName());
 
         if(dto.getId()==null){
-            if(modelRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
+            if(modelRepo.existsByNameAndBrandId(dto.getName(),dto.getOrgId())){
                 mp.put("hasError",true);
                 mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
                 return mp;
@@ -51,7 +56,7 @@ public class ProductModelService {
                 mp.put("message","Db data not found for edit");
                 return mp;
             }
-            if(modelRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
+            if(modelRepo.existsByNameAndBrandIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
                 return mp;
@@ -72,6 +77,8 @@ public class ProductModelService {
         ProductModel model = new ProductModel();
         if(dto.getId()==null){
             model.setName(dto.getName());
+            model.setBrandId(dto.getBrandId());
+            model.setBrandName(dto.getBrandName());
             model.setOrgName(dto.getOrgName());
             model.setOrgId(dto.getOrgId());
         }else{

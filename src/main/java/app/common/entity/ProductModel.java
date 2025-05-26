@@ -14,6 +14,8 @@ import lombok.Setter;
 @Entity
 public class ProductModel extends BaseEntity{
     private String name;
+    private Long brandId;
+    private String brandName;
     private Long orgId;
     private String orgName;
 
