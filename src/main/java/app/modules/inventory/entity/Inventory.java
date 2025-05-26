@@ -1,10 +1,7 @@
 package app.modules.inventory.entity;
 
 import app.common.entity.BaseEntity;
-import app.modules.organization.entity.Branch;
-import app.modules.organization.entity.Organization;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

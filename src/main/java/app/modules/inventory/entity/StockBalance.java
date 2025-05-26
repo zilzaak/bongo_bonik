@@ -22,4 +22,5 @@ public class StockBalance extends BaseEntity {
 
     private Double quantity;
     private Double avgPrice;
+
 }
