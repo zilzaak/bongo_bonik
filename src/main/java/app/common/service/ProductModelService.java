@@ -14,4 +14,7 @@ public class ProductModelService {
         return null;
     }
 
+    public MsgResponse delete(CommonDTO dto) {
+        return null;
+    }
 }

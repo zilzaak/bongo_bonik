@@ -58,18 +58,60 @@ public class CommonController {
   }
 
     @PostMapping("/update")
-    ResponseEntity<?> update(@RequestBody Map<String,Object> map)
+    ResponseEntity<?> update(@RequestBody CommonDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
+        if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
+            throw new RuntimeException("Under which entity you will create is not given");
+        }
+        if(dto.getEntity().equalsIgnoreCase("Brand")){
+            response = brandService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductCat")){
+            response = catService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductModel")){
+            response = modelService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductColor")){
+            response = colorService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductSize")){
+            response = sizeService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
+            response = uomService.create(dto);
+        }
 
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
 
     @DeleteMapping("/delete")
-    ResponseEntity<?> delete(@RequestBody Map<String,Object> map)
+    ResponseEntity<?> delete(@RequestBody CommonDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
+        if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
+            throw new RuntimeException("Under which entity you will create is not given");
+        }
+        if(dto.getEntity().equalsIgnoreCase("Brand")){
+            response = brandService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductCat")){
+            response = catService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductModel")){
+            response = modelService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductColor")){
+            response = colorService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("ProductSize")){
+            response = sizeService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
+            response = uomService.delete(dto);
+        }
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 

@@ -13,4 +13,8 @@ public class ProductSizeService {
 
         return null;
     }
+
+    public MsgResponse delete(CommonDTO dto) {
+        return null;
+    }
 }

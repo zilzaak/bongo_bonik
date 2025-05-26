@@ -64,4 +64,8 @@ public class BrandService {
         brandRepo.save(brand);
         return new MsgResponse("Successfully created",true);
     }
+
+    public MsgResponse delete(CommonDTO dto) {
+        return null;
+    }
 }

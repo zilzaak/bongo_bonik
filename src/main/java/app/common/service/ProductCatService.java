@@ -13,4 +13,8 @@ public class ProductCatService {
 
         return null;
     }
+
+    public MsgResponse delete(CommonDTO dto) {
+        return null;
+    }
 }
