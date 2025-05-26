@@ -5,6 +5,7 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.OrgRepo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +38,20 @@ public class OrganizationService {
 
 
         }else{
+
+            Organization org = orgRepo.findById(dto.getId()).orElse(null);
+            if(org==null){
+                mp.put("hasError",true);
+                mp.put("message","Organization not found");
+                return mp;
+            }
             if(orgRepo.existsByNameAndIdNotIn(dto.getName(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Org name must be unique");
                 return mp;
             }
+
+            mp.put("org",org);
 
         }
 
@@ -51,14 +61,21 @@ public class OrganizationService {
 
     public MsgResponse create(CommonDTO dto) {
 
-         if((boolean)validate(dto).get("hasError")){
+        Map<String, Object> mp = validate(dto);
+
+         if((boolean)mp.get("hasError")){
              return new MsgResponse("Invalid form ", false);
          }
-        Organization org = new Organization();
-         org.setName(dto.getName());
-         org.setPhone(dto.getPhone());
-         org.setAddress(dto.getAddress());
-         org.setLocation(dto.getLocation());
+         Organization org = new Organization();
+         if(dto.getId()==null){
+             org.setName(dto.getName());
+             org.setPhone(dto.getPhone());
+             org.setAddress(dto.getAddress());
+             org.setLocation(dto.getLocation());
+         }else{
+             org = (Organization) mp.get("org");
+             BeanUtils.copyProperties(dto,org,"created","updated");
+         }
          orgRepo.save(org);
          return new MsgResponse("Successfully created",true);
     }

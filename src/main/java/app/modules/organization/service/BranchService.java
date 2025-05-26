@@ -6,6 +6,7 @@ import app.modules.organization.entity.Branch;
 import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.BranchRepo;
 import app.modules.organization.repo.OrgRepo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +44,20 @@ public class BranchService {
 
 
         }else{
+            Branch branch = branchRepo.findById(dto.getId()).orElse(null);
+
+            if(branch==null){
+                mp.put("hasError",true);
+                mp.put("message","No data found for id");
+                return mp;
+            }
+
             if(branchRepo.existsByNameAndOrgAndIdNotIn(dto.getName(), org , Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","This branch already exist against selected Organization");
                 return mp;
             }
+            mp.put("branch",branch);
 
         }
         mp.put("org",org);
@@ -61,11 +71,19 @@ public class BranchService {
            return new MsgResponse((String)validate(dto).get("message"),false);
        }
        Branch branch = new Branch();
-       branch.setOrg((Organization) mp.get("org"));
-       branch.setName(dto.getName());
-       branch.setPhone(dto.getPhone());
-       branch.setAddress(dto.getAddress());
-       branch.setLocation(dto.getLocation());
+       Organization org = (Organization) mp.get("org");
+       if(dto.getId()==null){
+           branch.setOrg(org);
+           branch.setName(dto.getName());
+           branch.setPhone(dto.getPhone());
+           branch.setAddress(dto.getAddress());
+           branch.setLocation(dto.getLocation());
+       }else{
+           branch = (Branch) mp.get("branch");
+           BeanUtils.copyProperties(dto,branch,"created","updated");
+           branch.setOrg(org);
+       }
+
        branchRepo.save(branch);
        return  new MsgResponse(dto.getId()==null?"Successfully created":"Successfully updated",false);
     }

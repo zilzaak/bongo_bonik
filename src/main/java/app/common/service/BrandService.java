@@ -6,6 +6,7 @@ import app.common.dto.MsgResponse;
 import app.common.entity.Brand;
 import app.common.repo.BrandRepo;
 import app.modules.organization.repo.OrgRepo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,11 +42,19 @@ public class BrandService {
            }
 
         }else{
+            Brand brand = brandRepo.findById(dto.getId()).orElse(null);
+            if(brand==null){
+                mp.put("hasError",true);
+                mp.put("message","Db data not found for edit");
+                return mp;
+            }
             if(brandRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
                 return mp;
             }
+
+            mp.put("brand",brand);
 
         }
          return mp;
@@ -53,16 +62,21 @@ public class BrandService {
 
 
     public MsgResponse create(CommonDTO dto) {
-
-        if((boolean)formValidation(dto).get("hasError")){
+          Map<String,Object> mp = formValidation(dto);
+        if((boolean)mp.get("hasError")){
             return new MsgResponse("fail",false);
         }
         Brand brand = new Brand();
-        brand.setName(dto.getName());
-        brand.setOrgName(dto.getOrgName());
-        brand.setOrgId(dto.getOrgId());
+        if(dto.getId()==null){
+            brand.setName(dto.getName());
+            brand.setOrgName(dto.getOrgName());
+            brand.setOrgId(dto.getOrgId());
+        }else{
+            brand = (Brand) mp.get("brand");
+            BeanUtils.copyProperties(dto,brand,"created");
+        }
         brandRepo.save(brand);
-        return new MsgResponse("Successfully created",true);
+        return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);
     }
 
     public MsgResponse delete(CommonDTO dto) {
