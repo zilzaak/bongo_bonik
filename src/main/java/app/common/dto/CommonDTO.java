@@ -11,6 +11,35 @@ public class CommonDTO {
     private Long orgId;
     private String orgName;
 
+    private String phone;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone!=null?phone.trim().toUpperCase():null;;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    private String address;
+    private String location;
+
     public Long getId() {
         return id;
     }

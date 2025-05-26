@@ -19,5 +19,6 @@ public class Branch extends BaseEntity {
     private String address;
     private String location;
     @ManyToOne
-    private Organization organization;
+    private Organization org;
+
 }
