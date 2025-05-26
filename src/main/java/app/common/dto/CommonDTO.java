@@ -1,14 +1,19 @@
 package app.common.dto;
 
 
-import lombok.Data;
-
-
 public class CommonDTO {
 
     private Long id;
     private String name;
     private Long orgId;
+
+    public String getProductCatIds() {
+        return productCatIds;
+    }
+
+    public void setProductCatIds(String productCatIds) {
+        this.productCatIds = productCatIds!=null?productCatIds.trim().replaceAll("\\s+", ""):null;
+    }
 
     public Long getBrandId() {
         return brandId;
@@ -21,6 +26,7 @@ public class CommonDTO {
     private Long brandId;
     private String orgName;
     private String brandName;
+    private String productCatIds;
 
     private String phone;
 
