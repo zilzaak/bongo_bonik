@@ -42,7 +42,7 @@ public class ProductService {
 
 
     //1>>first check required field are null
-    //2>>check all criteria is belongs to same organization
+    //2>>check all criteria of product belongs to same organization
     //3>>check unique name exist or not
       Map<String,Object> validate(ProductDTO dto){
           Map<String,Object> mp = new HashMap<>();
