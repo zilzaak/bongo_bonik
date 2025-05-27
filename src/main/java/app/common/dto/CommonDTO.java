@@ -96,7 +96,11 @@ public class CommonDTO {
     private String entity;
 
     public void setName(String name) {
-        this.name = name!=null?name.trim().toUpperCase():null;
+        if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
+            this.name = name!=null?name.trim().toLowerCase():null;
+        }else{
+            this.name = name!=null?name.trim().toUpperCase():null;
+        }
     }
 
     public void setOrgName(String orgName) {

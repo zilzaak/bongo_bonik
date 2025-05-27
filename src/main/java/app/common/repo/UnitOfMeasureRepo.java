@@ -11,13 +11,10 @@ public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
 
     boolean existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> list);
 
-    @Query("select x.productCatIds from  UnitOfMeasure x where x.name=:name and x.orgId=:org ")
-    List<String> getExistCat(@Param("name") String name,
-                             @Param("org") Long org);
+    boolean existsByNameAndOrgId(String name, Long orgId);
 
-    @Query("select x.productCatIds from  UnitOfMeasure x where x.name=:name and x.orgId=:org and " +
-            " x.id <> : id ")
-    List<String> getExistCatExceptId(@Param("name") String name,
-                                     @Param("org") Long org,
-                                     @Param("id") Long id);
+    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId ")
+    List<String> getExistCat(@Param("name") String name, @Param("orgId") Long orgId);
+    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId and x.id <> :id ")
+    List<String> getExistCatExceptId(@Param("name") String name, @Param("orgId") Long orgId,  @Param("id")  Long id);
 }

@@ -26,9 +26,9 @@ public class BranchService {
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getName()==null || dto.getOrgId()==null || dto.getAddress()==null){
+        if(dto.getName()==null || dto.getOrgId()==null || dto.getAddress()==null || dto.getPhone()==null){
             mp.put("hasError",true);
-            mp.put("message","name , organization , address are required field");
+            mp.put("message","name , organization , address , phone are required field");
             return mp;
         }
 
