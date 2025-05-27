@@ -38,7 +38,6 @@ public class ProductService {
       Map<String,Object> validate(ProductDTO dto){
           Map<String,Object> mp = new HashMap<>();
           mp.put("hasError",false);
-
           if(dto.getOrgId()==null || dto.getCatId()==null || dto.getBrandId()==null){
            mp.put("hasError",true);
            mp.put("message","Organization , category , brand is required ");
@@ -50,9 +49,7 @@ public class ProductService {
 
     public MsgResponse create(ProductDTO dto) {
 
-
-
-        return null;
+          return null;
     }
 
     public MsgResponse edit(ProductDTO dto) {

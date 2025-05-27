@@ -1,7 +1,6 @@
 package app.common.controller;
 
 
-import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
 import app.common.service.ProductService;

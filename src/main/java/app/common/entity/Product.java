@@ -19,7 +19,6 @@ public class Product extends BaseEntity{
     private String code;
 
     private Long orgId;
-
     private Long catId;
     @ManyToOne
     private Brand brand;
@@ -28,10 +27,9 @@ public class Product extends BaseEntity{
     private Long sizeId;
     private Long colorId;
     private Long madeWithId;
-    private Long uomId;//KG,LITER,ETC
-
-    private Short qtyPerUnit;//10,20,30
+    private Long uomId;
+    private Integer qtyPerUnit;
+    private String qtyUnit;
     private Long parentId;
-    //   name = name+brand+model+color+size+quantityPerUnit+uom
-
+    //full name = brand+model+color+size+madeWith+qtyPerUnit+qtyUnit+uomId
 }

@@ -11,14 +11,12 @@ public class ProductDTO {
     private Long catId;
     private Long brandId;
     private Long modelId;
-
     private Long sizeId;
     private Long colorId;
+    private Long madeWithId;
     private Long uomId;//KG,LITER,ETC
-    private String uomName;
-    private Short qtyPerUnit;//10,20,30
-    private String arrangePattern;//BOX_PACKET_SINGLE
-
+    private Integer qtyPerUnit;//10,20,30
+    private String qtyUnit;
     private Long parentId;
 
 }
