@@ -15,6 +15,6 @@ public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
 
     @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId ")
     List<String> getExistCat(@Param("name") String name, @Param("orgId") Long orgId);
-    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId and x.id <> : id ")
+    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId and x.id <> :id ")
     List<String> getExistCatExceptId(@Param("name") String name, @Param("orgId") Long orgId,  @Param("id")  Long id);
 }
