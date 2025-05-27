@@ -26,6 +26,8 @@ public class CommonController {
     private ProductSizeService sizeService;
     @Autowired
     private UomService uomService;
+    @Autowired
+    private MadeWithService madeWithService;
 
 
   @PostMapping("/create")
@@ -49,6 +51,9 @@ public class CommonController {
       }
       else if(dto.getEntity().equalsIgnoreCase("ProductSize")){
           response = sizeService.create(dto);
+      }
+      else if(dto.getEntity().equalsIgnoreCase("MadeWith")){
+          response = madeWithService.create(dto);
       }
       else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
           response = uomService.create(dto);
@@ -78,6 +83,9 @@ public class CommonController {
         }
         else if(dto.getEntity().equalsIgnoreCase("ProductSize")){
             response = sizeService.create(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("MadeWith")){
+            response = madeWithService.create(dto);
         }
         else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
             response = uomService.create(dto);

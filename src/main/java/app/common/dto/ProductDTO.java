@@ -1,9 +1,9 @@
 package app.common.dto;
 
-import app.common.entity.Brand;
-import app.common.entity.ProductModel;
-import jakarta.persistence.ManyToOne;
 
+import lombok.Data;
+
+@Data
 public class ProductDTO {
 
     private String name;

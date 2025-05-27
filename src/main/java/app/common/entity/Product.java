@@ -27,14 +27,11 @@ public class Product extends BaseEntity{
     private ProductModel model;
     private Long sizeId;
     private Long colorId;
+    private Long madeWithId;
     private Long uomId;//KG,LITER,ETC
 
     private Short qtyPerUnit;//10,20,30
-
-    private String arrangePattern;//BOX_PACKET_SINGLE
-
     private Long parentId;
-
     //   name = name+brand+model+color+size+quantityPerUnit+uom
 
 }
