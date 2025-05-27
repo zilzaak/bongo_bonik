@@ -31,11 +31,11 @@ public class ProductService {
     public MsgResponse create(ProductDTO dto) {
 
 
-        
+
         return null;
     }
 
-    public MsgResponse edit(CommonDTO dto) {
+    public MsgResponse edit(ProductDTO dto) {
 
         return null;
     }

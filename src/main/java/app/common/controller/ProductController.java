@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    ResponseEntity<?> update(@RequestBody CommonDTO dto)
+    ResponseEntity<?> update(@RequestBody ProductDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -41,7 +41,7 @@ public class ProductController {
 
 
     @DeleteMapping("/delete")
-    ResponseEntity<?> delete(@RequestBody CommonDTO dto)
+    ResponseEntity<?> delete(@RequestBody ProductDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         return new ResponseEntity<>(response ,HttpStatus.OK);
