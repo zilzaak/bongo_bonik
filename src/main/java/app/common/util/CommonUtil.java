@@ -1,8 +1,13 @@
 package app.common.util;
 
+import app.common.entity.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class CommonUtil {
 
@@ -15,6 +20,37 @@ public class CommonUtil {
         String [] arr = bulkStr.split(",");
         list = Arrays.asList(arr);
         return list;
+    }
+
+    //cat,brand,model,
+    // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
+
+    public static String replaceRepeatedChar(String input, char ch) {
+        String regex = Pattern.quote(Character.toString(ch)) + "+";
+        return input.replaceAll(regex, Character.toString(ch));
+    }
+
+    public static String getProductFullname(ProductCat cat, Brand brand, ProductModel model,
+                                            MadeWith madeWith,ProductSize size,ProductColor color,
+                                            Integer qtyPerUnit,String qtyUnit,UnitOfMeasure uom){
+        String fullName=cat.getName()+">"+brand.getName()+">"+
+                Optional.ofNullable(model).map(ProductModel::getName).orElse("")+">"+
+                Optional.ofNullable(madeWith).map(MadeWith::getName).orElse("")+">"+
+                Optional.ofNullable(size).map(ProductSize::getName).orElse("")+">"+
+                Optional.ofNullable(color).map(ProductColor::getName).orElse("")+">";
+
+                 if(qtyPerUnit!=null){
+                     fullName=fullName+qtyPerUnit+">";
+                 }
+                 if(qtyUnit!=null){
+                     fullName=fullName+qtyUnit+">";
+                 }
+                 if(uom!=null){
+                     fullName=fullName+uom.getName().toLowerCase();
+                 }
+
+            fullName = replaceRepeatedChar(fullName,'>');
+        return fullName;
     }
 
 
