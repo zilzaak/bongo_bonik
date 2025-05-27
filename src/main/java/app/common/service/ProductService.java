@@ -158,6 +158,6 @@ public class ProductService {
 
     public MsgResponse edit(ProductDTO dto) {
 
-        return null;
+        return this.create(dto);
     }
 }
