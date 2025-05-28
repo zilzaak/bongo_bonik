@@ -22,6 +22,12 @@ public class CommonUtil {
         return list;
     }
 
+
+    public static String removeAllBlankSpace(String input){
+         input = input.replaceAll("\\s+", "");  //this also remove head and tails space from string
+        return input;
+    }
+
     //cat,brand,model,
     // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
 
@@ -30,10 +36,10 @@ public class CommonUtil {
         return input.replaceAll(regex, Character.toString(ch));
     }
 
-    public static String getProductFullname(ProductCat cat, Brand brand, ProductModel model,
+    public static String getProductFullname(String rootName , ProductCat cat, Brand brand, ProductModel model,
                                             MadeWith madeWith,ProductSize size,ProductColor color,
                                             Integer qtyPerUnit,String qtyUnit,UnitOfMeasure uom){
-        String fullName=cat.getName()+">"+brand.getName()+">"+
+        String fullName=rootName+">"+cat.getName()+">"+brand.getName()+">"+
                 Optional.ofNullable(model).map(ProductModel::getName).orElse("")+">"+
                 Optional.ofNullable(madeWith).map(MadeWith::getName).orElse("")+">"+
                 Optional.ofNullable(size).map(ProductSize::getName).orElse("")+">"+
@@ -50,6 +56,7 @@ public class CommonUtil {
                  }
 
             fullName = replaceRepeatedChar(fullName,'>');
+            fullName = replaceRepeatedChar(fullName,' ');  //replace double white space or blank space
         return fullName;
     }
 

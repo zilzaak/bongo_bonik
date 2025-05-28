@@ -2,7 +2,7 @@ package app.modules.inventory.controller;
 
 
 import app.common.dto.MsgResponse;
-import app.common.dto.ProductDTO;
+import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody ProductDTO dto)
+    ResponseEntity<?> create(@RequestBody InventoryDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -29,7 +29,7 @@ public class InventoryController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody ProductDTO dto)
+    ResponseEntity<?> update(@RequestBody InventoryDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");

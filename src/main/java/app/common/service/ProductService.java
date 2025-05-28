@@ -70,7 +70,7 @@ public class ProductService {
           }
 
 
-          String fullName = CommonUtil.getProductFullname(cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom);
+          String fullName = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom);
 
           if(dto.getId()==null){
              //check duplicate fullName
@@ -112,7 +112,7 @@ public class ProductService {
         if(model!=null && !model.getBrandId().equals(brand.getId())){
             return "Select model under selected brand";
         }
-        if(size!=null && !size.getOrgId().equals(org)){
+        if(size!=null){
             return "Selected size is under another organization";
         }
         if(color!=null && color.getOrgId().equals(org)){

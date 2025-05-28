@@ -7,6 +7,35 @@ public class InventoryDTO {
     private String phone;
     private String address;
     private Long branchId;
+    private String branchName;
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+    private Long orgId;
+    private String orgName;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
+
 
     public Long getId() {
         return id;
@@ -21,7 +50,9 @@ public class InventoryDTO {
     }
 
     public void setName(String name) {
-        this.name = name;
+
+        this.name = name!=null?name.trim().toUpperCase():null;
+
     }
 
     public String getPhone() {

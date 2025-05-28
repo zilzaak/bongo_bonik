@@ -22,9 +22,6 @@ public class ProductSizeService {
     @Autowired
     private ProductSizeRepo sizeRepo;
 
-    @Autowired
-    private OrgRepo orgRepo;
-
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
@@ -35,11 +32,9 @@ public class ProductSizeService {
             return mp;
         }
 
-        String orgName = orgRepo.getName(dto.getOrgId());
-        dto.setOrgName(orgName);
 
         if(dto.getId()==null){
-            if(sizeRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
+            if(sizeRepo.existsByName(dto.getName())){
                 mp.put("hasError",true);
                 mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
                 return mp;
@@ -52,7 +47,7 @@ public class ProductSizeService {
                 mp.put("message","Db data not found for edit");
                 return mp;
             }
-            if(sizeRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
+            if(sizeRepo.existsByNameAndIdNotIn(dto.getName(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
                 return mp;
@@ -73,8 +68,6 @@ public class ProductSizeService {
         ProductSize size = new ProductSize();
         if(dto.getId()==null){
             size.setName(dto.getName());
-            size.setOrgName(dto.getOrgName());
-            size.setOrgId(dto.getOrgId());
         }else{
             size = (ProductSize) mp.get("size");
             BeanUtils.copyProperties(dto,size,"created","updated");

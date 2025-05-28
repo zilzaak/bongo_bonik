@@ -1,6 +1,8 @@
 package app.common.dto;
 
 
+import app.common.util.CommonUtil;
+
 public class CommonDTO {
 
     private Long id;
@@ -97,17 +99,17 @@ public class CommonDTO {
 
     public void setName(String name) {
         if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
-            this.name = name!=null?name.trim().toLowerCase():null;
+            this.name = name!=null? CommonUtil.removeAllBlankSpace(name.trim().toLowerCase()):null;
         }else{
-            this.name = name!=null?name.trim().toUpperCase():null;
+            this.name = name!=null?CommonUtil.removeAllBlankSpace(name.trim().toUpperCase()):null;
         }
     }
 
     public void setOrgName(String orgName) {
-        this.orgName = orgName!=null?orgName.trim().toUpperCase():null;
+        this.orgName = orgName!=null?CommonUtil.replaceRepeatedChar(orgName.trim().toUpperCase(),' '):null;
     }
 
     public void setBrandName(String brandName) {
-        this.brandName = brandName!=null?brandName.trim().toUpperCase():null;
+        this.brandName = brandName!=null?CommonUtil.replaceRepeatedChar(brandName.trim().toUpperCase(),' '):null;
     }
 }

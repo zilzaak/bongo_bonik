@@ -1,6 +1,7 @@
 package app.common.dto;
 
 
+import app.common.util.CommonUtil;
 import lombok.Getter;
 
 
@@ -24,7 +25,7 @@ public class ProductDTO {
     }
 
     public void setName(String name) {
-        this.name = name!=null?name.trim().toUpperCase():null;
+        this.name = name!=null? CommonUtil.replaceRepeatedChar( name.trim().toUpperCase() ,' '):null; //remove  unnecesarydouble/multiple blank space
     }
 
     public Long getOrgId() {
