@@ -1,0 +1,76 @@
+package app.modules.inventory.service;
+
+
+import app.common.dto.MsgResponse;
+import app.modules.inventory.dto.PricingDTO;
+import app.modules.inventory.entity.SellPrice;
+import app.modules.inventory.repo.CostPriceRepo;
+import app.modules.inventory.repo.SellPriceRepo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class SellPriceService {
+
+    @Autowired
+    private SellPriceRepo sellPriceRepo;
+
+    Map<String,Object> validate(PricingDTO dto){
+        Map<String,Object> mp = new HashMap<>();
+        mp.put("hasError",false);
+        if(dto.getEntity()==null || dto.getEntity().trim().isBlank()){
+             mp.put("hasError",true);
+             mp.put("message","Entity is message ,SellPrice or CostPrice");
+             return mp;
+        }
+
+        if(dto.getUnitPrice()==null || dto.getOrgId()==null || dto.getProductId()==null){
+            mp.put("hasError",true);
+            mp.put("message","Unit price , Organization , Product is required field ");
+            return mp;
+        }
+
+        if(dto.getId()==null){
+               if(sellPriceRepo.existsByProductIdAndOrgIdAndUnitPrice(dto.getProductId(),dto.getOrgId(),dto.getUnitPrice())){
+                   mp.put("hasError",true);
+                   mp.put("message","Unit price , Organization , Product already exist ");
+                   return mp;
+               }
+        }else{
+            if(sellPriceRepo.existsByProductIdAndOrgIdAndUnitPriceAndIdNotIn(dto.getProductId(),dto.getOrgId(),dto.getUnitPrice(), Arrays.asList(dto.getId()))){
+                mp.put("hasError",true);
+                mp.put("message","Unit price , Organization , Product already exist ");
+                return mp;
+            }
+        }
+
+        return mp;
+    }
+
+    public MsgResponse create(PricingDTO dto) {
+        Map<String,Object> mp = validate(dto);
+        if((Boolean)mp.get("hasError")){
+            return new MsgResponse((String) mp.get("message"),false);
+        }
+
+        SellPrice sp = new SellPrice();
+        if(dto.getId()!=null){
+            sp = sellPriceRepo.findById(dto.getId()).get();
+        }
+        BeanUtils.copyProperties(dto,sp);
+        sellPriceRepo.save(sp);
+        return new MsgResponse("Successfully created",true);
+
+    }
+
+    public MsgResponse edit(PricingDTO dto) {
+        return create(dto);
+    }
+
+
+}
