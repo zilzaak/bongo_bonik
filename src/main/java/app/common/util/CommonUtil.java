@@ -2,12 +2,9 @@ package app.common.util;
 
 import app.common.entity.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
+
 
 public class CommonUtil {
 
@@ -22,8 +19,18 @@ public class CommonUtil {
         return list;
     }
 
+    public static String removeHeadTailSpace(String input){
+        if(input==null){
+            return null;
+        }
+        input = input.trim();
+        return input;
+    }
 
-    public static String removeAllBlankSpace(String input){
+    public static String removeAllSpace(String input){
+        if(input==null){
+            return null;
+        }
          input = input.replaceAll("\\s+", "");  //this also remove head and tails space from string
         return input;
     }
@@ -32,6 +39,9 @@ public class CommonUtil {
     // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
 
     public static String replaceRepeatedChar(String input, char ch) {
+        if(input==null){
+            return null;
+        }
         String regex = Pattern.quote(Character.toString(ch)) + "+";
         return input.replaceAll(regex, Character.toString(ch));
     }
@@ -67,6 +77,25 @@ public class CommonUtil {
             longLst.add(Long.parseLong(str));
         }
         return longLst;
+    }
+
+
+    public static Map<String,Object> counterAttribute(String counter){
+        Map<String,Object> attr = new HashMap<>();
+        if(counter==null || counter.isBlank()){
+            return attr;
+        }
+
+        if(counter.equals(CounterEnum.INVOICE.name())){
+            attr.put("name","INVOICE_COUNTER");
+            attr.put("prefix","INV-");
+        }
+        else if(counter.equals(CounterEnum.PURCHASE.name())){
+            attr.put("name","PURCHASE_COUNTER");
+            attr.put("prefix","PRCHS-");
+        }
+
+        return attr;
     }
 
 }

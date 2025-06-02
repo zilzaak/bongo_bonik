@@ -99,9 +99,9 @@ public class CommonDTO {
 
     public void setName(String name) {
         if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
-            this.name = name!=null? CommonUtil.removeAllBlankSpace(name.trim().toLowerCase()):null;
+            this.name = name!=null? CommonUtil.removeAllSpace(name.trim().toLowerCase()):null;
         }else{
-            this.name = name!=null?CommonUtil.removeAllBlankSpace(name.trim().toUpperCase()):null;
+            this.name = name!=null?CommonUtil.removeAllSpace(name.trim().toUpperCase()):null;
         }
     }
 

@@ -15,6 +15,7 @@ import lombok.Setter;
 public class Customer extends BaseEntity {
 
    private String name;
+   private String remarks;
    private String phone;
    private String address;
    private Long orgId;
