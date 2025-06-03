@@ -9,6 +9,8 @@ import app.modules.purchase.repo.PurchaseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class PurchaseService {
 
@@ -17,6 +19,13 @@ public class PurchaseService {
 
     @Autowired
     private CounterService counterService;
+
+
+    Map<String,Object> validate(PurchaseDTO dto){
+
+        return null;
+
+    }
 
 
     public MsgResponse create(PurchaseDTO dto) {

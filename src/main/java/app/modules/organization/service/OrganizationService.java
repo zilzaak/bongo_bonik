@@ -23,7 +23,10 @@ public class OrganizationService {
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getName()==null || dto.getPhone()==null || dto.getAddress()==null){
+        if(dto.getName()==null || dto.getName().isEmpty() ||
+                dto.getPhone()==null ||
+                dto.getPhone().isEmpty() ||
+                dto.getAddress()==null || dto.getAddress().isEmpty()){
             mp.put("hasError",true);
             mp.put("message","Phone no , org name , address are required field");
             return mp;

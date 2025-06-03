@@ -3,6 +3,7 @@ package app.modules.purchase.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
+import app.modules.purchase.dto.PurchaseDTO;
 import app.modules.purchase.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class PurchaseController {
     private PurchaseService purchaseService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody ProductDTO dto)
+    ResponseEntity<?> create(@RequestBody PurchaseDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -29,7 +30,7 @@ public class PurchaseController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody ProductDTO dto)
+    ResponseEntity<?> update(@RequestBody PurchaseDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");

@@ -2,6 +2,7 @@ package app.modules.supplier.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
+import app.modules.supplier.dto.SupplierDTO;
 import app.modules.supplier.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ public class SupplierController {
     private SupplierService supplierService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody ProductDTO dto)
+    ResponseEntity<?> create(@RequestBody SupplierDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -27,7 +28,7 @@ public class SupplierController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody ProductDTO dto)
+    ResponseEntity<?> update(@RequestBody SupplierDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
