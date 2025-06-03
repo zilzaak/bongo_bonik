@@ -2,9 +2,7 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
-import app.common.entity.Brand;
 import app.common.entity.MadeWith;
-import app.common.repo.BrandRepo;
 import app.common.repo.MadeWithRepo;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;

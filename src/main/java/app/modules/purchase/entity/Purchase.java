@@ -23,8 +23,6 @@ public class Purchase  extends BaseEntity {
   private String branchName;
   private String inventoryName;
 
-  private String productType;  //bar coded or non barcoded product
-
   private Double totalBill;
   private Double dueAmount;
   private String code;
