@@ -16,7 +16,7 @@ import java.util.Map;
 public class ProductPriceController {
 
     @Autowired
-    private SellPriceService pricingService;
+    private SellPriceService sellPriceService;
     @Autowired
     private CostPriceService costPriceService;
 
@@ -28,7 +28,7 @@ public class ProductPriceController {
         }
         MsgResponse response = new MsgResponse();
         if(dto.getEntity().equalsIgnoreCase("SellPrice")){
-            response =  pricingService.create(dto);
+            response =  sellPriceService.create(dto);
         }else{
             response =  costPriceService.create(dto);
         }
@@ -42,7 +42,12 @@ public class ProductPriceController {
         if(dto==null){
             throw new RuntimeException("null data exist in form");
         }
-        MsgResponse response = pricingService.edit(dto);
+        MsgResponse response = new MsgResponse();
+        if(dto.getEntity().equalsIgnoreCase("SellPrice")){
+            response =  sellPriceService.edit(dto);
+        }else{
+            response =  costPriceService.edit(dto);
+        }
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 

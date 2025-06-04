@@ -70,6 +70,10 @@ public class InventoryService {
         return new MsgResponse("Successfully created Inventory",true);
     }
 
+    public Inventory getById(Long id) {
+        return inventoryRepo.findById(id).orElse(null);
+    }
+
     public MsgResponse edit(InventoryDTO dto) {
         return create(dto);
     }

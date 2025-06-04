@@ -65,4 +65,8 @@ public class SupplierService {
     public MsgResponse edit(SupplierDTO dto) {
         return create(dto);
     }
+
+    public Supplier getById(Long supplierId) {
+        return supplierRepo.findById(supplierId).orElse(null);
+    }
 }

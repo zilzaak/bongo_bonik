@@ -27,7 +27,7 @@ public class CustomerService {
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getOrgId()==null || dto.getName()==null || dto.getPhone()==null){
+        if(dto.getOrgId()==null || dto.getName()==null || dto.getName().isEmpty() || dto.getPhone()==null || dto.getPhone().isEmpty()){
             mp.put("hasError",true);
             mp.put("message","Organization , Name , Phone is required field ");
             return mp;

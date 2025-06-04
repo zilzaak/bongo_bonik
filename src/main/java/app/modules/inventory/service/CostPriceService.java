@@ -17,4 +17,8 @@ public class CostPriceService {
         return null;
     }
 
+    public MsgResponse edit(PricingDTO dto) {
+
+        return create(dto);
+    }
 }

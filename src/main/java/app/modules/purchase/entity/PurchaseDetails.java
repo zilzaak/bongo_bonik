@@ -1,7 +1,11 @@
 package app.modules.purchase.entity;
 
 import app.common.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +17,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class PurchaseDetails extends BaseEntity{
-
     private Integer quantity;
     private Long productId;
     private String productType; //barcoded or not barcoded
+    private Double unitPrice;
+    private Double amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    @JsonBackReference
+    private Purchase purchase;
 
 }

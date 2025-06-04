@@ -23,7 +23,7 @@ public class SellPriceService {
     Map<String,Object> validate(PricingDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
-        if(dto.getEntity()==null || dto.getEntity().trim().isBlank()){
+        if(dto.getEntity()==null || dto.getEntity().isBlank()){
              mp.put("hasError",true);
              mp.put("message","Entity is message ,SellPrice or CostPrice");
              return mp;
