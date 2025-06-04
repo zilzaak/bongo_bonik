@@ -95,6 +95,11 @@ public class CommonUtil {
             attr.put("prefix","PRCHS-");
         }
 
+        else if(counter.equals(CounterEnum.BARCODE.name())){
+            attr.put("name","BARCODE_COUNTER");
+            attr.put("prefix","sl-");
+        }
+
         return attr;
     }
 

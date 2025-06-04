@@ -27,4 +27,5 @@ public class SystemCounter extends BaseEntity {
         this.currentNumber = currentNumber;
         this.increment = increment;
     }
+
 }

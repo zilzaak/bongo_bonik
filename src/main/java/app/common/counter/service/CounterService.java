@@ -6,6 +6,9 @@ import app.common.counter.repo.SystemCounterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CounterService {
 
@@ -28,4 +31,30 @@ public class CounterService {
     }
 
 
+    public List<String> getBarCode(String counterName,String prefix, Integer numberOfBarCode,Long orgId , Long branchId) {
+        List<String> list = new ArrayList<>();
+        SystemCounter counter = counterRepo.findByNameAndOrgIdAndBranchId(counterName,orgId,branchId);
+        if(counter==null){
+            Long increment=1L;
+            Long currentNumber=10000L;
+            for(int i=0;i<numberOfBarCode;i++){
+                String barCode = prefix+currentNumber;
+                list.add(barCode);
+                currentNumber = currentNumber + increment;
+            }
+            counter = new SystemCounter(counterName,orgId,branchId,prefix,currentNumber,1L);
+            counterRepo.save(counter);
+
+        }else{
+            Long increment=counter.getIncrement();
+            Long currentNumber= counter.getCurrentNumber();
+            for(int i=0;i<numberOfBarCode;i++){
+                String barCode = prefix+currentNumber;
+                list.add(barCode);
+                currentNumber = currentNumber + increment;
+            }
+        }
+
+        return list;
+    }
 }

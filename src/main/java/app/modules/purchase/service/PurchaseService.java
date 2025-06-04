@@ -4,8 +4,11 @@ import app.common.counter.entity.SystemCounter;
 import app.common.counter.service.CounterService;
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
+import app.common.util.CommonUtil;
+import app.common.util.CounterEnum;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.service.InventoryService;
+import app.modules.inventory.service.StockBalanceService;
 import app.modules.purchase.dto.PurchaseDTO;
 import app.modules.purchase.dto.PurchaseDetailsDTO;
 import app.modules.purchase.entity.Purchase;
@@ -27,9 +30,11 @@ public class PurchaseService {
     private CounterService counterService;
     @Autowired
     private InventoryService inventoryService;
-
     @Autowired
     private SupplierService supplierService;
+    @Autowired
+    private StockBalanceService stockBalanceService;
+
     public List<String> prdctTypes = Arrays.asList("BARCODED_PRODUCT","NORMAL_PRODUCT");
 
     PurchaseDetails getByIdFromList(List<PurchaseDetails> list , Long id){
@@ -155,12 +160,24 @@ public class PurchaseService {
                     }
                 }
             }else{
+                Map<String,Object> cnt = CommonUtil.counterAttribute(CounterEnum.PURCHASE.name());
+                String code = counterService.getCounterCode(inv.getOrgId(),inv.getBranchId(), (String) cnt.get("name"), (String) cnt.get("prefix"));
+                purchase.setCode(code);
                 for(PurchaseDetails obj : dtls){
                     obj.setPurchase(purchase);
                 }
                }
 
-        purchaseRepo.save(purchase);
+            boolean saveSucceed=true;
+            try{
+                purchaseRepo.save(purchase);
+            }catch (Exception e){
+                saveSucceed=false;
+            }
+          if(saveSucceed){
+              stockBalanceService.saveStockAfterPurchase(purchase);
+          }
+
         return new MsgResponse("Successfully purchase product",true);
     }
 

@@ -14,11 +14,15 @@ import lombok.Setter;
 @Entity
 public class StockBalance extends BaseEntity {
 
-    private String name;
+    private Long productId;
+    private Long orgId;
+    private Long branchId;
     private Long inventoryId;
 
-    private Long productId;
     private String productName;
+    private String orgName;
+    private String branchName;
+    private String inventoryName;
 
     private Double quantity;
     private Double avgPrice;
