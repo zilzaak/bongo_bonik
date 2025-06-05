@@ -1,6 +1,5 @@
 package app.modules.supplier.entity;
 
-
 import app.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,5 @@ public class Supplier extends BaseEntity{
     private String phone;
     private String address;
     private Long orgId;
-
 
 }

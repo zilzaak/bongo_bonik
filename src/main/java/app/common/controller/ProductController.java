@@ -1,6 +1,5 @@
 package app.common.controller;
 
-
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
 import app.common.service.ProductService;
@@ -52,7 +51,5 @@ public class ProductController {
         MsgResponse response = new MsgResponse();
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
-
-
 
 }

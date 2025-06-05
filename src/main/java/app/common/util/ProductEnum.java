@@ -3,6 +3,7 @@ package app.common.util;
 public enum ProductEnum {
 
     BARCODED_PRODUCT("BARCODED_PRODUCT"),
+    LOTCODED_PRODUCT("LOTCODED_PRODUCT"),
     NORMAL_PRODUCT("NORMAL_PRODUCT");
 
     private final String productType;

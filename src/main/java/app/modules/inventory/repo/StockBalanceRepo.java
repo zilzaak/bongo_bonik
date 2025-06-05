@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StockBalanceRepo extends JpaRepository<StockBalance,Long> {
 
+    StockBalance findByProductIdAndInventoryId(Long productId, Long inventoryId);
+
 }

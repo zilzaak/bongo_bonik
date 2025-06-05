@@ -53,6 +53,8 @@ public class CounterService {
                 list.add(barCode);
                 currentNumber = currentNumber + increment;
             }
+            counter.setCurrentNumber(currentNumber);
+            counterRepo.save(counter);
         }
 
         return list;
