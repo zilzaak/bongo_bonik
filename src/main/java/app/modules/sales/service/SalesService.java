@@ -213,7 +213,6 @@ public class SalesService {
         sales.setDue(sales.getNetAmount()-sales.getPaid());
         List<SalesItems> itemList = (List<SalesItems>) mp.get("itemList");
 
-
         // set the update the stock balance because in case if creation the stock update by substraction of product quntity
         // but in case of edit operation the stock may be increase or decrese for editing the product quntity
         // check for creation
@@ -229,6 +228,7 @@ public class SalesService {
             List<Long> processedProductDB = new ArrayList<>();
             List<SaleItemDTO> newlyAddedItemOnEdit = new ArrayList<>();
             List<SalesItems> deletedDBitemOnEdit = new ArrayList<>();
+            List<Integer> deleteIndex = new ArrayList<>();
 
           for(SaleItemDTO editedObj : dto.getDetails()){
                Integer editedProductSoldQty = editedObj.getTotalQuantity();
@@ -257,8 +257,10 @@ public class SalesService {
                               break;
                           }
                       }
+
                       if(!dbObjExistInEditedList){
                           deletedDBitemOnEdit.add(dbObj);
+                          deleteIndex.add(existedDbItems.indexOf(dbObj));
                       }
 
                   }
@@ -272,11 +274,25 @@ public class SalesService {
 
             stockBalanceService.subTractStockAfterSales(newlyAddedItemOnEdit,dto.getInventory());
             stockBalanceService.addStockAfterSales(deletedDBitemOnEdit,dto.getInventory());
+
+            for(Integer index : deleteIndex){
+                sales.getDetails().remove(index);
+            }
             for(SalesItems item : itemList){
                 item.setSales(sales);
+                boolean newAdded=true;
+                for(SalesItems db : sales.getDetails()){
+                   if(db.getId().equals(item.getId())){
+                       BeanUtils.copyProperties(item,db,"updated");
+                       newAdded=false;
+                   }
+                }
+                if(newAdded){
+                    sales.getDetails().add(item);
+                }
             }
-            saleItemRepo.saveAll(itemList);
-            stockBalanceService.subTractStockAfterSales(sales);
+            saleRepo.save(sales);
+
 
         }
         return new MsgResponse("Successfully created sales invoice",true);
