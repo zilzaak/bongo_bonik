@@ -135,7 +135,7 @@ public class PurchaseService {
         Inventory inv = (Inventory) mp.get("inv");
 
         Purchase purchase = new Purchase();
-        if(dto.getId()==null){
+        if(dto.getId()!=null){
             purchase = purchaseRepo.findById(dto.getId()).get();
         }
             purchase.setInventoryId(inv.getId());

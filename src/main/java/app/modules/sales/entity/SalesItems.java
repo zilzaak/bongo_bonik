@@ -1,4 +1,36 @@
 package app.modules.sales.entity;
 
-public class SalesItems {
+import app.common.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@Entity
+public class SalesItems extends BaseEntity {
+    private Long productId;
+    private String productName;
+    private String productType; //barcoded or not barcoded
+    private Double unitPrice;
+    private Integer quantity;
+    private Double amount;
+    private Double discPct;
+    private Double discAmount;
+    private Double vatPct;
+    private Double vatAmount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    @JsonBackReference
+    private Sales sales;
+
 }
