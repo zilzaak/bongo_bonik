@@ -19,6 +19,8 @@ public class CommonUtil {
         return list;
     }
 
+    public static List<String> prdctTypes = Arrays.asList("BARCODED_PRODUCT","NORMAL_PRODUCT");
+
     public static String removeHeadTailSpace(String input){
         if(input==null){
             return null;

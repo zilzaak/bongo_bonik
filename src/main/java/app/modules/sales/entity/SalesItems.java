@@ -1,6 +1,7 @@
 package app.modules.sales.entity;
 
 import app.common.entity.BaseEntity;
+import app.common.entity.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,8 +18,8 @@ import lombok.Setter;
 @Getter
 @Entity
 public class SalesItems extends BaseEntity {
-    private Long productId;
-    private String productName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
     private String productType; //barcoded or not barcoded
     private Double unitPrice;
     private Integer quantity;

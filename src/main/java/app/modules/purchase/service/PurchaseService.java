@@ -35,8 +35,6 @@ public class PurchaseService {
     @Autowired
     private StockBalanceService stockBalanceService;
 
-    public List<String> prdctTypes = Arrays.asList("BARCODED_PRODUCT","NORMAL_PRODUCT");
-
     PurchaseDetails getByIdFromList(List<PurchaseDetails> list , Long id){
         for(PurchaseDetails dtl : list){
             if(dtl.getId().equals(id)){
@@ -105,7 +103,7 @@ public class PurchaseService {
             return mp;
            }
 
-        if(dtl.getProductType()==null || !prdctTypes.contains(dtl.getProductType())){
+        if(dtl.getProductType()==null || !CommonUtil.prdctTypes.contains(dtl.getProductType())){
             mp.put("hasError",true);
             mp.put("message","Product type must be either 'BARCODED_PRODUCT' or 'NORMAL_PRODUCT' in SL NO"+index);
             return mp;
