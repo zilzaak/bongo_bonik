@@ -22,12 +22,14 @@ import java.util.List;
 @Entity
 public class Sales extends BaseEntity {
 
+    private String code;
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
     private Double discount;
     private Double vat;
     private Double amount;
+    private Double netAmount;
     private Double paid;
     private Double due;
     private Integer installment;

@@ -15,10 +15,12 @@ import java.util.List;
 @Getter
 public class SaleDTO {
     private Long id;
+    private String code;
     private Long customer;
     private Double discount;
     private Double vat;
     private Double amount;
+    private Double netAmount;
     private Double paid;
     private Double due;
     private Integer installment;

@@ -16,6 +16,7 @@ import app.modules.purchase.entity.PurchaseDetails;
 import app.modules.purchase.repo.PurchaseRepo;
 import app.modules.supplier.entity.Supplier;
 import app.modules.supplier.service.SupplierService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,7 +124,7 @@ public class PurchaseService {
         return mp;
     }
 
-
+    @Transactional
     public MsgResponse create(PurchaseDTO dto) {
         Map<String,Object> mp = validate(dto);
         if((boolean)mp.get("hasError")){
@@ -178,7 +179,7 @@ public class PurchaseService {
 
         return new MsgResponse("Successfully purchase product",true);
     }
-
+    @Transactional
     public MsgResponse edit(PurchaseDTO dto) {
         return create(dto);
     }

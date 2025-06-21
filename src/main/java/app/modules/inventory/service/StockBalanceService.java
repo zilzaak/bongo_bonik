@@ -2,6 +2,7 @@ package app.modules.inventory.service;
 
 
 import app.common.counter.service.CounterService;
+import app.common.entity.Product;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
@@ -10,10 +11,15 @@ import app.modules.inventory.entity.StockBalance;
 import app.modules.inventory.repo.StockBalanceRepo;
 import app.modules.purchase.entity.Purchase;
 import app.modules.purchase.entity.PurchaseDetails;
+import app.modules.sales.dto.SaleItemDTO;
+import app.modules.sales.entity.Sales;
+import app.modules.sales.entity.SalesItems;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,6 +71,47 @@ private ProductRepo productRepo;
         }
 
 
+    }
+
+    @Transactional
+    public void subTractStockAfterSales(Sales sales) {
+        Long inventoryId = sales.getInventory().getId();
+        // Deduct stock for each item in the sales details
+        sales.getDetails().forEach(item -> {
+            Product product = item.getProduct();
+            if (product != null && item.getQuantity() > 0) {
+                stockBalanceRepo.deductStock(product.getId(), inventoryId, item.getQuantity());
+            }
+        });
+    }
+
+    @Transactional
+    public void subTractStockAfterSales(List<SaleItemDTO> newlyAddedItemOnEdit,Long inventoryId) {
+        // Deduct stock for each item in the sales details
+        newlyAddedItemOnEdit.forEach(item -> {
+            if (item.getProduct() != null && item.getQuantity() > 0) {
+                stockBalanceRepo.deductStock(item.getProduct(), inventoryId, item.getQuantity());
+            }
+        });
+    }
+
+    @Transactional
+    public void subTractStockForIncreaseInEdit(Long product , Long inventoryId , Integer subQty) {
+        stockBalanceRepo.deductStock(product, inventoryId, subQty);
+    }
+
+    @Transactional
+    public void addStockForDecreaseInEdit(Long product , Long inventoryId , Integer subQty) {
+        stockBalanceRepo.addStock(product, inventoryId, subQty);
+    }
+
+    @Transactional
+    public void addStockAfterSales(List<SalesItems> deletedExistItemOnEdit,Long inventoryId) {
+        deletedExistItemOnEdit.forEach(item -> {
+            if (item.getProduct() != null && item.getQuantity() > 0) {
+                stockBalanceRepo.addStock(item.getProduct().getId(), inventoryId, item.getQuantity());
+            }
+        });
     }
 
 

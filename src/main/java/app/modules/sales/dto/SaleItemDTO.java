@@ -16,8 +16,11 @@ public class SaleItemDTO {
     private Double unitPrice;
     private Integer quantity;
     private Double amount;
+    private Double netAmount;
     private Double discPct;
     private Double discAmount;
     private Double vatPct;
     private Double vatAmount;
+    //just for calculation
+    private Integer totalQuantity;
 }

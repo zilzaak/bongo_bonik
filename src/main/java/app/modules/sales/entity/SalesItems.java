@@ -24,6 +24,7 @@ public class SalesItems extends BaseEntity {
     private Double unitPrice;
     private Integer quantity;
     private Double amount;
+    private Double netAmount;
     private Double discPct;
     private Double discAmount;
     private Double vatPct;
