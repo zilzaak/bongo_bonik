@@ -136,6 +136,7 @@ public class SalesService {
                     return mp;
                 }
                 dtl.setTotalQuantity(quantity);
+                processedProductId.add(dtl.getProduct());
             }
 
 
@@ -189,7 +190,7 @@ public class SalesService {
 
         Sales sales=new Sales();
         Customer customer = new Customer();
-        Inventory inventory = new Inventory();
+        Inventory inventory = null;
         List<SalesItems> existedDbItems = new ArrayList<>();
         if(dto.getId()==null){
             inventory= inventoryRepo.findById(dto.getInventory()).get();
