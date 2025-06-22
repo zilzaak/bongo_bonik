@@ -129,7 +129,7 @@ public class SalesService {
             if(!processedProductId.contains(dtl.getProduct())){
                 Integer totalQuantity = this.totalSellQuantity(dto,dtl.getProduct());
                 Integer bal = stockBalanceRepo.stockQbalanceOfProduct(dtl.getProduct(),dto.getInventory()).orElse(0);
-                if(bal<totalQuantity){
+                if(bal<totalQuantity || bal==0){
                     String productName=productRepo.getProductName(dtl.getProduct());
                     mp.put("hasError",true);
                     mp.put("message","Insufficient "+productName+" , stock balance = "+bal+" but selling quantity is "+totalQuantity+" for slNo="+slNo);
@@ -361,7 +361,7 @@ public class SalesService {
             item.setSales(sales);
             boolean newAdded=true;
             for(SalesItems db : sales.getDetails()){
-                if(db.getId().equals(item.getId())){
+                if(item.getId()!=null && db.getId().equals(item.getId())){
                     BeanUtils.copyProperties(item,db,"updated");
                     newAdded=false;
                 }
