@@ -8,11 +8,9 @@ import app.common.util.CommonUtil;
 import app.modules.customer.entity.Customer;
 import app.modules.customer.service.CustomerService;
 import app.modules.inventory.entity.Inventory;
-import app.modules.inventory.entity.StockBalance;
 import app.modules.inventory.repo.InventoryRepo;
 import app.modules.inventory.repo.StockBalanceRepo;
 import app.modules.inventory.service.StockBalanceService;
-import app.modules.purchase.dto.PurchaseDTO;
 import app.modules.sales.dto.SaleDTO;
 import app.modules.sales.dto.SaleItemDTO;
 import app.modules.sales.entity.Sales;
@@ -94,8 +92,7 @@ public class SalesService {
         }
 
         // now check the product stock balance and selling quantity missmatch or not in details list
-
-             int slNo=0; Double totalDiscount=0.0 ; Double totalVat=0.0;
+         int slNo=0; Double totalDiscount=0.0 ; Double totalVat=0.0;
              Double totalAmount=0.0;
              List<SalesItems> itemList = new ArrayList<>();
              List<Long> processedProductId=new ArrayList<>();
@@ -129,10 +126,10 @@ public class SalesService {
             if(!processedProductId.contains(dtl.getProduct())){
                 Integer totalQuantity = this.totalSellQuantity(dto,dtl.getProduct());
                 Integer bal = stockBalanceRepo.stockQbalanceOfProduct(dtl.getProduct(),dto.getInventory()).orElse(0);
-                if(bal<totalQuantity || bal==0){
+                if(bal==0){
                     String productName=productRepo.getProductName(dtl.getProduct());
                     mp.put("hasError",true);
-                    mp.put("message","Insufficient "+productName+" , stock balance = "+bal+" but selling quantity is "+totalQuantity+" for slNo="+slNo);
+                    mp.put("message","No stock found against the inventory for product"+productName+" in slNo="+slNo);
                     return mp;
                 }
                 dtl.setTotalQuantity(totalQuantity);
@@ -225,7 +222,6 @@ public class SalesService {
             saleItemRepo.saveAll(itemList);
             stockBalanceService.subTractStockAfterSales(sales);
         }else{
-
             if(sales.getInventory().getId().equals(dto.getInventory())){
                 // this case where inventory is not changed in edit
                 this.processWhenInventoryNotChanged(sales,dto,itemList,existedDBitems);
@@ -235,9 +231,6 @@ public class SalesService {
                 inventory= inventoryRepo.findById(dto.getInventory()).get();
                 this.processWhenInventoryIsChanged(sales,inventory,itemList);
             }
-
-
-
         }
         return new MsgResponse("Successfully created sales invoice",true);
     }

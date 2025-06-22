@@ -2,7 +2,6 @@ package app.modules.sales.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
-import app.modules.purchase.dto.PurchaseDTO;
 import app.modules.sales.dto.SaleDTO;
 import app.modules.sales.service.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;

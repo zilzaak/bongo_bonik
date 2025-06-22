@@ -80,7 +80,11 @@ private ProductRepo productRepo;
         sales.getDetails().forEach(item -> {
             Product product = item.getProduct();
             if (product != null && item.getQuantity() > 0) {
-                stockBalanceRepo.deductStock(product.getId(), inventoryId, item.getQuantity());
+                if(stockBalanceRepo.existsByInventoryIdAndProductIdAndQuantityLessThan(inventoryId,product.getId(),item.getQuantity())){
+                    throw new RuntimeException("Stock is not available to remove ");
+                }else{
+                    stockBalanceRepo.deductStock(product.getId(), inventoryId, item.getQuantity());
+                }
             }
         });
     }
@@ -90,14 +94,22 @@ private ProductRepo productRepo;
         // Deduct stock for each item in the sales details
         newlyAddedItemOnEdit.forEach(item -> {
             if (item.getProduct() != null && item.getQuantity() > 0) {
-                stockBalanceRepo.deductStock(item.getProduct(), inventoryId, item.getQuantity());
+                if(stockBalanceRepo.existsByInventoryIdAndProductIdAndQuantityLessThan(inventoryId,item.getProduct(),item.getQuantity())){
+                    throw new RuntimeException("Stock is not available to remove ");
+                }else{
+                    stockBalanceRepo.deductStock(item.getProduct(), inventoryId, item.getQuantity());
+                }
             }
         });
     }
 
     @Transactional
     public void subTractStockForIncreaseInEdit(Long product , Long inventoryId , Integer subQty) {
-        stockBalanceRepo.deductStock(product, inventoryId, subQty);
+        if(stockBalanceRepo.existsByInventoryIdAndProductIdAndQuantityLessThan(inventoryId,product,subQty)){
+            throw new RuntimeException("Stock is not available to remove ");
+        }else{
+            stockBalanceRepo.deductStock(product, inventoryId, subQty);
+        }
     }
 
     @Transactional
