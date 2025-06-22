@@ -3,10 +3,7 @@ package app.modules.sales.entity;
 import app.common.entity.BaseEntity;
 import app.common.entity.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +31,7 @@ public class SalesItems extends BaseEntity {
     @JoinColumn
     @JsonBackReference
     private Sales sales;
+    @Transient
+    private Integer totalQuantity;
 
 }

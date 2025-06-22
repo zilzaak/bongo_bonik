@@ -52,8 +52,8 @@ public class SalesService {
     private StockBalanceService stockBalanceService;
 
 
-    Integer totalSellQuantity(SaleDTO dto , Long product){
-        Integer quantity=0;
+    int totalSellQuantity(SaleDTO dto , Long product){
+        int quantity=0;
         for(SaleItemDTO dtl : dto.getDetails()){
             if(dtl.getProduct().equals(product)){
                 quantity=quantity+dtl.getQuantity();
@@ -62,10 +62,10 @@ public class SalesService {
         return quantity;
     }
 
-    Integer totalSellQuantity(List<SalesItems>  details , Long product){
-        Integer quantity=0;
+    int totalSellQuantity(List<SalesItems>  details , Long product){
+        int quantity=0;
         for(SalesItems dtl : details){
-            if(dtl.getProduct().equals(product)){
+            if(dtl.getProduct().getId().equals(product)){
                 quantity=quantity+dtl.getQuantity();
             }
         }
@@ -95,7 +95,7 @@ public class SalesService {
 
         // now check the product stock balance and selling quantity missmatch or not in details list
 
-             Integer slNo=0; Double totalDiscount=0.0 ; Double totalVat=0.0;
+             int slNo=0; Double totalDiscount=0.0 ; Double totalVat=0.0;
              Double totalAmount=0.0;
              List<SalesItems> itemList = new ArrayList<>();
              List<Long> processedProductId=new ArrayList<>();
@@ -127,15 +127,16 @@ public class SalesService {
             }
 
             if(!processedProductId.contains(dtl.getProduct())){
-                Integer quantity = this.totalSellQuantity(dto,dtl.getProduct());
+                Integer totalQuantity = this.totalSellQuantity(dto,dtl.getProduct());
                 Integer bal = stockBalanceRepo.stockQbalanceOfProduct(dtl.getProduct(),dto.getInventory()).orElse(0);
-                if(bal<quantity){
+                if(bal<totalQuantity){
                     String productName=productRepo.getProductName(dtl.getProduct());
                     mp.put("hasError",true);
-                    mp.put("message","Insufficient "+productName+" , stock balance = "+bal+" but selling quantity is "+quantity+" for slNo="+slNo);
+                    mp.put("message","Insufficient "+productName+" , stock balance = "+bal+" but selling quantity is "+totalQuantity+" for slNo="+slNo);
                     return mp;
                 }
-                dtl.setTotalQuantity(quantity);
+                dtl.setTotalQuantity(totalQuantity);
+                item.setTotalQuantity(totalQuantity);
                 processedProductId.add(dtl.getProduct());
             }
 
@@ -191,7 +192,7 @@ public class SalesService {
         Sales sales=new Sales();
         Customer customer = new Customer();
         Inventory inventory = null;
-        List<SalesItems> existedDbItems = new ArrayList<>();
+        List<SalesItems> existedDBitems = new ArrayList<>();
         if(dto.getId()==null){
             inventory= inventoryRepo.findById(dto.getInventory()).get();
             Map<String,Object> attr =  CommonUtil.counterAttribute("INVOICE");
@@ -199,9 +200,8 @@ public class SalesService {
             customer.setId(dto.getCustomer());
         }else{
             sales = saleRepo.findById(dto.getId()).get();
-            existedDbItems = sales.getDetails();
+            existedDBitems = sales.getDetails();
             customer = sales.getCustomer();
-            inventory=sales.getInventory();
         }
         sales.setPaid(dto.getPaid());
         sales.setInstallment(dto.getInstallment());
@@ -210,94 +210,171 @@ public class SalesService {
         sales.setDiscount(dto.getDiscount());
         sales.setVat(dto.getVat());
         sales.setCustomer(customer);
-        sales.setInventory(inventory);
-        sales.setDue(sales.getNetAmount()-sales.getPaid());
+        sales.setDue(dto.getNetAmount() - dto.getPaid());
         List<SalesItems> itemList = (List<SalesItems>) mp.get("itemList");
 
-        // set the update the stock balance because in case if creation the stock update by substraction of product quntity
-        // but in case of edit operation the stock may be increase or decrese for editing the product quntity
+        // set the update the stock balance because in case if creation the stock update by substraction of product quantity
+        // but in case of edit operation the stock may be increase or decrease for editing the product quantity / inventory / product
         // check for creation
         if(dto.getId()==null){
             for(SalesItems item : itemList){
                 item.setSales(sales);
             }
+            sales.setInventory(inventory);
             saleRepo.save(sales);
             saleItemRepo.saveAll(itemList);
             stockBalanceService.subTractStockAfterSales(sales);
         }else{
-            List<Long> processedProductEdit = new ArrayList<>();
-            List<Long> processedProductDB = new ArrayList<>();
-            List<SaleItemDTO> newlyAddedItemOnEdit = new ArrayList<>();
-            List<SalesItems> deletedDBitemOnEdit = new ArrayList<>();
-            List<Integer> deleteIndex = new ArrayList<>();
 
-          for(SaleItemDTO editedObj : dto.getDetails()){
-               Integer editedProductSoldQty = editedObj.getTotalQuantity();
-              if(!processedProductEdit.contains(editedObj.getProduct())){
-                    boolean itemExistInDbList=false;
-                  for(SalesItems dbObj : existedDbItems){
-                                  if(dbObj.getProduct().getId().equals(editedObj.getProduct()) &&
-                                          !processedProductDB.contains(dbObj.getProduct().getId())){
-                                      Integer dbProductSoldQty = this.totalSellQuantity(existedDbItems,dbObj.getProduct().getId()) ;
-                                      if(editedProductSoldQty > dbProductSoldQty){
-                                          Integer diffrence = editedProductSoldQty-dbProductSoldQty;
-                                          stockBalanceService.subTractStockForIncreaseInEdit(editedObj.getProduct(), sales.getInventory().getId(),diffrence);
-                                      }
-                                      if(editedProductSoldQty < dbProductSoldQty){
-                                          Integer diffrence = dbProductSoldQty-editedProductSoldQty;
-                                          stockBalanceService.subTractStockForIncreaseInEdit(editedObj.getProduct(), sales.getInventory().getId(),diffrence);
-                                      }
-                                      processedProductDB.add(dbObj.getProduct().getId());
-                                      itemExistInDbList=true;
-                                  }
-                                  //check dbObj is previously exist but on edit the usewr deleted the item
-                      boolean dbObjExistInEditedList = false;
-                      for(SaleItemDTO x : dto.getDetails()){
-                          if(x.getProduct().equals(dbObj.getProduct().getId())){
-                              dbObjExistInEditedList = true;
-                              break;
-                          }
-                      }
-
-                      if(!dbObjExistInEditedList){
-                          deletedDBitemOnEdit.add(dbObj);
-                          deleteIndex.add(existedDbItems.indexOf(dbObj));
-                      }
-
-                  }
-                  processedProductEdit.add(editedObj.getProduct());
-                  if(!itemExistInDbList){
-                      newlyAddedItemOnEdit.add(editedObj);
-                  }
-              }
-
-          }
-
-            stockBalanceService.subTractStockAfterSales(newlyAddedItemOnEdit,dto.getInventory());
-            stockBalanceService.addStockAfterSales(deletedDBitemOnEdit,dto.getInventory());
-
-            for(Integer index : deleteIndex){
-                sales.getDetails().remove(index);
+            if(sales.getInventory().getId().equals(dto.getInventory())){
+                // this case where inventory is not changed in edit
+                this.processWhenInventoryNotChanged(sales,dto,itemList,existedDBitems);
+            }else{
+                // here the inventory is changed on edit , as a result all items
+                // with previous inventory stock  should be restored/returned , and in new inventory , new items will be removed from stock
+                inventory= inventoryRepo.findById(dto.getInventory()).get();
+                this.processWhenInventoryIsChanged(sales,inventory,itemList);
             }
-            for(SalesItems item : itemList){
-                item.setSales(sales);
-                boolean newAdded=true;
-                for(SalesItems db : sales.getDetails()){
-                   if(db.getId().equals(item.getId())){
-                       BeanUtils.copyProperties(item,db,"updated");
-                       newAdded=false;
-                   }
-                }
-                if(newAdded){
-                    sales.getDetails().add(item);
-                }
-            }
-            saleRepo.save(sales);
+
 
 
         }
         return new MsgResponse("Successfully created sales invoice",true);
     }
+
+    @Transactional
+    private void processWhenInventoryIsChanged(Sales sales,Inventory editedInventory, List<SalesItems> itemList) {
+        //restore db items to its stock
+        stockBalanceService.addStockAfterSales(sales.getDetails(),sales.getInventory().getId());
+
+        List<SalesItems> notMatchedIdList = new ArrayList<>();
+
+        for(SalesItems DBitem : sales.getDetails()){
+            boolean exist=false;
+            for(SalesItems edt : itemList){
+               if(edt.getId()!=null && edt.getId().equals(DBitem.getId())){
+                   exist=true;
+                   BeanUtils.copyProperties(edt,DBitem,"created");
+                   saleItemRepo.save(DBitem);
+               }
+            }
+             if(!exist){
+                 notMatchedIdList.add(DBitem);
+             }
+        }
+
+        for(SalesItems notMachted : notMatchedIdList){
+            sales.getDetails().remove(notMachted);
+        }
+
+        sales.setInventory(editedInventory);
+        for(SalesItems edited : itemList){
+           if(edited.getId()==null){
+               edited.setSales(sales);
+               sales.getDetails().add(edited);
+               saleItemRepo.save(edited);
+           }
+           if(edited.getTotalQuantity()!=null && edited.getTotalQuantity()>0){
+               stockBalanceService.subTractStockForIncreaseInEdit(edited.getProduct().getId(),editedInventory.getId(),edited.getTotalQuantity());
+           }
+        }
+
+        saleRepo.save(sales);
+
+    }
+
+
+    @Transactional
+    private void processWhenInventoryNotChanged(Sales sales , SaleDTO dto , List<SalesItems> itemList , List<SalesItems> existedDBitems) {
+       /* suppose  Edited List is A = [1,4,5]     DB  List  is  B = [1,2,3]
+
+         1> For Common product  (this means we will retrieve product list from two List A> edited List  B> DB product List against that sales )
+                the common product from List A and B is = [1]
+                now two case may occurs here , the edited quantity of product '1' may increased or decreased
+                if increased then==>>ReduceStock----------------------(M)
+                if decreased then==>>IncreaseStock--------------------(N)
+         2> For Un Common product  ( Retrieve product List which is in list A but not in List B , and also those which are in List B but not in List A )
+              elements exist in A but not in B = [4,5]  ---------------(X)
+              elements exist in B but not in A = [2,3]  ---------------(Y)
+
+              so (x) products are newly added and these item will be subtracted from stock
+                 (y) products are not exist edited/lates list , that means [2,3] product will be restored/add to stock
+         */
+
+        List<Long> processedProductEdit = new ArrayList<>();
+        List<Long> processedProductDB = new ArrayList<>();
+        List<SaleItemDTO> newlyAddedItemOnEdit = new ArrayList<>();
+        List<SalesItems> deletedDBitemOnEdit = new ArrayList<>();
+
+        for(SaleItemDTO editedObj : dto.getDetails()){
+
+            if(!processedProductEdit.contains(editedObj.getProduct())){
+
+                boolean commonProductEdit_DB=false;
+
+          for(SalesItems dbProduct : existedDBitems){
+
+                 if(dbProduct.getProduct().getId().equals(editedObj.getProduct()) && !processedProductDB.contains(dbProduct.getProduct().getId())){
+
+                  int dbProductSoldQty = this.totalSellQuantity(existedDBitems,dbProduct.getProduct().getId()) ;
+
+                        if(editedObj.getTotalQuantity() > dbProductSoldQty){
+                            Integer diff = editedObj.getTotalQuantity()-dbProductSoldQty;
+                            stockBalanceService.subTractStockForIncreaseInEdit(editedObj.getProduct(), sales.getInventory().getId(),diff); // ------EQUATION (N)
+                        }
+                        if(editedObj.getTotalQuantity() < dbProductSoldQty){
+                            Integer diff = dbProductSoldQty-editedObj.getTotalQuantity();
+                            stockBalanceService.addStockForDecreaseInEdit(editedObj.getProduct(), sales.getInventory().getId(),diff); // --------- EQUATION (M)
+                        }
+                          processedProductDB.add(dbProduct.getProduct().getId());
+                          commonProductEdit_DB=true;
+                      }
+
+                    //check db product is previously exist but after edit the user deleted/removed the product
+                    if(dto.getDetails().indexOf(editedObj)==0){
+                        boolean common = false;
+                        for(SaleItemDTO editedProduct : dto.getDetails()){
+                            if(editedProduct.getProduct().equals(dbProduct.getProduct().getId())){
+                                common = true; break;
+                                 }
+                               }
+                        if(!common){deletedDBitemOnEdit.add(dbProduct);}
+                    }
+
+                }
+
+                processedProductEdit.add(editedObj.getProduct());
+                if(!commonProductEdit_DB){
+                    newlyAddedItemOnEdit.add(editedObj);
+                }
+            }
+
+        }
+
+        stockBalanceService.subTractStockAfterSales(newlyAddedItemOnEdit,dto.getInventory()); // ------------- equation (X)
+        stockBalanceService.addStockAfterSales(deletedDBitemOnEdit,dto.getInventory());       // --------------equation (Y)
+
+        for(SalesItems dbObj : deletedDBitemOnEdit){
+            sales.getDetails().remove(dbObj);
+        }
+        for(SalesItems item : itemList){
+            item.setSales(sales);
+            boolean newAdded=true;
+            for(SalesItems db : sales.getDetails()){
+                if(db.getId().equals(item.getId())){
+                    BeanUtils.copyProperties(item,db,"updated");
+                    newAdded=false;
+                }
+            }
+            if(newAdded){
+                saleItemRepo.save(item);
+                sales.getDetails().add(item);
+            }
+        }
+        saleRepo.save(sales);
+
+    }
+
 
     @Transactional
     public MsgResponse edit(SaleDTO dto) {

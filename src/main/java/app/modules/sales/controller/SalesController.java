@@ -29,7 +29,7 @@ public class SalesController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody PurchaseDTO dto)
+    ResponseEntity<?> update(@RequestBody SaleDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");

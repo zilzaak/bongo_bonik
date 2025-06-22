@@ -21,8 +21,8 @@ public class SaleDTO {
     private Double vat;
     private Double amount;
     private Double netAmount;
-    private Double paid;
-    private Double due;
+    private Double paid=0.0;
+    private Double due=0.0;
     private Integer installment;
     private Long inventory;
     private List<SaleItemDTO> details = new ArrayList<>();

@@ -101,8 +101,8 @@ private ProductRepo productRepo;
     }
 
     @Transactional
-    public void addStockForDecreaseInEdit(Long product , Long inventoryId , Integer subQty) {
-        stockBalanceRepo.addStock(product, inventoryId, subQty);
+    public void addStockForDecreaseInEdit(Long product , Long inventoryId , Integer decreasedQty) {
+        stockBalanceRepo.addStock(product, inventoryId, decreasedQty);
     }
 
     @Transactional
