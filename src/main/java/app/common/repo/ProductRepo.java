@@ -13,7 +13,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
     boolean existsByOrgIdAndFullNameAndIdNotIn(Long orgId, String fullName, List<Long> list);
 
-    @Query("select p.name from Product p where p.is=:pid ")
+    @Query("select p.name from Product p where p.id=:pid ")
     String getProductName(@Param("pid") Long pid);
 
 }
