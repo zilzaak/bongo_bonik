@@ -28,8 +28,8 @@ public class Product extends BaseEntity{
     private Long colorId;
     private Long madeWithId;
     private Long uomId;
-    private Integer qtyPerUnit;
-    private String qtyUnit;
+    private Integer qtyPerUnit; // amount per unit
+    private String unitName;  // for example ml , liter , kg , gm , kilo , km  , meter etc
     private Long parentId;
     //full name = brand+model+color+size+madeWith+qtyPerUnit+qtyUnit+uomId
 }
