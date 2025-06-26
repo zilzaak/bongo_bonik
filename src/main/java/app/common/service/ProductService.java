@@ -3,11 +3,17 @@ package app.common.service;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -159,5 +165,14 @@ public class ProductService {
     public MsgResponse edit(ProductDTO dto) {
 
         return this.create(dto);
+    }
+
+    public MsgResponse getList(SearchParamDTO dto) {
+
+        Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
+        Page<Map<String,Object>> page = productRepo.getList(dto.productId,dto.orgId,dto.brandId,
+                dto.catId,dto.modelId,dto.sizeId,dto.colorId ,pageable);
+        return CommonUtil.responseFromPage(page);
+
     }
 }

@@ -2,6 +2,7 @@ package app.common.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
+import app.common.dto.SearchParamDTO;
 import app.common.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class ProductController {
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     ResponseEntity<?> update(@RequestBody ProductDTO dto)
             throws RuntimeException{
         if(dto==null){
@@ -45,10 +46,10 @@ public class ProductController {
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
-    @PostMapping("/list")
-    ResponseEntity<?> getList(@RequestParam Map<String,String> params)
+    @RequestMapping("/list")
+    ResponseEntity<?> getList(@RequestParam SearchParamDTO dto)
             throws RuntimeException{
-        MsgResponse response = new MsgResponse();
+        MsgResponse response =productService.getList(dto);
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 

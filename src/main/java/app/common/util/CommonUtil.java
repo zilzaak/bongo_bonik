@@ -1,6 +1,8 @@
 package app.common.util;
 
+import app.common.dto.MsgResponse;
 import app.common.entity.*;
+import org.springframework.data.domain.Page;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -104,5 +106,20 @@ public class CommonUtil {
 
         return attr;
     }
+
+
+    public static MsgResponse responseFromPage(Page<Map<String,Object>> page){
+        MsgResponse response = new MsgResponse();
+        response.setMessage("data retrived");
+        Map<String,Object> mp = new HashMap<>();
+        mp.put("listData",page.getContent());
+        mp.put("totalPages",page.getTotalPages());
+        mp.put("totalItems",page.getTotalElements());
+        mp.put("pageNum",page.getNumber());
+        mp.put("pageSize",page.getSize());
+        response.setData(mp);
+        return response;
+    }
+
 
 }
