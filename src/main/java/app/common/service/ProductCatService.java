@@ -3,11 +3,15 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
 import app.common.entity.ProductCat;
 import app.common.repo.ProductCatRepo;
+import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -36,6 +40,12 @@ public class ProductCatService {
 
         String orgName = orgRepo.getName(dto.getOrgId());
         dto.setOrgName(orgName);
+        if(orgName==null){
+            mp.put("hasError",true);
+            mp.put("message","No Organization exist with id="+dto.getOrgId());
+            return mp;
+        }
+
 
         if(dto.getId()==null){
             if(catRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
@@ -86,8 +96,9 @@ public class ProductCatService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = catRepo.getList(dto.catId,dto.orgId,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

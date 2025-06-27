@@ -3,13 +3,18 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.ProductColor;
 import app.common.entity.ProductSize;
 import app.common.repo.ProductColorRepo;
 import app.common.repo.ProductSizeRepo;
+import app.common.util.CommonUtil;
+import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -22,6 +27,9 @@ public class ProductSizeService {
     @Autowired
     private ProductSizeRepo sizeRepo;
 
+    @Autowired
+    private OrgRepo orgRepo;
+
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
@@ -32,6 +40,11 @@ public class ProductSizeService {
             return mp;
         }
 
+        if(!orgRepo.existsById(dto.getOrgId())){
+            mp.put("hasError",true);
+            mp.put("message","No Organization exist with id = "+dto.getOrgId());
+            return mp;
+        }
 
         if(dto.getId()==null){
             if(sizeRepo.existsByName(dto.getName())){
@@ -67,7 +80,10 @@ public class ProductSizeService {
         }
         ProductSize size = new ProductSize();
         if(dto.getId()==null){
+            Organization organization = orgRepo.findById(dto.getOrgId()).get();
             size.setName(dto.getName());
+            size.setOrgId(dto.getOrgId());
+            size.setOrgName(organization.getName());
         }else{
             size = (ProductSize) mp.get("size");
             BeanUtils.copyProperties(dto,size,"created","updated");
@@ -80,8 +96,9 @@ public class ProductSizeService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = sizeRepo.getList(dto.sizeId,dto.orgId,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

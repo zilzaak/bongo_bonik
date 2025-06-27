@@ -3,13 +3,17 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
 import app.common.entity.ProductModel;
 import app.common.repo.BrandRepo;
 import app.common.repo.ProductModelRepo;
+import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -33,11 +37,17 @@ public class ProductModelService {
 
         if(dto.getName()==null ||  dto.getBrandId()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , brand is required are required");
+            mp.put("message","Name , brand is required");
             return mp;
         }
 
         Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
+        if(brand==null){
+            mp.put("hasError",true);
+            mp.put("message","No Brand exist with id="+dto.getBrandId());
+            return mp;
+        }
+
         dto.setOrgName(brand.getOrgName());
         dto.setOrgId(brand.getOrgId());
         dto.setBrandName(brand.getName());
@@ -72,7 +82,7 @@ public class ProductModelService {
     public MsgResponse create(CommonDTO dto) {
         Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse("fail",false);
+            return new MsgResponse((String) mp.get("message"),false);
         }
         ProductModel model = new ProductModel();
         if(dto.getId()==null){
@@ -93,8 +103,9 @@ public class ProductModelService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = modelRepo.getList(dto.brandId,dto.orgId,dto.modelId ,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

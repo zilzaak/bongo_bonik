@@ -15,4 +15,5 @@ public class SearchParamDTO {
    public Integer pageSize=10;
    public String sortDir="desc";
    public String sortField="id";
+   public String entity;
 }

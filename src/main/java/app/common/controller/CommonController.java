@@ -3,6 +3,7 @@ package app.common.controller;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class CommonController {
       return new ResponseEntity<>(response ,HttpStatus.OK);
   }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     ResponseEntity<?> update(@RequestBody CommonDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
@@ -123,30 +124,30 @@ public class CommonController {
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
-    @PostMapping("/list")
-    ResponseEntity<?> getList(@RequestParam Map<String,String> params)
+    @RequestMapping("/list")
+    ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
-        if(params.isEmpty()){
+        if(dto.entity==null){
             throw new RuntimeException("Under which entity you will create is not given");
         }
-        if(params.containsKey("Brand")){
-            response = brandService.getList(params);
+        if(dto.entity.equals("Brand")){
+            response = brandService.getList(dto);
         }
-        else if(params.containsKey("ProductCat")){
-            response = catService.getList(params);
+        else if(dto.entity.equals("ProductCat")){
+            response = catService.getList(dto);
         }
-        else if(params.containsKey("ProductModel")){
-            response = modelService.getList(params);
+        else if(dto.entity.equals("ProductModel")){
+            response = modelService.getList(dto);
         }
-        else if(params.containsKey("ProductColor")){
-            response = colorService.getList(params);
+        else if(dto.entity.equals("ProductColor")){
+            response = colorService.getList(dto);
         }
-        else if(params.containsKey("ProductSize")){
-            response = sizeService.getList(params);
+        else if(dto.entity.equals("ProductSize")){
+            response = sizeService.getList(dto);
         }
-        else if(params.containsKey("UnitOfMeasure")){
-            response = uomService.getList(params);
+        else if(dto.entity.equals("UnitOfMeasure")){
+            response = uomService.getList(dto);
         }
 
         return new ResponseEntity<>(response ,HttpStatus.OK);

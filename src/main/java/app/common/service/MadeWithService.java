@@ -31,6 +31,11 @@ public class MadeWithService {
         }
 
         String orgName = orgRepo.getName(dto.getOrgId());
+        if(orgName==null){
+            mp.put("hasError",true);
+            mp.put("message","No Organization exist with id = "+dto.getOrgId());
+            return mp;
+        }
         dto.setOrgName(orgName);
 
         if(dto.getId()==null){

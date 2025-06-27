@@ -64,9 +64,9 @@ public class ProductService {
           }
 
           Long org = dto.getOrgId();
-          ProductCat cat = catRepo.findById(dto.getCatId()).get();
-          Brand brand = brandRepo.findById(dto.getBrandId()).get();
-          UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).get():null;
+          ProductCat cat = catRepo.findById(dto.getCatId()).orElse(null);
+          Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
+          UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).orElse(null):null;
 
           if(cat==null){
               mp.put("hasError",true);

@@ -3,12 +3,17 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
 import app.common.repo.BrandRepo;
+import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,12 +32,17 @@ public class BrandService {
 
         if(dto.getName()==null || dto.getOrgId()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , Organization are required");
+            mp.put("message","Brand Name and Organization is required");
             return mp;
         }
 
         String orgName = orgRepo.getName(dto.getOrgId());
         dto.setOrgName(orgName);
+        if(orgName==null){
+            mp.put("hasError",true);
+            mp.put("message","No Organization exist with id="+dto.getOrgId());
+            return mp;
+        }
 
         if(dto.getId()==null){
            if(brandRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
@@ -83,8 +93,9 @@ public class BrandService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = brandRepo.getList(dto.brandId,dto.orgId,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

@@ -8,6 +8,14 @@ public class CommonDTO {
     private Long id;
     private String name;
     private Long orgId;
+    private Long brandId;
+    private String orgName;
+    private String brandName;
+    private String productCatIds;
+    private String phone;
+    private String entity;
+    private String address;
+    private String location;
 
     public String getProductCatIds() {
         return productCatIds;
@@ -24,13 +32,6 @@ public class CommonDTO {
     public void setBrandId(Long brandId) {
         this.brandId = brandId;
     }
-
-    private Long brandId;
-    private String orgName;
-    private String brandName;
-    private String productCatIds;
-
-    private String phone;
 
     public String getPhone() {
         return phone;
@@ -55,9 +56,6 @@ public class CommonDTO {
     public void setLocation(String location) {
         this.location = location;
     }
-
-    private String address;
-    private String location;
 
     public Long getId() {
         return id;
@@ -95,8 +93,6 @@ public class CommonDTO {
         return entity;
     }
 
-    private String entity;
-
     public void setName(String name) {
         if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
             this.name = name!=null? CommonUtil.removeAllSpace(name.trim().toLowerCase()):null;
@@ -104,11 +100,9 @@ public class CommonDTO {
             this.name = name!=null?CommonUtil.removeAllSpace(name.trim().toUpperCase()):null;
         }
     }
-
     public void setOrgName(String orgName) {
         this.orgName = orgName!=null?CommonUtil.replaceRepeatedChar(orgName.trim().toUpperCase(),' '):null;
     }
-
     public void setBrandName(String brandName) {
         this.brandName = brandName!=null?CommonUtil.replaceRepeatedChar(brandName.trim().toUpperCase(),' '):null;
     }

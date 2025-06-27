@@ -2,13 +2,17 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.ProductColor;
 import app.common.entity.ProductModel;
 import app.common.repo.ProductColorRepo;
 import app.common.repo.ProductModelRepo;
+import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -35,6 +39,11 @@ public class ProductColorService {
         }
 
         String orgName = orgRepo.getName(dto.getOrgId());
+        if(orgName==null){
+            mp.put("hasError",true);
+            mp.put("message","No Organization exist with id = "+dto.getOrgId());
+            return mp;
+        }
         dto.setOrgName(orgName);
 
         if(dto.getId()==null){
@@ -86,8 +95,9 @@ public class ProductColorService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = colorRepo.getList(dto.colorId,dto.orgId,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

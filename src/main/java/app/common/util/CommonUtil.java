@@ -1,8 +1,12 @@
 package app.common.util;
 
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -105,6 +109,13 @@ public class CommonUtil {
         }
 
         return attr;
+    }
+
+    public static Pageable getPageable(SearchParamDTO dto){
+        Sort sort = dto.sortDir.equals("asc")?Sort.by(dto.sortField).ascending():Sort.by(dto.sortField).descending();
+        Pageable pageable = PageRequest.of(dto.pageNum-1,dto.pageSize,sort);
+        return pageable;
+
     }
 
 

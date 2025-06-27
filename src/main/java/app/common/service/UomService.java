@@ -3,6 +3,7 @@ package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.common.entity.ProductCat;
 import app.common.entity.ProductSize;
 import app.common.entity.UnitOfMeasure;
@@ -134,7 +135,7 @@ public class UomService {
         return null;
     }
 
-    public MsgResponse getList(Map<String, String> params) {
+    public MsgResponse getList(SearchParamDTO dto) {
 
         return null;
     }

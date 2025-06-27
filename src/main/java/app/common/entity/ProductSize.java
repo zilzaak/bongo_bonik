@@ -14,4 +14,6 @@ import lombok.Setter;
 @Entity
 public class ProductSize extends BaseEntity {
     private String name;
+    private Long orgId;
+    private String orgName;
 }
