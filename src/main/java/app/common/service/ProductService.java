@@ -7,6 +7,7 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,9 @@ public class ProductService {
     @Autowired
     private ProductRepo productRepo;
 
+    @Autowired
+    private OrgRepo orgRepo;
+
 
     //1>>first check required field are null
     //2>>check all criteria of product belongs to same organization
@@ -62,11 +66,33 @@ public class ProductService {
           Long org = dto.getOrgId();
           ProductCat cat = catRepo.findById(dto.getCatId()).get();
           Brand brand = brandRepo.findById(dto.getBrandId()).get();
+          UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).get():null;
+
+          if(cat==null){
+              mp.put("hasError",true);
+              mp.put("message","No category exist under id="+dto.getCatId());
+              return mp;
+          }
+          if(brand==null){
+              mp.put("hasError",true);
+              mp.put("message","No brand exist under id="+dto.getBrandId());
+              return mp;
+          }
+          if(uom==null){
+              mp.put("hasError",true);
+              mp.put("message","No Uom exist under id="+dto.getUomId());
+              return mp;
+          }
+          if(!orgRepo.existsById(dto.getOrgId())){
+              mp.put("hasError",true);
+              mp.put("message","No Organization exist under id="+dto.getOrgId());
+              return mp;
+          }
+
           ProductModel model = dto.getModelId()!=null?modelRepo.findById(dto.getModelId()).get():null;
           ProductSize size = dto.getSizeId()!=null?sizeRepo.findById(dto.getSizeId()).get():null;
           ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
           MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
-          UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).get():null;
 
           String errorMessage = productCriteriaMaintainClassification(org,cat,brand,model,size,color,madeWith,uom);
           if(errorMessage!=null){
@@ -76,7 +102,7 @@ public class ProductService {
           }
 
 
-          String fullName = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom);
+          String fullName = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName(),uom);
 
           if(dto.getId()==null){
              //check duplicate fullName
@@ -174,5 +200,9 @@ public class ProductService {
                 dto.catId,dto.modelId,dto.sizeId,dto.colorId ,pageable);
         return CommonUtil.responseFromPage(page);
 
+    }
+
+    public Product getById(Long id) {
+        return productRepo.findById(id).orElse(null);
     }
 }
