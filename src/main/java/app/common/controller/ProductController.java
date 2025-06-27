@@ -3,6 +3,7 @@ package app.common.controller;
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Product;
 import app.common.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,16 +39,16 @@ public class ProductController {
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
-
-    @DeleteMapping("/delete")
-    ResponseEntity<?> delete(@RequestBody ProductDTO dto)
+    @GetMapping("/get/{id}")
+    ResponseEntity<?> getById(@PathVariable Long id)
             throws RuntimeException{
-        MsgResponse response = new MsgResponse();
-        return new ResponseEntity<>(response ,HttpStatus.OK);
+        Product product = productService.getById(id);
+        return new ResponseEntity<>(product ,HttpStatus.OK);
     }
 
+
     @RequestMapping("/list")
-    ResponseEntity<?> getList(@RequestParam SearchParamDTO dto)
+    ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
         MsgResponse response =productService.getList(dto);
         return new ResponseEntity<>(response ,HttpStatus.OK);
