@@ -111,6 +111,7 @@ public class CommonUtil {
     public static MsgResponse responseFromPage(Page<Map<String,Object>> page){
         MsgResponse response = new MsgResponse();
         response.setMessage("data retrived");
+        response.setSuccess(true);
         Map<String,Object> mp = new HashMap<>();
         mp.put("listData",page.getContent());
         mp.put("totalPages",page.getTotalPages());
