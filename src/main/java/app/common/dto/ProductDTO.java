@@ -16,7 +16,7 @@ public class ProductDTO {
     private Long madeWithId;
     private Long uomId;//KG,LITER,ETC
     private Integer qtyPerUnit;//10,20,30
-    private String qtyUnit;
+    private String unitName;
     private Long parentId;
 
     public Long getId() {
@@ -107,12 +107,16 @@ public class ProductDTO {
         this.qtyPerUnit = qtyPerUnit;
     }
 
-    public String getQtyUnit() {
-        return qtyUnit;
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName!=null?unitName.trim().toUpperCase():null;
     }
 
     public void setQtyUnit(String qtyUnit) {
-        this.qtyUnit = qtyUnit!=null?qtyUnit.trim().toUpperCase():null;
+
     }
 
     public Long getParentId() {
