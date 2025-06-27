@@ -19,9 +19,16 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query("select p.name from Product p where p.id=:pid ")
     String getProductName(@Param("pid") Long pid);
 
-    @Query("select p from Product p where ( ?1 is null or p.id=?1 ) " +
-            " and ( ?2 is null or p.brand.id=?2 ) " +
-            " and ( ?3 is null or p.)")
+    @Query("select p from Product p  " +
+            " left join p.brand brand " +
+            " left join p.model model " +
+            " where ( ?1 is null or p.id=?1 ) " +
+            " and ( ?2 is null or p.orgId= ?2 ) " +
+            " and ( ?3 is null or brand.id=?3 )  " +
+            " and ( ?4 is null or p.catId= ?4 ) " +
+            " and  (?5 is null or model.id= ?5 )  " +
+            " and ( ?6 is null or p.sizeId=?6 )  " +
+            " and  ( ?7 is null or p.colorId= ?7 ) " )
     Page<Map<String, Object>> getList(Long productId,
                                       Long orgId,
                                       Long brandId,
