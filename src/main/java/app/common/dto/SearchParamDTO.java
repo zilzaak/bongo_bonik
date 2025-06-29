@@ -1,5 +1,11 @@
 package app.common.dto;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SearchParamDTO {
    public Long orgId;
    public Long branchId;
@@ -16,4 +22,5 @@ public class SearchParamDTO {
    public String sortDir="desc";
    public String sortField="id";
    public String entity;
+   public String commonField;
 }

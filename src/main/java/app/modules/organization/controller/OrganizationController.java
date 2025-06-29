@@ -3,6 +3,7 @@ package app.modules.organization.controller;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.modules.organization.service.BranchService;
 import app.modules.organization.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,9 @@ public class OrganizationController {
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-            throw new RuntimeException("Under which entity you will create is not given");
+            response.setMessage("Entity is required , entity = Organization or Branch ");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response , HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Organization")){
             response = orgService.create(dto);
@@ -45,7 +48,9 @@ public class OrganizationController {
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-            throw new RuntimeException("Under which entity you will create is not given");
+            response.setMessage("Entity is required , entity = Organization or Branch ");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response , HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Organization")){
             response = orgService.edit(dto);
@@ -58,18 +63,20 @@ public class OrganizationController {
     }
 
     @GetMapping("/list")
-    ResponseEntity<?> getList(@RequestParam Map<String,String> params)
+    ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
-        if(params.isEmpty()){
-            throw new RuntimeException("Under which entity you will create is not given");
+        if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
+            response.setMessage("Entity is required , entity = Organization or Branch ");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response , HttpStatus.OK);
         }
 
-        if(params.get("entity").equalsIgnoreCase("Organization")){
-            response = orgService.getList(params);
+        if(dto.entity.equalsIgnoreCase("Organization")){
+            response = orgService.getList(dto);
         }
-        else if(params.get("entity").equalsIgnoreCase("Branch")){
-            response = branchService.getList(params);
+        else if(dto.entity.equalsIgnoreCase("Branch")){
+            response = branchService.getList(dto);
         }
         return new ResponseEntity<>(response , HttpStatus.OK);
     }

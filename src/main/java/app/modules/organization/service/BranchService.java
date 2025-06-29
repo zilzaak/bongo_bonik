@@ -2,13 +2,17 @@ package app.modules.organization.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.organization.entity.Branch;
 import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.BranchRepo;
-import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -92,7 +96,9 @@ public class BranchService {
         return  create(dto);
     }
 
-    public MsgResponse getList(Map<String, String> params) {
-        return null;
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = branchRepo.getList(dto.branchId,dto.orgId,pageable);
+        return CommonUtil.responseFromPage(page);
     }
 }

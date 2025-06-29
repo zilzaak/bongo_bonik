@@ -3,10 +3,14 @@ package app.modules.organization.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -65,9 +69,9 @@ public class OrganizationService {
     public MsgResponse create(CommonDTO dto) {
 
         Map<String, Object> mp = validate(dto);
-
+         String sms = null;
          if((boolean)mp.get("hasError")){
-             return new MsgResponse("Invalid form ", false);
+             return new MsgResponse((String) mp.get("message"), false);
          }
          Organization org = new Organization();
          if(dto.getId()==null){
@@ -75,12 +79,14 @@ public class OrganizationService {
              org.setPhone(dto.getPhone());
              org.setAddress(dto.getAddress());
              org.setLocation(dto.getLocation());
+             sms="Successfully created";
          }else{
              org = (Organization) mp.get("org");
              BeanUtils.copyProperties(dto,org,"created","updated");
+             sms="Successfully updated";
          }
          orgRepo.save(org);
-         return new MsgResponse("Successfully created",true);
+         return new MsgResponse(sms,true);
     }
 
 
@@ -88,8 +94,10 @@ public class OrganizationService {
         return create(dto);
     }
 
-    public MsgResponse getList(Map<String, String> params) {
+    public MsgResponse getList(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = orgRepo.getList(dto.orgId,dto.commonField,pageable);
+        return CommonUtil.responseFromPage(page);
 
-        return null;
     }
 }
