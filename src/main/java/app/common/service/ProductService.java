@@ -118,6 +118,68 @@ public class ProductService {
                   return mp;
               }
               Product prdct = productRepo.findById(dto.getId()).get();
+
+              if(!prdct.getOrgId().equals(dto.getOrgId())){
+                  mp.put("hasError",true);
+                  mp.put("message","Organization can not edit bcz it is a sensitive data and related with accounting ");
+                  return mp;
+              }
+              if(cat!=null){
+                  if(!cat.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Product category and and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(model!=null){
+                  if(!model.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Product model and and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(uom!=null){
+                  if(!uom.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","OUM and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(size!=null){
+                  if(!size.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Product size and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(color!=null){
+                  if(!color.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Product color and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(madeWith!=null){
+                  if(!madeWith.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Made with and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
+              if(brand!=null){
+                  if(!brand.getOrgId().equals(prdct.getOrgId())){
+                      mp.put("hasError",true);
+                      mp.put("message","Brand and product must be under same Organization ");
+                      return mp;
+                  }
+              }
+
               mp.put("product",prdct);
 
           }

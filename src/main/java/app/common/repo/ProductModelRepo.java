@@ -26,4 +26,6 @@ public interface ProductModelRepo extends JpaRepository<ProductModel,Long> {
     boolean existsByOrgId(Long id);
 
     ProductModel findTopByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long modelId);
 }

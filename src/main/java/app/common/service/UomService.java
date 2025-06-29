@@ -109,6 +109,12 @@ public class UomService {
                 }
             }
 
+            if(!uom.getOrgId().equals(dto.getOrgId())){
+                mp.put("hasError",true);
+                mp.put("message","you can not edit the organization because its usual is sensitive");
+                return mp;
+            }
+
             mp.put("uom",uom);
 
         }

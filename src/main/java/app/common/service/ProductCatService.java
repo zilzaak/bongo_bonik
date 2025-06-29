@@ -72,6 +72,12 @@ public class ProductCatService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
+
+            if(!cat.getOrgId().equals(dto.getOrgId())){
+                mp.put("hasError",true);
+                mp.put("message","you can not edit the organization because its usual is sensitive");
+                return mp;
+            }
                 mp.put("cat",cat);
         }
         return mp;

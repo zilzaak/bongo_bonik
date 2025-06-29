@@ -29,4 +29,6 @@ public interface ProductCatRepo extends JpaRepository<ProductCat,Long> {
     boolean existsByOrgId(Long id);
 
     ProductCat findTopByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long catId);
 }

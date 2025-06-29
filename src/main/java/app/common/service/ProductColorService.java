@@ -71,6 +71,12 @@ public class ProductColorService {
                 return mp;
             }
 
+            if(!color.getOrgId().equals(dto.getOrgId())){
+                mp.put("hasError",true);
+                mp.put("message","you can not edit the organization because its usual is sensitive");
+                return mp;
+            }
+
             mp.put("color",color);
 
         }

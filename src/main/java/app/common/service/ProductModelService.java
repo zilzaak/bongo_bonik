@@ -77,6 +77,12 @@ public class ProductModelService {
                 return mp;
             }
 
+            if(!brand.getOrgId().equals(model.getOrgId())){
+                mp.put("hasError",true);
+                mp.put("message","you can not edit the organization because its usual is sensitive");
+                return mp;
+            }
+
             mp.put("model",model);
 
         }

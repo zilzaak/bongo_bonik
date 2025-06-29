@@ -21,4 +21,6 @@ public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
     UnitOfMeasure findTopByOrgId(Long id);
 
     boolean existsByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long uomId);
 }

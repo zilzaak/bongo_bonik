@@ -29,4 +29,6 @@ public interface BrandRepo extends JpaRepository<Brand,Long> {
     boolean existsByOrgId(Long id);
 
     Brand findTopByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long brandId);
 }

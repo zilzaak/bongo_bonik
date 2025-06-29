@@ -23,4 +23,6 @@ public interface MadeWithRepo extends JpaRepository<MadeWith,Long> {
     boolean existsByOrgId(Long id);
 
     MadeWith findTopByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long madeWithId);
 }

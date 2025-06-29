@@ -24,4 +24,6 @@ public interface ProductColorRepo extends JpaRepository<ProductColor,Long> {
     boolean existsByOrgId(Long id);
 
     ProductColor findTopByOrgId(Long id);
+
+    boolean existsByOrgIdAndId(Long orgId, Long colorId);
 }
