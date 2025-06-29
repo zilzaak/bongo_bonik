@@ -52,8 +52,6 @@ public class BranchService {
                 mp.put("message","This branch already exist against selected Organization");
                 return mp;
             }
-
-
         }else{
             Branch branch = branchRepo.findById(dto.getId()).orElse(null);
 
@@ -68,6 +66,18 @@ public class BranchService {
                 mp.put("message","This branch already exist against selected Organization");
                 return mp;
             }
+
+            if(!branch.getOrg().getId().equals(dto.getOrgId())){
+                if(inventoryRepo.existsByBranchId(branch.getId())){
+                    Inventory inv = inventoryRepo.findTopByBranchId(branch.getId());
+                    mp.put("hasError",true);
+                    mp.put("message","This branch can not be delete , it is used in Inventory "+inv.getId()+"-"+inv.getName());
+                    return mp;
+                }
+
+                return mp;
+            }
+
             mp.put("branch",branch);
 
         }
@@ -111,7 +121,7 @@ public class BranchService {
 
     public MsgResponse delete(CommonDTO dto) {
         if(!branchRepo.existsById(dto.getId())){
-            return  new MsgResponse("This branch with id="+dto.getId()+" dont exist in DB",false);
+            return  new MsgResponse("This branch with id="+dto.getId()+" don't exist in DB",false);
         }
         if(inventoryRepo.existsByBranchId(dto.getId())){
             Inventory inv = inventoryRepo.findTopByBranchId(dto.getId());
