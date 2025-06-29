@@ -119,6 +119,7 @@ public class CommonUtil {
     }
 
 
+
     public static MsgResponse responseFromPage(Page<Map<String,Object>> page){
         MsgResponse response = new MsgResponse();
         response.setMessage("data retrived");
@@ -132,6 +133,22 @@ public class CommonUtil {
         response.setData(mp);
         return response;
     }
+
+
+    public static MsgResponse responseFromObjectPage(Page<Object> page){
+        MsgResponse response = new MsgResponse();
+        response.setMessage("data retrived");
+        response.setSuccess(true);
+        Map<String,Object> mp = new HashMap<>();
+        mp.put("listData",page.getContent());
+        mp.put("totalPages",page.getTotalPages());
+        mp.put("totalItems",page.getTotalElements());
+        mp.put("pageNum",page.getNumber());
+        mp.put("pageSize",page.getSize());
+        response.setData(mp);
+        return response;
+    }
+
 
 
 }

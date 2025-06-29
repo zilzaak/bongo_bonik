@@ -29,4 +29,8 @@ public interface StockBalanceRepo extends JpaRepository<StockBalance,Long> {
                     @Param("addQty") Integer addQty);
 
     boolean existsByInventoryIdAndProductIdAndQuantityLessThan(Long inventoryId, Long id, Integer quantity);
+
+    boolean existsByInventoryId(Long id);
+
+    StockBalance findTopByInventoryId(Long id);
 }
