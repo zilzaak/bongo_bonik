@@ -134,6 +134,10 @@ public class OrganizationService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
+        if(!orgRepo.existsById(dto.getId())){
+            return  new MsgResponse("The organization with id"+dto.getId()+" dont exist in DB",false);
+        }
+
         if(productRepo.existsByOrgId(dto.getId())){
             Product pdct = productRepo.findTopByOrgId(dto.getId());
             return  new MsgResponse("This organization can not be delete , it is used in product "+pdct.getId()+"-"+pdct.getName(),false);

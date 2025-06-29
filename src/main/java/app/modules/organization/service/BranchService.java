@@ -3,7 +3,6 @@ package app.modules.organization.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.common.entity.Product;
 import app.common.util.CommonUtil;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.repo.InventoryRepo;
@@ -111,6 +110,9 @@ public class BranchService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
+        if(!branchRepo.existsById(dto.getId())){
+            return  new MsgResponse("This branch with id="+dto.getId()+" dont exist in DB",false);
+        }
         if(inventoryRepo.existsByBranchId(dto.getId())){
             Inventory inv = inventoryRepo.findTopByBranchId(dto.getId());
             return  new MsgResponse("This branch can not be delete , it is used in Inventory "+inv.getId()+"-"+inv.getName(),false);
