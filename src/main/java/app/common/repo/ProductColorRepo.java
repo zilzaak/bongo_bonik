@@ -20,4 +20,8 @@ public interface ProductColorRepo extends JpaRepository<ProductColor,Long> {
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")
     Page<Map<String, Object>> getList(Long colorId, Long orgId, Pageable pageable);
+
+    boolean existsByOrgId(Long id);
+
+    ProductColor findTopByOrgId(Long id);
 }

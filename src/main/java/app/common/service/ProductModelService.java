@@ -5,9 +5,11 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
+import app.common.entity.Product;
 import app.common.entity.ProductModel;
 import app.common.repo.BrandRepo;
 import app.common.repo.ProductModelRepo;
+import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +32,9 @@ public class ProductModelService {
     private BrandRepo brandRepo;
     @Autowired
     private OrgRepo orgRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -100,7 +105,13 @@ public class ProductModelService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        return null;
+        if(productRepo.existsByModelId(dto.getId())){
+            Product pd = productRepo.findTopByModelId(dto.getId());
+            return  new MsgResponse("This model can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            modelRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

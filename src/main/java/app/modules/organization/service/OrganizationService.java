@@ -4,8 +4,13 @@ package app.modules.organization.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.*;
+import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.inventory.entity.Inventory;
+import app.modules.organization.entity.Branch;
 import app.modules.organization.entity.Organization;
+import app.modules.organization.repo.BranchRepo;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,33 @@ public class OrganizationService {
     @Autowired
     private OrgRepo orgRepo;
 
+    @Autowired
+    private ProductRepo productRepo;
+    @Autowired
+    private BranchRepo branchRepo;
+
+    @Autowired
+    private BrandRepo brandRepo;
+
+    @Autowired
+    private ProductCatRepo catRepo;
+
+    @Autowired
+    private ProductModelRepo modelRepo;
+
+    @Autowired
+    private ProductSizeRepo sizeRepo;
+
+    @Autowired
+    private ProductColorRepo colorRepo;
+
+    @Autowired
+    private UnitOfMeasureRepo unitOfMeasureRepo;
+
+    @Autowired
+    private MadeWithRepo madeWithRepo;
+
+
     Map<String,Object> validate(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
@@ -37,7 +69,7 @@ public class OrganizationService {
         }
 
         if(dto.getId()==null){
-           if(orgRepo.existsByName(dto.getName())){
+           if(orgRepo.checkExistName(dto.getName())>0){
                mp.put("hasError",true);
                mp.put("message","Org name must be unique");
                return mp;
@@ -52,7 +84,7 @@ public class OrganizationService {
                 mp.put("message","Organization not found");
                 return mp;
             }
-            if(orgRepo.existsByNameAndIdNotIn(dto.getName(), Arrays.asList(dto.getId()))){
+            if(orgRepo.checkExistNameEdit(dto.getName(), Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message","Org name must be unique");
                 return mp;
@@ -98,6 +130,52 @@ public class OrganizationService {
         Pageable pageable = CommonUtil.getPageable(dto);
         Page<Map<String,Object>> page = orgRepo.getList(dto.orgId,dto.commonField,pageable);
         return CommonUtil.responseFromPage(page);
+
+    }
+
+    public MsgResponse delete(CommonDTO dto) {
+        if(productRepo.existsByOrgId(dto.getId())){
+            Product pdct = productRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in product "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(branchRepo.existsByOrgId(dto.getId())){
+            Branch pdct = branchRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in Branch "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(brandRepo.existsByOrgId(dto.getId())){
+            Brand pdct = brandRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in Brand "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(modelRepo.existsByOrgId(dto.getId())){
+            ProductModel pdct = modelRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in ProductModel "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(catRepo.existsByOrgId(dto.getId())){
+            ProductCat pdct = catRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in ProductCat "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(sizeRepo.existsByOrgId(dto.getId())){
+            ProductSize pdct = sizeRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in ProductSize "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else if(madeWithRepo.existsByOrgId(dto.getId())){
+            MadeWith pdct = madeWithRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in MadeWith "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+
+        else if(colorRepo.existsByOrgId(dto.getId())){
+            ProductColor pdct = colorRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in ProductColor "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+
+        else if(unitOfMeasureRepo.existsByOrgId(dto.getId())){
+            UnitOfMeasure pdct = unitOfMeasureRepo.findTopByOrgId(dto.getId());
+            return  new MsgResponse("This organization can not be delete , it is used in UnitOfMeasure "+pdct.getId()+"-"+pdct.getName(),false);
+        }
+        else{
+            orgRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
 
     }
 }

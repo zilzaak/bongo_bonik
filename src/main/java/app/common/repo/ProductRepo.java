@@ -51,4 +51,36 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
                                       Long sizeId,
                                       Long colorId,
                                       Pageable pageable);
+
+    boolean existsByBrandId(Long id);
+
+    Product findTopByBrandId(Long id);
+
+    boolean existsByCatId(Long id);
+
+    Product findTopByCatId(Long id);
+
+    boolean existsByModelId(Long id);
+
+    Product findTopByModelId(Long id);
+
+    boolean existsByColorId(Long id);
+
+    Product findTopByColorId(Long id);
+
+    boolean existsBySizeId(Long id);
+
+    Product findTopBySizeId(Long id);
+
+    boolean existsByUomId(Long id);
+
+    Product findTopByUomId(Long id);
+
+    boolean existsByMadeWithId(Long id);
+
+    Product findTopByMadeWithId(Long id);
+
+    boolean existsByOrgId(Long id);
+
+    Product findTopByOrgId(Long id);
 }

@@ -3,10 +3,12 @@ package app.common.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Product;
 import app.common.entity.ProductColor;
 import app.common.entity.ProductModel;
 import app.common.repo.ProductColorRepo;
 import app.common.repo.ProductModelRepo;
+import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +29,9 @@ public class ProductColorService {
 
     @Autowired
     private OrgRepo orgRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -92,7 +97,13 @@ public class ProductColorService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        return null;
+        if(productRepo.existsByColorId(dto.getId())){
+            Product pd = productRepo.findTopByColorId(dto.getId());
+            return  new MsgResponse("This color can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            colorRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

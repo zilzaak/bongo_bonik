@@ -1,6 +1,5 @@
 package app.common.controller;
 
-
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
@@ -126,6 +125,9 @@ public class CommonController {
         else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
             response = uomService.delete(dto);
         }
+        else if(dto.getEntity().equalsIgnoreCase("MadeWith")){
+            response = madeWithService.delete(dto);
+        }
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
@@ -138,23 +140,27 @@ public class CommonController {
             response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
-        if(dto.entity.equals("Brand")){
+        if(dto.entity.equalsIgnoreCase("Brand")){
             response = brandService.getList(dto);
         }
-        else if(dto.entity.equals("ProductCat")){
+        else if(dto.entity.equalsIgnoreCase("ProductCat")){
             response = catService.getList(dto);
         }
-        else if(dto.entity.equals("ProductModel")){
+        else if(dto.entity.equalsIgnoreCase("ProductModel")){
             response = modelService.getList(dto);
         }
-        else if(dto.entity.equals("ProductColor")){
+        else if(dto.entity.equalsIgnoreCase("ProductColor")){
             response = colorService.getList(dto);
         }
-        else if(dto.entity.equals("ProductSize")){
+        else if(dto.entity.equalsIgnoreCase("ProductSize")){
             response = sizeService.getList(dto);
         }
-        else if(dto.entity.equals("UnitOfMeasure")){
+        else if(dto.entity.equalsIgnoreCase("UnitOfMeasure")){
             response = uomService.getList(dto);
+        }
+
+        else if(dto.entity.equalsIgnoreCase("MadeWith")){
+            response = madeWithService.getList(dto);
         }
 
         return new ResponseEntity<>(response ,HttpStatus.OK);

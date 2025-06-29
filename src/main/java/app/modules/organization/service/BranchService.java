@@ -3,7 +3,11 @@ package app.modules.organization.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Product;
 import app.common.util.CommonUtil;
+import app.modules.inventory.entity.Inventory;
+import app.modules.inventory.repo.InventoryRepo;
+import app.modules.inventory.repo.StockBalanceRepo;
 import app.modules.organization.entity.Branch;
 import app.modules.organization.entity.Organization;
 import app.modules.organization.repo.BranchRepo;
@@ -21,10 +25,14 @@ import java.util.Map;
 @Service
 public class BranchService {
 
-
     @Autowired
     private BranchRepo branchRepo;
 
+    @Autowired
+    private StockBalanceRepo stockBalanceRepo;
+
+    @Autowired
+    private InventoryRepo inventoryRepo;
 
     Map<String,Object> validate(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -40,7 +48,7 @@ public class BranchService {
         org.setId(dto.getOrgId());
 
         if(dto.getId()==null){
-            if(branchRepo.existsByNameAndOrg(dto.getName(),org)){
+            if(branchRepo.checkExistName(dto.getName(),org.getId())>0){
                 mp.put("hasError",true);
                 mp.put("message","This branch already exist against selected Organization");
                 return mp;
@@ -56,7 +64,7 @@ public class BranchService {
                 return mp;
             }
 
-            if(branchRepo.existsByNameAndOrgAndIdNotIn(dto.getName(), org , Arrays.asList(dto.getId()))){
+            if(branchRepo.checkExistNameEdit(dto.getName(), org.getId() , Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message","This branch already exist against selected Organization");
                 return mp;
@@ -101,4 +109,16 @@ public class BranchService {
         Page<Map<String,Object>> page = branchRepo.getList(dto.branchId,dto.orgId,pageable);
         return CommonUtil.responseFromPage(page);
     }
+
+    public MsgResponse delete(CommonDTO dto) {
+        if(inventoryRepo.existsByBranchId(dto.getId())){
+            Inventory inv = inventoryRepo.findTopByBranchId(dto.getId());
+            return  new MsgResponse("This branch can not be delete , it is used in Inventory "+inv.getId()+"-"+inv.getName(),false);
+        }else{
+            branchRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
+    }
+
+
 }

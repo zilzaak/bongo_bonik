@@ -22,4 +22,8 @@ public interface ProductModelRepo extends JpaRepository<ProductModel,Long> {
             " and ( ?2 is null or b.orgId=?2 ) " +
             " and ( ?3 is null or b.id=?3) ")
     Page<Map<String, Object>> getList(Long brandId, Long orgId, Long id ,Pageable pageable);
+
+    boolean existsByOrgId(Long id);
+
+    ProductModel findTopByOrgId(Long id);
 }

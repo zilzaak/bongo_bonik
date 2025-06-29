@@ -16,11 +16,15 @@ public interface OrgRepo extends JpaRepository<Organization,Long> {
     @Query("select x.name from Organization x where x.id=:id")
     String getName(@Param("id") Long id);
 
-    boolean existsByName(String name);
+    @Query("select count(x) from Organization x where " +
+            " ( upper(x.name) like concat('%', upper(?1),'%')  or upper(x.name) like concat('%',upper(?1),'%') )  ")
+    int checkExistName(String name);
 
-    boolean existsByNameAndIdNotIn(String name, List<Long> list);
+    @Query("select count(x) from Organization x where " +
+            " ( upper(x.name) like concat('%', upper(:nm),'%')  or upper(x.name) like concat('%',upper(:nm),'%') ) and x.id not in :list  ")
+    int checkExistNameEdit(@Param("nm") String nm, @Param("list") List<Long> list);
 
-    @Query("select b.name as orgName , b.phone as orgPhone , " +
+    @Query("select b.id as id , b.name as orgName , b.phone as orgPhone , " +
             "  b.address as orgAddress , b.location as orgLocation , " +
             "  b.created as created  " +
             " from Organization b " +

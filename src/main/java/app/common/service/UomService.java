@@ -4,10 +4,12 @@ package app.common.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Product;
 import app.common.entity.ProductCat;
 import app.common.entity.ProductSize;
 import app.common.entity.UnitOfMeasure;
 import app.common.repo.ProductCatRepo;
+import app.common.repo.ProductRepo;
 import app.common.repo.ProductSizeRepo;
 import app.common.repo.UnitOfMeasureRepo;
 import app.common.util.CommonUtil;
@@ -32,6 +34,10 @@ public class UomService {
 
     @Autowired
     private ProductCatRepo catRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
+
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -131,8 +137,13 @@ public class UomService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        uomRepo.deleteById(dto.getId());
-        return null;
+        if(productRepo.existsByUomId(dto.getId())){
+            Product pd = productRepo.findTopByUomId(dto.getId());
+            return  new MsgResponse("This size can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            uomRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

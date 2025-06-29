@@ -5,7 +5,9 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
+import app.common.entity.Product;
 import app.common.repo.BrandRepo;
+import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +28,9 @@ public class BrandService {
     @Autowired
     private OrgRepo orgRepo;
 
+    @Autowired
+    private ProductRepo productRepo;
+
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
@@ -45,7 +50,7 @@ public class BrandService {
         }
 
         if(dto.getId()==null){
-           if(brandRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
+           if(brandRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())>0){
                mp.put("hasError",true);
                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                return mp;
@@ -58,7 +63,7 @@ public class BrandService {
                 mp.put("message","Db data not found for edit");
                 return mp;
             }
-            if(brandRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
+            if(brandRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
@@ -90,7 +95,13 @@ public class BrandService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        return null;
+        if(productRepo.existsByBrandId(dto.getId())){
+            Product pd = productRepo.findTopByBrandId(dto.getId());
+            return  new MsgResponse("This brand can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            brandRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

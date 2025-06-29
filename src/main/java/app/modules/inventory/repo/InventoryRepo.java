@@ -11,4 +11,8 @@ public interface InventoryRepo extends JpaRepository<Inventory,Long> {
     boolean existsByNameAndBranchId(String name, Long branchId);
 
     boolean existsByNameAndBranchIdAndIdNotIn(String name, Long branchId, List<Long> list);
+
+    boolean existsByBranchId(Long id);
+
+    Inventory findTopByBranchId(Long id);
 }

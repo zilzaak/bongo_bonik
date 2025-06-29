@@ -4,9 +4,11 @@ package app.common.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Product;
 import app.common.entity.ProductColor;
 import app.common.entity.ProductSize;
 import app.common.repo.ProductColorRepo;
+import app.common.repo.ProductRepo;
 import app.common.repo.ProductSizeRepo;
 import app.common.util.CommonUtil;
 import app.modules.organization.entity.Organization;
@@ -29,6 +31,9 @@ public class ProductSizeService {
 
     @Autowired
     private OrgRepo orgRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -93,7 +98,13 @@ public class ProductSizeService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        return null;
+        if(productRepo.existsBySizeId(dto.getId())){
+            Product pd = productRepo.findTopBySizeId(dto.getId());
+            return  new MsgResponse("This size can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            sizeRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

@@ -5,8 +5,10 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
+import app.common.entity.Product;
 import app.common.entity.ProductCat;
 import app.common.repo.ProductCatRepo;
+import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class ProductCatService {
 
     @Autowired
     private OrgRepo orgRepo;
+
+    @Autowired
+    private ProductRepo productRepo;
 
 
     Map<String,Object> formValidation(CommonDTO dto){
@@ -48,7 +53,7 @@ public class ProductCatService {
 
 
         if(dto.getId()==null){
-            if(catRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
+            if(catRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())>0){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
@@ -62,7 +67,7 @@ public class ProductCatService {
                 return mp;
             }
 
-            if(catRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
+            if(catRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
@@ -93,7 +98,13 @@ public class ProductCatService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        return null;
+        if(productRepo.existsByCatId(dto.getId())){
+            Product pd = productRepo.findTopByCatId(dto.getId());
+            return  new MsgResponse("This category can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
+        }else{
+            catRepo.deleteById(dto.getId());
+        }
+        return  new MsgResponse("Deleted successfully",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {

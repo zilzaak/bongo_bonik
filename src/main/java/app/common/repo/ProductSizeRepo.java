@@ -17,4 +17,8 @@ public interface ProductSizeRepo extends JpaRepository<ProductSize,Long> {
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")
     Page<Map<String, Object>> getList(Long sizeId, Long orgId, Pageable pageable);
+
+    boolean existsByOrgId(Long id);
+
+    ProductSize findTopByOrgId(Long id);
 }

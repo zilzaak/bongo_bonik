@@ -62,6 +62,21 @@ public class OrganizationController {
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
+
+    @DeleteMapping("/delete")
+    ResponseEntity<?> delete(@RequestBody CommonDTO dto)
+            throws RuntimeException{
+        MsgResponse response = new MsgResponse();
+        if(dto.getEntity().equalsIgnoreCase("Organization")){
+            response = orgService.delete(dto);
+        }
+        else if(dto.getEntity().equalsIgnoreCase("Branch")){
+            response = branchService.delete(dto);
+        }
+        return new ResponseEntity<>(response ,HttpStatus.OK);
+    }
+
+
     @GetMapping("/list")
     ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{

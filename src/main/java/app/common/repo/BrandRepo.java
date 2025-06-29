@@ -11,9 +11,13 @@ import java.util.Map;
 
 public interface BrandRepo extends JpaRepository<Brand,Long> {
 
-    boolean existsByNameAndOrgId(String name, Long orgId);
+    @Query("select count(x) from Brand  x where (   upper(x.name) like concat('%', upper(?1) ,'%')  " +
+            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.orgId=?2 ")
+    int existsByNameAndOrgId(String name, Long orgId);
 
-    boolean existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> asList);
+    @Query("select count(x) from Brand  x where (   upper(x.name) like concat('%', upper(?1) ,'%')  " +
+            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.orgId=?2 and x.id not in ?3  ")
+    int existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> asList);
 
 
     @Query("select b.id as id , b.name as brandName , org.name as orgName , b.created as created  ,  b.updated as updated " +
@@ -21,4 +25,8 @@ public interface BrandRepo extends JpaRepository<Brand,Long> {
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")
     Page<Map<String, Object>> getList(Long brandId, Long orgId, Pageable pageable);
+
+    boolean existsByOrgId(Long id);
+
+    Brand findTopByOrgId(Long id);
 }
