@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 @RestController
 @RequestMapping("/common")
 public class CommonController {
@@ -36,7 +35,9 @@ public class CommonController {
           throws RuntimeException{
       MsgResponse response = new MsgResponse();
       if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-          throw new RuntimeException("Under which entity you will create is not given");
+          response.setSuccess(false);
+          response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+          return new ResponseEntity<>(response ,HttpStatus.OK);
       }
       if(dto.getEntity().equalsIgnoreCase("Brand")){
           response = brandService.create(dto);
@@ -68,7 +69,9 @@ public class CommonController {
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-            throw new RuntimeException("Under which entity you will create is not given");
+            response.setSuccess(false);
+            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Brand")){
             response = brandService.create(dto);
@@ -101,7 +104,9 @@ public class CommonController {
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
-            throw new RuntimeException("Under which entity you will create is not given");
+            response.setSuccess(false);
+            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Brand")){
             response = brandService.delete(dto);
@@ -129,7 +134,9 @@ public class CommonController {
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         if(dto.entity==null){
-            throw new RuntimeException("Under which entity you will create is not given");
+            response.setSuccess(false);
+            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.entity.equals("Brand")){
             response = brandService.getList(dto);

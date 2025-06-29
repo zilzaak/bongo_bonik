@@ -74,7 +74,7 @@ public class BrandService {
     public MsgResponse create(CommonDTO dto) {
           Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse("fail",false);
+            return new MsgResponse((String) mp.get("message"),false);
         }
         Brand brand = new Brand();
         if(dto.getId()==null){
@@ -86,7 +86,7 @@ public class BrandService {
             BeanUtils.copyProperties(dto,brand,"created");
         }
         brandRepo.save(brand);
-        return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);
+        return new MsgResponse(dto.getId()==null?"Successfully created":"Successfully edited",true);
     }
 
     public MsgResponse delete(CommonDTO dto) {
