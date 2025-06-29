@@ -85,7 +85,7 @@ public class InventoryService {
         Inventory inv = new Inventory();
         BeanUtils.copyProperties(dto,inv);
         inventoryRepo.save(inv);
-        return new MsgResponse("Successfully created Inventory",true);
+        return new MsgResponse(dto.getId()==null?"Successfully created Inventory":"Successfully updated Inventory",true);
     }
 
     public Inventory getById(Long id) {
