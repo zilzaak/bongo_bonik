@@ -49,7 +49,7 @@ public class ProductSizeService {
         if(dto.getId()==null){
             if(sizeRepo.existsByName(dto.getName())){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
 
@@ -62,7 +62,7 @@ public class ProductSizeService {
             }
             if(sizeRepo.existsByNameAndIdNotIn(dto.getName(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
 

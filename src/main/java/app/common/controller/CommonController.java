@@ -70,7 +70,7 @@ public class CommonController {
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
             response.setSuccess(false);
-            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Brand")){
@@ -105,7 +105,7 @@ public class CommonController {
         MsgResponse response = new MsgResponse();
         if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
             response.setSuccess(false);
-            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.getEntity().equalsIgnoreCase("Brand")){
@@ -135,7 +135,7 @@ public class CommonController {
         MsgResponse response = new MsgResponse();
         if(dto.entity==null){
             response.setSuccess(false);
-            response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
+            response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
         if(dto.entity.equals("Brand")){

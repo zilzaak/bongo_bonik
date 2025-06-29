@@ -55,7 +55,7 @@ public class ProductModelService {
         if(dto.getId()==null){
             if(modelRepo.existsByNameAndBrandId(dto.getName(),dto.getOrgId())){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
 
@@ -68,7 +68,7 @@ public class ProductModelService {
             }
             if(modelRepo.existsByNameAndBrandIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
 

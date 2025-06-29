@@ -47,7 +47,7 @@ public class BrandService {
         if(dto.getId()==null){
            if(brandRepo.existsByNameAndOrgId(dto.getName(),dto.getOrgId())){
                mp.put("hasError",true);
-               mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+               mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                return mp;
            }
 
@@ -60,7 +60,7 @@ public class BrandService {
             }
             if(brandRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
-                mp.put("message","Name against"+dto.getOrgName()+" already exist , give unique name");
+                mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
 
