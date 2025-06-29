@@ -30,7 +30,7 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
 
 
 
-    @Query("select b.id as id , b.name as branchName , " +
+    @Query("select b.id as id , b.name as branchName , org.id as orgId , " +
             "  b.phone as branchPhone , " +
             "  b.address as branchAddress , " +
             "  b.created as created ," +
