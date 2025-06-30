@@ -24,8 +24,6 @@ public class ModuleInfo extends BaseEntity {
 
     private String name;
 
-    private  Long parentModule;
-
     @OneToMany(mappedBy = "moduleInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ApiAgainstModule> details = new ArrayList<>();

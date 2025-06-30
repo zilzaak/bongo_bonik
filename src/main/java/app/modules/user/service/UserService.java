@@ -5,7 +5,6 @@ import app.common.dto.CustomException;
 import app.modules.security.entity.*;
 import app.modules.security.repo.AuthorityPermissionRepository;
 import app.modules.user.dto.UserDTO;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

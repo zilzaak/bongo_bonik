@@ -149,6 +149,14 @@ public class CommonUtil {
         return response;
     }
 
+    public static String removeCharFromString(String input , char ch){
+        String result = input.chars()
+                .filter(c -> c != ch)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+              return result;
+    }
+
 
 
 }
