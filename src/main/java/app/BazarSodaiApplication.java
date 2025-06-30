@@ -26,7 +26,6 @@ public class BazarSodaiApplication implements CommandLineRunner {
     // and admin will be assigned super_admin role who can change anything in  whole system
     // or edit anything , the admin user only created first time only.
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
         this.userService.createDefaultUser();
     }

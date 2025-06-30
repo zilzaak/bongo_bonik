@@ -59,15 +59,15 @@ public class DynamicAuthorizationFilter extends OncePerRequestFilter {
 
           if (rolesForUri != null) {
             String[] requiredRoles = rolesForUri.split(",");
-            boolean openUrl=false;
+            boolean noNeedAuthenticationUrl=false;
             for(int i=0;i<requiredRoles.length;i++){
                 if(requiredRoles[i].equals("PERMIT_ALL")){
-                    openUrl=true;
+                    noNeedAuthenticationUrl=true;
                     break;
                 }
             }
 
-            if(!openUrl){
+            if(!noNeedAuthenticationUrl){
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 boolean hasRole = Arrays.stream(requiredRoles)
                         .anyMatch(role -> auth.getAuthorities().stream()
