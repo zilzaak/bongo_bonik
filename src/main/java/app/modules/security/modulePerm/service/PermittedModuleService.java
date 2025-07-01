@@ -120,7 +120,7 @@ public class PermittedModuleService {
                  return mp;
              }
          }else{
-             if(permittedModuleRepository.existsByModuleIdAndRoleIdNotIn(dto.getModuleId(),role,Arrays.asList(dto.getId()))){
+             if(permittedModuleRepository.existsByModuleIdAndRoleAndIdNotIn(dto.getModuleId(),role,Arrays.asList(dto.getId()))){
                  mp.put("hasError",true);
                  mp.put("message","Module permission for the role already created");
                  return mp;

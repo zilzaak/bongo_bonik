@@ -2,10 +2,7 @@ package app.modules.moduleInfo.entity;
 
 import app.common.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,8 @@ public class ModuleInfo extends BaseEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "moduleInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "moduleInfo", cascade = CascadeType.ALL,
+            orphanRemoval = true,fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ApiAgainstModule> details = new ArrayList<>();
 

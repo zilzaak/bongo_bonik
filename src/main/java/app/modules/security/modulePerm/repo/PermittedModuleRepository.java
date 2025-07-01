@@ -15,5 +15,5 @@ public interface PermittedModuleRepository extends JpaRepository<PermittedModule
 
     boolean existsByModuleIdAndRole(Long moduleId, Role role);
 
-    boolean existsByModuleIdAndRoleIdNotIn(Long moduleId, Role role, List<Long> asList);
+    boolean existsByModuleIdAndRoleAndIdNotIn(Long moduleId, Role role, List<Long> asList);
 }
