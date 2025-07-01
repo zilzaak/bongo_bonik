@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ApiAgainstModuleRepo extends JpaRepository<ApiAgainstModule,Long> {
 
+    boolean existsByApiPatternAndMethodName(String apiPattern, String methodName);
 }
