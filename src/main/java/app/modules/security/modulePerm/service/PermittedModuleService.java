@@ -133,7 +133,7 @@ public class PermittedModuleService {
         int index=0;
         for(PrmttedApiDTO apiDto : dto.getDetails()){
             index++;
-            if(apiDto.getApi()==null || apiAgainstModuleRepo.existsById(apiDto.getApi())){
+            if(apiDto.getApi()==null || !apiAgainstModuleRepo.existsById(apiDto.getApi())){
                 mp.put("hasError",true);
                 mp.put("message","The "+index +"th api don't exist under selected module ");
                 return mp;

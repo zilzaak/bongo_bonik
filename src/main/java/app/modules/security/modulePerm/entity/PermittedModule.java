@@ -30,7 +30,8 @@ public class PermittedModule {
     @ManyToOne
     private Role role;
 
-    @OneToMany(mappedBy = "permittedModule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "permittedModule", cascade = CascadeType.ALL,
+    orphanRemoval = true , fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<PermittedApi> details = new ArrayList<>();
 

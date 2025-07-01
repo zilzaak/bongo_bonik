@@ -131,7 +131,7 @@ public class CommonController {
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
