@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/role")
 @Controller
 public class CreateRoleController {
@@ -38,7 +39,7 @@ private CreateRoleService manageRoleService;
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     private ResponseEntity<?> delete(@RequestParam Map<String,String> param) throws CustomException {
         manageRoleService.delete(param);
         return new ResponseEntity<>(new MsgResponse("Successfully deleted role",true), HttpStatus.OK);
