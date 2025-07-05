@@ -2,6 +2,7 @@ package app.modules.security.modulePerm.service;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.moduleInfo.entity.ApiAgainstModule;
 import app.modules.moduleInfo.repo.ApiAgainstModuleRepo;
 import app.modules.moduleInfo.repo.ModuleInfoRepo;
@@ -16,6 +17,8 @@ import app.modules.security.modulePerm.entity.PermittedModule;
 import app.modules.security.modulePerm.repo.PermittedApiRepository;
 import app.modules.security.modulePerm.repo.PermittedModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -149,8 +152,9 @@ public class PermittedModuleService {
 
 
     public MsgResponse getList(SearchParamDTO dto) {
-
-        return null;
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = permittedModuleRepository.getList(dto.getModuleId(),dto.getUsername(),dto.getRoleId(),dto.getApiPattern(),pageable);
+        return CommonUtil.responseFromPage(page);
     }
 
     public MsgResponse delete(Long id) {
@@ -234,14 +238,22 @@ public class PermittedModuleService {
         User user = userRepository.findByUsername(username);
         List<Map<String,Object>> permittedModules = permittedModuleRepository.getMenu(user,user.getRoles());
 
-            Map<String,List<String>> modules = new HashMap<>();
+            Map<String,List<Map<String,Object>>> modules = new HashMap<>();
             for(Map<String,Object> mp : permittedModules){
                 if(!modules.containsKey((String)mp.get("moduleName"))){
-                    List<String> apiPatterns = new ArrayList<>();
-                    apiPatterns.add((String) mp.get("apiPattern"));
+                    List<Map<String,Object>> apiPatterns = new ArrayList<>();
+                    Map<String,Object> elmnt = new HashMap<>();
+                    elmnt.put("apiPattern", mp.get("apiPattern"));
+                    elmnt.put("moduleId", mp.get("moduleId"));
+                    apiPatterns.add(elmnt);
                     modules.put((String) mp.get("moduleName"),apiPatterns);
                 }else{
-                    modules.get((String) mp.get("moduleName")).add((String) mp.get("apiPattern"));
+                    List<Map<String,Object>> apiPatterns = modules.get((String) mp.get("moduleName"));
+                    Map<String,Object> elmnt = new HashMap<>();
+                    elmnt.put("apiPattern", mp.get("apiPattern"));
+                    elmnt.put("moduleId", mp.get("moduleId"));
+                    apiPatterns.add(elmnt);
+                    modules.put((String) mp.get("moduleName"),apiPatterns);
                 }
             }
         return new MsgResponse("Found Data",modules,true);

@@ -180,6 +180,7 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
         AuthorityPermission menuAcess=new AuthorityPermission("SUPER_ADMIN","/apiPerm/**");
         AuthorityPermission userAccess=new AuthorityPermission("SUPER_ADMIN","/user/**");
         AuthorityPermission moduleAccess=new AuthorityPermission("SUPER_ADMIN","/module/**");
+        AuthorityPermission permittedModule=new AuthorityPermission("SUPER_ADMIN","/permittedModule/**");
 
         if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("PERMIT_ALL","/permittedModule/getMenu")){
             authorityPermissionRepository.save(getMenu);
@@ -198,6 +199,9 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
         }
         if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/module/**")){
             authorityPermissionRepository.save(moduleAccess);
+        }
+        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/permittedModule/**")){
+            authorityPermissionRepository.save(permittedModule);
         }
 
     }

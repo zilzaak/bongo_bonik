@@ -24,4 +24,7 @@ public class SearchParamDTO {
    public String entity;
    public String commonField;
    private String username;
+   private Long roleId;
+   private Long moduleId;
+   private String apiPattern;
 }
