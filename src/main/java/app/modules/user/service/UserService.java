@@ -175,11 +175,15 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
 
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
         AuthorityPermission permitAll = new AuthorityPermission("PERMIT_ALL","/auth/getToken");
+        AuthorityPermission getMenu = new AuthorityPermission("PERMIT_ALL","/permittedModule/getMenu");
         AuthorityPermission roleAcess=new AuthorityPermission("SUPER_ADMIN","/role/**");
         AuthorityPermission menuAcess=new AuthorityPermission("SUPER_ADMIN","/apiPerm/**");
         AuthorityPermission userAccess=new AuthorityPermission("SUPER_ADMIN","/user/**");
         AuthorityPermission moduleAccess=new AuthorityPermission("SUPER_ADMIN","/module/**");
 
+        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("PERMIT_ALL","/permittedModule/getMenu")){
+            authorityPermissionRepository.save(getMenu);
+        }
         if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("PERMIT_ALL","/auth/getToken")){
             authorityPermissionRepository.save(permitAll);
         }

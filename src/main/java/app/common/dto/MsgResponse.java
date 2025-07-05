@@ -11,16 +11,16 @@ public class MsgResponse {
     private Object data;
     private boolean success;
 
-    MsgResponse(String message  , Object data , boolean success ){
+    public MsgResponse(String message  , Object data , boolean success ){
         this.message = message;
         this.data = data;
         this.success = success;
     }
 
-    MsgResponse(Object data){
+    public MsgResponse(Object data){
         this.data = data;
     }
-    MsgResponse(Object data, boolean success ){
+    public MsgResponse(Object data, boolean success ){
         this.data = data;
         this.success = success;
     }

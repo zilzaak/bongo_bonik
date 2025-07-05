@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/permittedModule")
 public class PermittedModuleController {
 
@@ -41,6 +42,13 @@ public class PermittedModuleController {
     ResponseEntity<?> delete(@PathVariable Long id)
             throws RuntimeException{
         MsgResponse response = permittedModuleService.delete(id);
+        return new ResponseEntity<>(response ,HttpStatus.OK);
+    }
+
+    @GetMapping("/getMenu")
+    ResponseEntity<?> getMenu()
+            throws RuntimeException{
+        MsgResponse response = permittedModuleService.getMenu();
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 

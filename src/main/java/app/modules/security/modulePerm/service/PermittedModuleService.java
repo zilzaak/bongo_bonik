@@ -16,6 +16,8 @@ import app.modules.security.modulePerm.entity.PermittedModule;
 import app.modules.security.modulePerm.repo.PermittedApiRepository;
 import app.modules.security.modulePerm.repo.PermittedModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -223,6 +225,27 @@ public class PermittedModuleService {
             permittedModuleRepository.save(permittedModule);
 
         return new MsgResponse(dto.getId()==null?"Successfully Created ":"Successfully edited ",true);
+    }
+
+
+        public MsgResponse getMenu() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName(); // comes from the token subject
+        User user = userRepository.findByUsername(username);
+        List<Map<String,Object>> permittedModules = permittedModuleRepository.getMenu(user,user.getRoles());
+
+            Map<String,List<String>> modules = new HashMap<>();
+            for(Map<String,Object> mp : permittedModules){
+                if(!modules.containsKey((String)mp.get("moduleName"))){
+                    List<String> apiPatterns = new ArrayList<>();
+                    apiPatterns.add((String) mp.get("apiPattern"));
+                    modules.put((String) mp.get("moduleName"),apiPatterns);
+                }else{
+                    modules.get((String) mp.get("moduleName")).add((String) mp.get("apiPattern"));
+                }
+            }
+        return new MsgResponse("Found Data",modules,true);
+
     }
 
 }

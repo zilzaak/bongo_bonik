@@ -23,4 +23,5 @@ public class SearchParamDTO {
    public String sortField="id";
    public String entity;
    public String commonField;
+   private String username;
 }
