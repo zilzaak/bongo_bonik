@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/role")
-@Controller
 public class CreateRoleController {
 
 @Autowired
 private CreateRoleService manageRoleService;
 
     @PostMapping("/create")
-    private ResponseEntity<?> create(@RequestBody Role role) throws CustomException {
-        manageRoleService.create(role);
+    private ResponseEntity<?> create(@RequestBody Role role) {
+        MsgResponse resp = manageRoleService.create(role);
         return new ResponseEntity<>(new MsgResponse("Successfully created role",true), HttpStatus.OK);
     }
 
-    @PutMapping("/edit")
-    private ResponseEntity<?> edit(@RequestBody Role role) throws CustomException {
-        manageRoleService.edit(role);
-        return new ResponseEntity<>(new MsgResponse("Successfully edited role",true), HttpStatus.OK);
+    @PutMapping("/update")
+    private ResponseEntity<?> edit(@RequestBody Role role) {
+       MsgResponse resp = manageRoleService.edit(role);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @GetMapping("/get")

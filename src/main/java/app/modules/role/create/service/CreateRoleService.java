@@ -2,6 +2,7 @@ package app.modules.role.create.service;
 
 
 import app.common.dto.CustomException;
+import app.common.dto.MsgResponse;
 import app.modules.security.entity.Role;
 import app.modules.security.entity.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,28 +48,29 @@ public class CreateRoleService {
     }
 
 
-    public void create(Role role) throws CustomException {
+    public MsgResponse create(Role role) {
 
         Map<String,Object> resp = checkValidData(role,"create");
         if((boolean)resp.get("hasError")){
-            throw new CustomException((String)resp.get("message"));
+            return new MsgResponse((String)resp.get("message"),false);
         }
-            roleRepository.saveAndFlush(role);
-
+        roleRepository.saveAndFlush(role);
+        return new MsgResponse("Successfully created role",true);
     }
 
-    public void edit(Role role) throws CustomException {
+    public MsgResponse edit(Role role) {
         Map<String,Object> resp = checkValidData(role,"edit");
         if((boolean)resp.get("hasError")){
-            throw new CustomException((String)resp.get("message"));
+            return new MsgResponse((String)resp.get("message"),false);
         }
 
         Role entity = roleRepository.findById(role.getId()).orElse(null);
         if(entity==null){
-            throw new CustomException("role is not found");
+            return new MsgResponse("role is not found",false);
         }
         entity.setAuthority(role.getAuthority());
         roleRepository.saveAndFlush(entity);
+        return new MsgResponse("Successfully created role",true);
 
     }
 
