@@ -1,21 +1,20 @@
-package app.modules.role.create.controller;
+package app.modules.security.role.create.controller;
 
 
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
-import app.modules.role.create.service.CreateRoleService;
+import app.modules.security.role.create.service.CreateRoleService;
 import app.modules.security.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/role")
+@RequestMapping("/base/role")
 public class CreateRoleController {
 
 @Autowired

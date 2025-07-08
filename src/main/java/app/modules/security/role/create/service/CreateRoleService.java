@@ -1,4 +1,4 @@
-package app.modules.role.create.service;
+package app.modules.security.role.create.service;
 
 
 import app.common.dto.CustomException;

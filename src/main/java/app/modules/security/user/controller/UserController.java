@@ -1,10 +1,10 @@
-package app.modules.user.controller;
+package app.modules.security.user.controller;
 
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
 import app.modules.security.entity.User;
-import app.modules.user.dto.UserDTO;
-import app.modules.user.service.UserService;
+import app.modules.security.user.dto.UserDTO;
+import app.modules.security.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/base/user")
 public class UserController {
 
     @Autowired

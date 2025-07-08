@@ -1,8 +1,8 @@
-package app.modules.role.menuWise.controller;
+package app.modules.security.role.menuWise.controller;
 
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
-import app.modules.role.menuWise.service.MenuWisePermissionService;
+import app.modules.security.role.menuWise.service.MenuWisePermissionService;
 import app.modules.security.entity.AuthorityPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

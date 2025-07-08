@@ -1,10 +1,10 @@
-package app.modules.user.service;
+package app.modules.security.user.service;
 
 
 import app.common.dto.CustomException;
 import app.modules.security.entity.*;
 import app.modules.security.repo.AuthorityPermissionRepository;
-import app.modules.user.dto.UserDTO;
+import app.modules.security.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

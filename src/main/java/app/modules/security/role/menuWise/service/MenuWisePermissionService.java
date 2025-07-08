@@ -1,4 +1,4 @@
-package app.modules.role.menuWise.service;
+package app.modules.security.role.menuWise.service;
 
 
 import app.common.dto.CustomException;

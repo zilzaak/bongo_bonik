@@ -1,4 +1,4 @@
-package app.modules.user.dto;
+package app.modules.security.user.dto;
 
 import lombok.Data;
 
