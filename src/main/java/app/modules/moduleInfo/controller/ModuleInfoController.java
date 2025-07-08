@@ -3,6 +3,7 @@ package app.modules.moduleInfo.controller;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.modules.inventory.dto.InventoryDTO;
+import app.modules.moduleInfo.dto.ModuleInfoDTO;
 import app.modules.moduleInfo.service.ModuleInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class ModuleInfoController {
     private ModuleInfoService moduleInfoService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody InventoryDTO dto)
+    ResponseEntity<?> create(@RequestBody ModuleInfoDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -28,7 +29,7 @@ public class ModuleInfoController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody InventoryDTO dto)
+    ResponseEntity<?> update(@RequestBody ModuleInfoDTO dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");

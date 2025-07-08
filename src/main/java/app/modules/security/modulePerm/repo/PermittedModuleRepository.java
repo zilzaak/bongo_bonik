@@ -22,7 +22,11 @@ public interface PermittedModuleRepository extends JpaRepository<PermittedModule
     boolean existsByModuleIdAndRole(Long moduleId, Role role);
 
     boolean existsByModuleIdAndRoleAndIdNotIn(Long moduleId, Role role, List<Long> asList);
-     @Query("select x.moduleId as moduleId , module.name as moduleName , apiAgnstMdle.apiPattern as apiPattern from PermittedModule x   " +
+     @Query("select x.moduleId as moduleId , " +
+             " module.name as moduleName , " +
+             " apiAgnstMdle.apiPattern as apiPattern , " +
+             " apiAgnstMdle.methodName as methodName " +
+             " from PermittedModule x   " +
              " join x.details dtl " +
              " join dtl.api apiAgnstMdle  " +
              " join apiAgnstMdle.moduleInfo  module  " +

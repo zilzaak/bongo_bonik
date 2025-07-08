@@ -19,8 +19,9 @@ import lombok.Setter;
 @Entity
 public class ApiAgainstModule extends BaseEntity {
 
-    private String apiPattern;
+    private String apiPattern; //backendUrl
     private String methodName; //put , post , delete , update , patch
+    private String frontUrl;  //frontendUrl
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn

@@ -256,6 +256,8 @@ public class PermittedModuleService {
                     modules.put((String) mp.get("moduleName"),apiPatterns);
                 }
             }
+
+
         return new MsgResponse("Found Data",modules,true);
 
     }
