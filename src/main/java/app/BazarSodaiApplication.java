@@ -1,7 +1,7 @@
 package app;
 
 
-import app.modules.security.user.service.UserService;
+import app.modules.base.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
