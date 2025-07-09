@@ -1,9 +1,9 @@
-package app.modules.base.service;
+package app.modules.base.security.auth.service;
 
 
 
-import app.modules.base.entity.AuthorityPermission;
-import app.modules.base.repo.AuthorityPermissionRepository;
+import app.modules.base.security.auth.entity.AuthorityPermission;
+import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

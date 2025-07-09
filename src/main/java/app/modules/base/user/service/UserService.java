@@ -2,8 +2,8 @@ package app.modules.base.user.service;
 
 
 import app.common.dto.CustomException;
-import app.modules.base.entity.*;
-import app.modules.base.repo.AuthorityPermissionRepository;
+import app.modules.base.security.auth.entity.*;
+import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.user.dto.UserDTO;

@@ -1,4 +1,4 @@
-package app.modules.base.entity;
+package app.modules.base.security.auth.entity;
 
 
 import jakarta.persistence.Entity;

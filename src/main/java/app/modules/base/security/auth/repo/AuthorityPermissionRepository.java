@@ -1,8 +1,8 @@
-package app.modules.base.repo;
+package app.modules.base.security.auth.repo;
 
 
 
-import app.modules.base.entity.AuthorityPermission;
+import app.modules.base.security.auth.entity.AuthorityPermission;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

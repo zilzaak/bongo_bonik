@@ -2,7 +2,7 @@ package app.modules.base.security.config;
 
 import app.modules.base.security.auth.service.CustomUserDetailsService;
 import app.modules.base.security.auth.service.DynamicAuthorizationFilter;
-import app.modules.base.service.DynamicPermissionService;
+import app.modules.base.security.auth.service.DynamicPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

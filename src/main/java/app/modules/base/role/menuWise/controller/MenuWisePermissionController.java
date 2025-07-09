@@ -3,7 +3,7 @@ package app.modules.base.role.menuWise.controller;
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
 import app.modules.base.role.menuWise.service.MenuWisePermissionService;
-import app.modules.base.entity.AuthorityPermission;
+import app.modules.base.security.auth.entity.AuthorityPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
