@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/purchase")
+@RequestMapping("/purchase/product")
 @CrossOrigin(origins = "http://localhost:4200")
 public class PurchaseController {
 
