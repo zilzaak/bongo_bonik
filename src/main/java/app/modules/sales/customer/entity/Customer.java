@@ -1,4 +1,4 @@
-package app.modules.customer.entity;
+package app.modules.sales.customer.entity;
 
 import app.common.entity.BaseEntity;
 import jakarta.persistence.Entity;

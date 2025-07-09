@@ -1,9 +1,7 @@
 package app.modules.purchase.service;
 
-import app.common.counter.entity.SystemCounter;
 import app.common.counter.service.CounterService;
 import app.common.dto.MsgResponse;
-import app.common.dto.ProductDTO;
 import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
 import app.modules.inventory.entity.Inventory;
@@ -14,8 +12,8 @@ import app.modules.purchase.dto.PurchaseDetailsDTO;
 import app.modules.purchase.entity.Purchase;
 import app.modules.purchase.entity.PurchaseDetails;
 import app.modules.purchase.repo.PurchaseRepo;
-import app.modules.supplier.entity.Supplier;
-import app.modules.supplier.service.SupplierService;
+import app.modules.purchase.supplier.entity.Supplier;
+import app.modules.purchase.supplier.service.SupplierService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

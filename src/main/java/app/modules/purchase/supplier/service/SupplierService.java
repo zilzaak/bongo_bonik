@@ -1,10 +1,9 @@
-package app.modules.supplier.service;
+package app.modules.purchase.supplier.service;
 
 import app.common.dto.MsgResponse;
-import app.common.dto.ProductDTO;
-import app.modules.supplier.dto.SupplierDTO;
-import app.modules.supplier.entity.Supplier;
-import app.modules.supplier.repo.SupplierRepo;
+import app.modules.purchase.supplier.dto.SupplierDTO;
+import app.modules.purchase.supplier.entity.Supplier;
+import app.modules.purchase.supplier.repo.SupplierRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

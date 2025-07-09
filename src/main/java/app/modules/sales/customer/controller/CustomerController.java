@@ -1,8 +1,8 @@
-package app.modules.customer.controller;
+package app.modules.sales.customer.controller;
 
 import app.common.dto.MsgResponse;
-import app.modules.customer.dto.CustomerDTO;
-import app.modules.customer.service.CustomerService;
+import app.modules.sales.customer.dto.CustomerDTO;
+import app.modules.sales.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/sales/customer")
 @CrossOrigin(origins = "http://localhost:4200")
 public class CustomerController {
 

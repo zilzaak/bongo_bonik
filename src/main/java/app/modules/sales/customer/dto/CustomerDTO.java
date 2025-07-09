@@ -1,13 +1,15 @@
-package app.modules.supplier.dto;
+package app.modules.sales.customer.dto;
 
 import app.common.util.CommonUtil;
 
-public class SupplierDTO {
+public class CustomerDTO {
     private Long id;
     private String name;
+    private String remarks;
     private String phone;
     private String address;
     private Long orgId;
+    private Long branchId;
 
     public Long getId() {
         return id;
@@ -22,7 +24,15 @@ public class SupplierDTO {
     }
 
     public void setName(String name) {
-        this.name = CommonUtil.replaceRepeatedChar(name,' ');
+        this.name = CommonUtil.removeHeadTailSpace(name);
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public String getPhone() {
@@ -38,7 +48,7 @@ public class SupplierDTO {
     }
 
     public void setAddress(String address) {
-        this.address = CommonUtil.replaceRepeatedChar(address,' ');
+        this.address = address;
     }
 
     public Long getOrgId() {
@@ -47,5 +57,13 @@ public class SupplierDTO {
 
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public Long getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(Long branchId) {
+        this.branchId = branchId;
     }
 }

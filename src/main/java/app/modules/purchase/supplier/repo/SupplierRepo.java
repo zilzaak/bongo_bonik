@@ -1,6 +1,6 @@
-package app.modules.supplier.repo;
+package app.modules.purchase.supplier.repo;
 
-import app.modules.supplier.entity.Supplier;
+import app.modules.purchase.supplier.entity.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

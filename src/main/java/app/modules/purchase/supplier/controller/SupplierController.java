@@ -1,9 +1,9 @@
-package app.modules.supplier.controller;
+package app.modules.purchase.supplier.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
-import app.modules.supplier.dto.SupplierDTO;
-import app.modules.supplier.service.SupplierService;
+import app.modules.purchase.supplier.dto.SupplierDTO;
+import app.modules.purchase.supplier.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/supplier")
+@RequestMapping("/purchase/supplier")
 @CrossOrigin(origins = "http://localhost:4200")
 public class SupplierController {
     @Autowired

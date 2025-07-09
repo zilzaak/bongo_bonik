@@ -2,9 +2,8 @@ package app.modules.sales.entity;
 
 
 import app.common.entity.BaseEntity;
-import app.modules.customer.entity.Customer;
+import app.modules.sales.customer.entity.Customer;
 import app.modules.inventory.entity.Inventory;
-import app.modules.purchase.entity.PurchaseDetails;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

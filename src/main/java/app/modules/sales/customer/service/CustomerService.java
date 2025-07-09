@@ -1,10 +1,10 @@
-package app.modules.customer.service;
+package app.modules.sales.customer.service;
 
 
 import app.common.dto.MsgResponse;
-import app.modules.customer.dto.CustomerDTO;
-import app.modules.customer.entity.Customer;
-import app.modules.customer.repo.CustomerRepo;
+import app.modules.sales.customer.dto.CustomerDTO;
+import app.modules.sales.customer.entity.Customer;
+import app.modules.sales.customer.repo.CustomerRepo;
 import app.modules.organization.entity.Branch;
 import app.modules.organization.repo.BranchRepo;
 import org.springframework.beans.BeanUtils;
