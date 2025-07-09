@@ -5,12 +5,10 @@ import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Product;
 import app.common.entity.ProductColor;
-import app.common.entity.ProductModel;
+import app.common.repo.BranchRepo;
 import app.common.repo.ProductColorRepo;
-import app.common.repo.ProductModelRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
-import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +26,7 @@ public class ProductColorService {
     private ProductColorRepo colorRepo;
 
     @Autowired
-    private OrgRepo orgRepo;
+    private BranchRepo.OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

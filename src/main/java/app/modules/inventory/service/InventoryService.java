@@ -2,16 +2,14 @@ package app.modules.inventory.service;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.common.entity.Brand;
 import app.common.util.CommonUtil;
 import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.entity.StockBalance;
 import app.modules.inventory.repo.InventoryRepo;
 import app.modules.inventory.repo.StockBalanceRepo;
-import app.modules.organization.entity.Branch;
-import app.modules.organization.repo.BranchRepo;
-import app.modules.organization.repo.OrgRepo;
+import app.common.entity.Branch;
+import app.common.repo.BranchRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +35,7 @@ public class InventoryService {
     private StockBalanceRepo stockBalanceRepo;
 
     @Autowired
-    private OrgRepo orgRepo;
+    private BranchRepo.OrgRepo orgRepo;
 
     Map<String ,Object> validate(InventoryDTO dto){
         Map<String ,Object> mp = new HashMap<>();

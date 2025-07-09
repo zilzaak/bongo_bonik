@@ -1,4 +1,4 @@
-package app.modules.organization.entity;
+package app.common.entity;
 
 import app.common.entity.BaseEntity;
 import jakarta.persistence.Entity;

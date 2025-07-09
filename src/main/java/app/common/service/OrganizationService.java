@@ -1,4 +1,4 @@
-package app.modules.organization.service;
+package app.common.service;
 
 
 import app.common.dto.CommonDTO;
@@ -7,11 +7,9 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
-import app.modules.inventory.entity.Inventory;
-import app.modules.organization.entity.Branch;
-import app.modules.organization.entity.Organization;
-import app.modules.organization.repo.BranchRepo;
-import app.modules.organization.repo.OrgRepo;
+import app.common.entity.Branch;
+import app.common.entity.Organization;
+import app.common.repo.BranchRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +24,7 @@ import java.util.Map;
 public class OrganizationService {
 
     @Autowired
-    private OrgRepo orgRepo;
+    private BranchRepo.OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

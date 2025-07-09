@@ -4,13 +4,12 @@ package app.common.service;
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.common.entity.Brand;
 import app.common.entity.Product;
 import app.common.entity.ProductCat;
+import app.common.repo.BranchRepo;
 import app.common.repo.ProductCatRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
-import app.modules.organization.repo.OrgRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,7 @@ public class ProductCatService {
     private ProductCatRepo catRepo;
 
     @Autowired
-    private OrgRepo orgRepo;
+    private BranchRepo.OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

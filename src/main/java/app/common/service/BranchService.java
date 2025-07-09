@@ -1,4 +1,4 @@
-package app.modules.organization.service;
+package app.common.service;
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
@@ -7,9 +7,9 @@ import app.common.util.CommonUtil;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.repo.InventoryRepo;
 import app.modules.inventory.repo.StockBalanceRepo;
-import app.modules.organization.entity.Branch;
-import app.modules.organization.entity.Organization;
-import app.modules.organization.repo.BranchRepo;
+import app.common.entity.Branch;
+import app.common.entity.Organization;
+import app.common.repo.BranchRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -1,20 +1,18 @@
-package app.modules.organization.controller;
+package app.common.controller;
 
 
 import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.modules.organization.service.BranchService;
-import app.modules.organization.service.OrganizationService;
+import app.common.service.BranchService;
+import app.common.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/common/organization")
 @CrossOrigin(origins = "http://localhost:4200")
 public class OrganizationController {
 

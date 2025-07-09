@@ -5,14 +5,12 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Product;
-import app.common.entity.ProductColor;
 import app.common.entity.ProductSize;
-import app.common.repo.ProductColorRepo;
+import app.common.repo.BranchRepo;
 import app.common.repo.ProductRepo;
 import app.common.repo.ProductSizeRepo;
 import app.common.util.CommonUtil;
-import app.modules.organization.entity.Organization;
-import app.modules.organization.repo.OrgRepo;
+import app.common.entity.Organization;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +28,7 @@ public class ProductSizeService {
     private ProductSizeRepo sizeRepo;
 
     @Autowired
-    private OrgRepo orgRepo;
+    private BranchRepo.OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;
