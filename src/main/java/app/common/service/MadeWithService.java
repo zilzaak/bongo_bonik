@@ -7,6 +7,7 @@ import app.common.entity.MadeWith;
 import app.common.entity.Product;
 import app.common.repo.BranchRepo;
 import app.common.repo.MadeWithRepo;
+import app.common.repo.OrgRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +25,7 @@ public class MadeWithService {
     @Autowired
     private MadeWithRepo madeWithRepo;
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

@@ -1,6 +1,7 @@
-package app.modules.organization.repo;
+package app.common.repo;
 
-import app.modules.organization.entity.Organization;
+
+import app.common.entity.Organization;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

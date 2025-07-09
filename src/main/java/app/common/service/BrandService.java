@@ -8,6 +8,7 @@ import app.common.entity.Brand;
 import app.common.entity.Product;
 import app.common.repo.BranchRepo;
 import app.common.repo.BrandRepo;
+import app.common.repo.OrgRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +27,7 @@ public class BrandService {
     @Autowired
     private BrandRepo brandRepo;
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

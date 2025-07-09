@@ -7,6 +7,7 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.Product;
 import app.common.entity.ProductSize;
 import app.common.repo.BranchRepo;
+import app.common.repo.OrgRepo;
 import app.common.repo.ProductRepo;
 import app.common.repo.ProductSizeRepo;
 import app.common.util.CommonUtil;
@@ -28,7 +29,7 @@ public class ProductSizeService {
     private ProductSizeRepo sizeRepo;
 
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

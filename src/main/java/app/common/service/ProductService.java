@@ -46,7 +46,7 @@ public class ProductService {
     private ProductRepo productRepo;
 
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
 
     //1>>first check required field are null

@@ -6,6 +6,7 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.Product;
 import app.common.entity.ProductColor;
 import app.common.repo.BranchRepo;
+import app.common.repo.OrgRepo;
 import app.common.repo.ProductColorRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
@@ -26,7 +27,7 @@ public class ProductColorService {
     private ProductColorRepo colorRepo;
 
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;

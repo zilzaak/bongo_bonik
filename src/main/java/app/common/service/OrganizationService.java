@@ -24,7 +24,7 @@ import java.util.Map;
 public class OrganizationService {
 
     @Autowired
-    private BranchRepo.OrgRepo orgRepo;
+    private OrgRepo orgRepo;
 
     @Autowired
     private ProductRepo productRepo;
