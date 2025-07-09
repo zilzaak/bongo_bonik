@@ -47,7 +47,7 @@ public class ProductController {
     }
 
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
         MsgResponse response =productService.getList(dto);

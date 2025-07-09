@@ -152,8 +152,6 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
     public void createDefaultUser(){
 
         Set<Role> defaultRoleList = new HashSet<>();
-
-
         if(!roleRepository.existsByAuthority("SUPER_ADMIN")){
             Role superAdmin = new Role();
             superAdmin.setAuthority("SUPER_ADMIN");
@@ -176,7 +174,6 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
             permAllRole.setAuthority("PERMIT_ALL");
             roleRepository.saveAndFlush(permAllRole);
         }
-
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
         AuthorityPermission permitAll = new AuthorityPermission("PERMIT_ALL","/auth/getToken");
         AuthorityPermission getMenu = new AuthorityPermission("PERMIT_ALL","/permittedModule/getMenu");
@@ -207,7 +204,6 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
         if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/permittedModule/**")){
             authorityPermissionRepository.save(permittedModule);
         }
-
     }
 
 }

@@ -6,10 +6,8 @@ import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
 import app.modules.base.moduleInfo.dto.AgainstModuleDTO;
 import app.modules.base.moduleInfo.dto.ModuleInfoDTO;
-import app.modules.base.moduleInfo.entity.ApiAgainstModule;
-import app.modules.base.moduleInfo.entity.ModuleInfo;
-import app.modules.base.moduleInfo.repo.ApiAgainstModuleRepo;
-import app.modules.base.moduleInfo.repo.ModuleInfoRepo;
+import app.modules.base.moduleInfo.entity.MenuHierarchy;
+import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +19,9 @@ import java.util.*;
 @Service
 public class ModuleInfoService {
 
-    @Autowired
-    private ModuleInfoRepo moduleInfoRepo;
 
     @Autowired
-    private ApiAgainstModuleRepo detailsRepo;
+    private MenuHierarchyRepo detailsRepo;
 
     private final RequestMappingHandlerMapping handlerMapping;
     public ModuleInfoService(RequestMappingHandlerMapping handlerMapping) {
@@ -43,16 +39,16 @@ public class ModuleInfoService {
         }
 
         if(dto.getId()==null){
-           if(moduleInfoRepo.existsByName(dto.getName())){
-               mp.put("hasError",true);
-               mp.put("message","Module name already exist");
-               return mp;}
+//           if(moduleInfoRepo.existsByName(dto.getName())){
+//               mp.put("hasError",true);
+//               mp.put("message","Module name already exist");
+//               return mp;}
         }else{
-            if(moduleInfoRepo.existsByNameAndIdNotIn(dto.getName(),Arrays.asList(dto.getId()))){
-                mp.put("hasError",true);
-                mp.put("message","Module name already exist");
-                return mp;
-            }
+//            if(moduleInfoRepo.existsByNameAndIdNotIn(dto.getName(),Arrays.asList(dto.getId()))){
+//                mp.put("hasError",true);
+//                mp.put("message","Module name already exist");
+//                return mp;
+//            }
         }
 
 
@@ -86,16 +82,16 @@ public class ModuleInfoService {
         if((boolean)mp.get("hasError")){
             return new MsgResponse(mp.get("message"),false);
         }
-        ModuleInfo moduleInfo = new ModuleInfo();
-        BeanUtils.copyProperties(dto,moduleInfo);
-        if(moduleInfo.getId()==null){
-            moduleInfoRepo.save(moduleInfo);
-        }
+      //  ModuleInfo moduleInfo = new ModuleInfo();
+//        BeanUtils.copyProperties(dto,moduleInfo);
+//        if(moduleInfo.getId()==null){
+//           // moduleInfoRepo.save(moduleInfo);
+//        }
 
         for(AgainstModuleDTO x : dto.getDetails()){
-            ApiAgainstModule dtl = new ApiAgainstModule();
+            MenuHierarchy dtl = new MenuHierarchy();
             BeanUtils.copyProperties(x,dtl);
-            dtl.setModuleInfo(moduleInfo);
+          //  dtl.setModuleInfo(moduleInfo);
             detailsRepo.save(dtl);
             }
         return new MsgResponse("Successfully created",true);

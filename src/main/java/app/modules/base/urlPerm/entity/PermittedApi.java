@@ -1,7 +1,7 @@
 package app.modules.base.urlPerm.entity;
 
 import app.common.entity.BaseEntity;
-import app.modules.base.moduleInfo.entity.ApiAgainstModule;
+import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class PermittedApi extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "api_id", nullable = false)
-    private ApiAgainstModule api;
+    private MenuHierarchy api;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn

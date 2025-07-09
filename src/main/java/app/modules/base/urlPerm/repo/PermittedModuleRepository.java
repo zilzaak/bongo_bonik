@@ -22,38 +22,6 @@ public interface PermittedModuleRepository extends JpaRepository<PermittedModule
     boolean existsByModuleIdAndRole(Long moduleId, Role role);
 
     boolean existsByModuleIdAndRoleAndIdNotIn(Long moduleId, Role role, List<Long> asList);
-     @Query("select x.moduleId as moduleId , " +
-             " module.name as moduleName , " +
-             " apiAgnstMdle.apiPattern as apiPattern , " +
-             " apiAgnstMdle.methodName as methodName " +
-             " from PermittedModule x   " +
-             " join x.details dtl " +
-             " join dtl.api apiAgnstMdle  " +
-             " join apiAgnstMdle.moduleInfo  module  " +
-             "  where :user is not null and ( x.user=:user or x.role in :roles ) " +
-             " group by  x.moduleId , module.name , apiAgnstMdle.apiPattern  ")
-    List<Map<String,Object>> getMenu(@Param("user") User user, @Param("roles") Set<Role> roles);
 
-    @Query("select x.moduleId as moduleId , " +
-            " module.name as moduleName , " +
-            " apiUnderMdl.apiPattern as apiPattern , " +
-            " apiUnderMdl.methodName as methodName , " +
-            " concat(user.id,'-',user.username) as user , " +
-            " concat(role.id,'-',role.authority) as role " +
-            " from PermittedModule x   " +
-            " left join PermittedApi dtl on dtl.permittedModule=x " +
-            " left join dtl.api apiUnderMdl  " +
-            " left join apiUnderMdl.moduleInfo  module  " +
-            " left join x.user user  " +
-            " left join x.role role " +
-            "  where ( :moduleId is null or x.moduleId=:moduleId ) " +
-            " and ( :username is null or user.username=:username )  " +
-            " and ( :roleId is null or role.id=:roleId ) " +
-            " and ( :apiPattern is null or apiUnderMdl.apiPattern=:apiPattern ) " +
-            " group by  x.moduleId , module.name , apiUnderMdl.apiPattern , apiUnderMdl.methodName  ")
-    Page<Map<String, Object>> getList(@Param("moduleId")   Long moduleId,
-                                      @Param("username")   String username,
-                                      @Param("roleId")     Long roleId,
-                                      @Param("apiPattern") String apiPattern,
-                                      Pageable pageable);
+
 }
