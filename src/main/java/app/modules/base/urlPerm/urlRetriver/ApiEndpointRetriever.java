@@ -1,10 +1,10 @@
 package app.modules.base.urlPerm.urlRetriver;
 
 import app.common.util.CommonUtil;
-import app.modules.moduleInfo.entity.ApiAgainstModule;
-import app.modules.moduleInfo.entity.ModuleInfo;
-import app.modules.moduleInfo.repo.ApiAgainstModuleRepo;
-import app.modules.moduleInfo.repo.ModuleInfoRepo;
+import app.modules.base.moduleInfo.entity.ApiAgainstModule;
+import app.modules.base.moduleInfo.entity.ModuleInfo;
+import app.modules.base.moduleInfo.repo.ApiAgainstModuleRepo;
+import app.modules.base.moduleInfo.repo.ModuleInfoRepo;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

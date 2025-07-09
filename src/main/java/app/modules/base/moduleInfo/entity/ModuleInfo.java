@@ -1,4 +1,4 @@
-package app.modules.moduleInfo.entity;
+package app.modules.base.moduleInfo.entity;
 
 import app.common.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

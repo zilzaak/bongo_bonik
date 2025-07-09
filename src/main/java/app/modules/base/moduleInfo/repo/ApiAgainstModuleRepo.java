@@ -1,6 +1,6 @@
-package app.modules.moduleInfo.repo;
+package app.modules.base.moduleInfo.repo;
 
-import app.modules.moduleInfo.entity.ApiAgainstModule;
+import app.modules.base.moduleInfo.entity.ApiAgainstModule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

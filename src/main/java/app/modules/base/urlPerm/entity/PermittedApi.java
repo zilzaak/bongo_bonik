@@ -1,7 +1,7 @@
 package app.modules.base.urlPerm.entity;
 
 import app.common.entity.BaseEntity;
-import app.modules.moduleInfo.entity.ApiAgainstModule;
+import app.modules.base.moduleInfo.entity.ApiAgainstModule;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
-package app.modules.moduleInfo.repo;
+package app.modules.base.moduleInfo.repo;
 
-import app.modules.moduleInfo.entity.ModuleInfo;
+import app.modules.base.moduleInfo.entity.ModuleInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

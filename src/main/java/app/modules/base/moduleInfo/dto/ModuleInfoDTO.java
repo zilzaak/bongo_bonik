@@ -1,4 +1,4 @@
-package app.modules.moduleInfo.dto;
+package app.modules.base.moduleInfo.dto;
 import lombok.Getter;
 import lombok.Setter;
 

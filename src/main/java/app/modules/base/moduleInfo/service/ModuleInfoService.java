@@ -1,15 +1,15 @@
-package app.modules.moduleInfo.service;
+package app.modules.base.moduleInfo.service;
 
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
-import app.modules.moduleInfo.dto.AgainstModuleDTO;
-import app.modules.moduleInfo.dto.ModuleInfoDTO;
-import app.modules.moduleInfo.entity.ApiAgainstModule;
-import app.modules.moduleInfo.entity.ModuleInfo;
-import app.modules.moduleInfo.repo.ApiAgainstModuleRepo;
-import app.modules.moduleInfo.repo.ModuleInfoRepo;
+import app.modules.base.moduleInfo.dto.AgainstModuleDTO;
+import app.modules.base.moduleInfo.dto.ModuleInfoDTO;
+import app.modules.base.moduleInfo.entity.ApiAgainstModule;
+import app.modules.base.moduleInfo.entity.ModuleInfo;
+import app.modules.base.moduleInfo.repo.ApiAgainstModuleRepo;
+import app.modules.base.moduleInfo.repo.ModuleInfoRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;

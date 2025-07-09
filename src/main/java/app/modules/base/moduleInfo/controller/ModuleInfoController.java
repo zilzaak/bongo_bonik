@@ -1,10 +1,9 @@
-package app.modules.moduleInfo.controller;
+package app.modules.base.moduleInfo.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.modules.inventory.dto.InventoryDTO;
-import app.modules.moduleInfo.dto.ModuleInfoDTO;
-import app.modules.moduleInfo.service.ModuleInfoService;
+import app.modules.base.moduleInfo.dto.ModuleInfoDTO;
+import app.modules.base.moduleInfo.service.ModuleInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/module")
+@RequestMapping("/base/module")
 public class ModuleInfoController {
 
     @Autowired
