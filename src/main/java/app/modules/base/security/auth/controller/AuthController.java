@@ -1,5 +1,8 @@
-package app.modules.base.config;
+package app.modules.base.security.auth.controller;
 
+import app.modules.base.security.config.JwtUtil;
+import app.modules.base.security.auth.dto.AuthRequest;
+import app.modules.base.security.auth.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,5 +1,6 @@
-package app.modules.base.config;
+package app.modules.base.security.config;
 
+import app.modules.base.security.auth.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

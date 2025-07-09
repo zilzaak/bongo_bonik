@@ -1,4 +1,4 @@
-package app.modules.base.config;
+package app.modules.base.security.auth.service;
 
 
 
