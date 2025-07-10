@@ -58,7 +58,7 @@ public class ApiEndpointRetriever {
         return  list;
     }
 
-public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> partTracker){
+public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,List<String>> partTracker){
     MenuHierarchy m = new MenuHierarchy();
     m.setMenu(track.childMenu);
     m.setParentMenu(track.parentMenu);
@@ -66,7 +66,13 @@ public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> pa
         m.setMethodName(track.methodName);
         m.setApiPattern(track.apiUrl);
     }
-    partTracker.put(track.childMenu,track.childMenu);
+    if(!partTracker.containsKey(track.apiUrl)){
+        List<String> apiParts = new ArrayList<>();
+        apiParts.add(track.childMenu);
+        partTracker.put(track.apiUrl,apiParts);
+    }else{
+        partTracker.get(track.apiUrl).add(track.childMenu);
+     }
     return m;
 }
 
@@ -77,7 +83,7 @@ public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> pa
         String[] methods = allApi.get(1);
 
         List<MenuHierarchy> menuTree = new ArrayList<MenuHierarchy>();
-        Map<String,String> partTracker = new HashMap<>();
+        Map<String,List<String>> partTracker = new HashMap<>();
         for(int i=0 ; i<apiUrls.length ;i++){
             String api=apiUrls[i];
             String[] apiParts = api.split("/");
@@ -93,13 +99,22 @@ public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> pa
                 track.parentMenu=parentMenu;
                 track.isLastPart=(apiParts.length==(j+1));
                 track.methodName=method;
-                if(!partTracker.containsKey(track.childMenu) && !crudMenu.contains(track.childMenu)){
-                    if(menuTree.size()<1 || track.parentMenu==null){
+                    if(menuTree.size()<1){
                         menuTree.add(this.makeMenuHierarchy(track,partTracker));
-                    }else{
-                        this.setUnderParent(menuTree,track,partTracker);
                     }
-                }
+                    else if(track.parentMenu==null){
+                        menuTree.add(this.makeMenuHierarchy(track,partTracker));
+                    }
+                    else{
+                        if(partTracker.containsKey(track.apiUrl)){
+                            if(!partTracker.get(track.apiUrl).contains(track.childMenu)){
+                                this.setUnderParent(menuTree,track,partTracker);
+                            }
+                        }else{
+                            this.setUnderParent(menuTree,track,partTracker);
+                        }
+                    }
+
             }
 
         }
@@ -108,7 +123,7 @@ public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> pa
     }
 
 
-    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> partTracker){
+    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,List<String>> partTracker){
             for(MenuHierarchy menu : menuTree){
                     if(menu.getMenu().equals(track.parentMenu)){
                         menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
