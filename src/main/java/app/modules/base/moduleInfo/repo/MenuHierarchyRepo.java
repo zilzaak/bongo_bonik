@@ -24,4 +24,6 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     Page<Map<String,Object>> getList(Long moduleId , Pageable pageable);
+
+    boolean existsByMenuAndApiPatternInAndParentMenuIn(String menu, List<String> asList, List<String> asList1);
 }

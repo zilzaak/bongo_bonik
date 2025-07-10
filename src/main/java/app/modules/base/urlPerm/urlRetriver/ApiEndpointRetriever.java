@@ -17,219 +17,128 @@ public class ApiEndpointRetriever {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private final MenuHierarchyRepo apiAgainstModuleRepo;
-    public List<String> urlContains = Arrays.asList("create","get","update","edit","delete","list");
+    public List<String> urlContains = Arrays.asList("create", "get", "update", "edit", "delete", "list");
 
-    public ApiEndpointRetriever(RequestMappingHandlerMapping mapping ,
+    public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
                                 MenuHierarchyRepo apiAgainstModuleRepo) {
         this.requestMappingHandlerMapping = mapping;
         this.apiAgainstModuleRepo = apiAgainstModuleRepo;
     }
 
-    private String getMethod(String method){
-            method=CommonUtil.removeCharFromString(method,'/');
-            method=CommonUtil.removeCharFromString(method,'[');
-            method=CommonUtil.removeCharFromString(method,']');
+    private String getMethod(String method) {
+        method = CommonUtil.removeCharFromString(method, '/');
+        method = CommonUtil.removeCharFromString(method, '[');
+        method = CommonUtil.removeCharFromString(method, ']');
 
-        return  method;
+        return method;
     }
 
 
-    public  List<MenuHierarchy> allParentModule() {
+    public List<String[]> allUrlWithMethod() {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        Map<String,List<String>> apiListUnderModule = new HashMap<>();
+        List<String> api = new ArrayList<>();
+        List<String> methods = new ArrayList<>();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingInfo info = entry.getKey();
-            Set<String> apiInfo  = info.getDirectPaths();
-            if(apiInfo.size()>0){
-                String method = "/"+info.getMethodsCondition().getMethods();
-                method=getMethod(method);
+            Set<String> apiInfo = info.getDirectPaths();
+            if (apiInfo.size() > 0) {
+                String method = "/" + info.getMethodsCondition().getMethods();
+                method = getMethod(method);
                 String apiUrl = new ArrayList<>(apiInfo).get(0);
-                apiUrl=CommonUtil.removeAllSpace(apiUrl);
-                if(!apiUrl.contains("error")){
-                    String apiParts[] = apiUrl.split("/");
-                    String module = apiParts[1];
-                    apiUrl=apiUrl+">"+method;
-                    if(!apiListUnderModule.containsKey(module)){
-                        List<String> apiList = new ArrayList<>();
-                        apiList.add(apiUrl);
-                        apiListUnderModule.put(module,apiList);
-                    }else{
-                        apiListUnderModule.get(module).add(apiUrl);
-                    }
+                apiUrl = CommonUtil.removeAllSpace(apiUrl);
+                if (!apiUrl.contains("error")) {
+                    api.add(apiUrl);
+                    methods.add(method);
                 }
             }
         }
+        String[] apiArray = api.toArray(new String[0]);
+        String[] methodArray = methods.toArray(new String[0]);
+        List<String[]> list = new ArrayList<>();
+        list.add(apiArray);
+        list.add(methodArray);
+        return  list;
 
-        List<MenuHierarchy> parents = new ArrayList<>();
-        for(String module : apiListUnderModule.keySet()){
-            MenuHierarchy parentModule = new MenuHierarchy();
-            parentModule.setType(HeirarchyType.MODULE.name());
-            parentModule.setName(module);
-            List<String> subModules = apiListUnderModule.get(module);
-            List<MenuHierarchy> subLists = new ArrayList<>();
-            if(subModules.size()>0){
-                for(String subModule : subModules){
-                    MenuHierarchy sub = new MenuHierarchy();
-                    String arr[]= subModule.split("/");
-                    String[] method = subModule.split(">");
-                    String type=null;
-                    String nextPart = null;
-                    try{nextPart=arr[2];}catch (ArrayIndexOutOfBoundsException e){}
-
-                    if(nextPart==null){
-                        type=HeirarchyType.MENU.name();
-                        nextPart=module;
-                    }else{
-                       if(!urlContains.contains(nextPart)){
-                           String next = null;
-                           try{next=arr[3];}catch (ArrayIndexOutOfBoundsException e){}
-                           if(next==null){
-                               type=HeirarchyType.MENU.name();
-                           }else{
-                               if(!urlContains.contains(next)){
-                                   type=HeirarchyType.SUB_MODULE.name();
-                               }else {
-                                   type=HeirarchyType.MENU.name();
-                               }
-                           }
-                       }
-                    }
-
-                    sub.setType(type);
-                    sub.setName(nextPart);
-                    sub.setMethodName(method[1]);
-                    sub.setApiPattern(subModule);
-                    subLists.add(sub);
-                }
-            }
-            parentModule.setDetails(subLists);
-            parents.add(parentModule);
-        }
-        return  parents;
     }
 
 
     @PostConstruct
-    public  void categoryIntoSubModuleOrMenu(){
-        List<MenuHierarchy>  parentModules = this.allParentModule();
-        this.convertToHierarchicalStructure(parentModules);
-        apiAgainstModuleRepo.saveAll(parentModules);
+    public void categoryIntoSubModuleOrMenu() {
+        List<String[]> allApi = this.allUrlWithMethod();
+        String[] apiUrls = allApi.get(0);
+        String[] methods = allApi.get(1);
+
+        List<MenuHierarchy> menuTree = new ArrayList<MenuHierarchy>();
+        Map<String,String> menuTracker = new HashMap<>();
+
+        for(int i=0 ; i<apiUrls.length ;i++){
+            String api=apiUrls[i];
+            String[] apiParts = api.split("/");
+            String method=methods[i];
+
+            for(int j=0;j<apiParts.length;j++){
+                if(j==0)continue;
+                String childMenu = apiParts[j];
+                String parentMenu=(j>=2)?apiParts[j-1]:null;
+                TreePartTrack track = new TreePartTrack();
+                track.apiUrl=api;
+                track.childMenu=childMenu;
+                track.parentMenu=parentMenu;
+                track.isLastPart=(apiParts.length==(j+1));
+                track.methodName=method;
+                this.setUnderParent(menuTree,track,menuTracker);
+
+            }
+
+        }
+
+    
     }
 
 
-    private void convertToHierarchicalStructure(List<MenuHierarchy>  parentModules){
-
-        //arrange sub modules
-        for(MenuHierarchy parent : parentModules){
-            if(parent.getDetails().size()<1) continue;
-
-            int nextHierarchyIndex=2;
-
-            Map<String,List<MenuHierarchy>> newParentHierarchy = new HashMap<>();
-            List<MenuHierarchy> childGoneUnderNewParent=new ArrayList<>();
-
-            for(MenuHierarchy obj : parent.getDetails()){
-                String[] apiArr=obj.getApiPattern().split("/");
-                String newModulePart=null;
-                String nextModulePart=null;
-                String apiPattern=obj.getApiPattern();
-                String methodName=obj.getMethodName();
-
-                try{newModulePart=apiArr[nextHierarchyIndex];}catch (ArrayIndexOutOfBoundsException e){newModulePart=null;
+    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> menuTracker){
+        if(menuTree.size()<1 && !menuTracker.containsKey(track.childMenu)){
+            MenuHierarchy menu = new MenuHierarchy();
+            menu.setMenu(track.childMenu);
+            menu.setParentMenu(track.parentMenu);
+            menuTree.add(menu);
+            menuTracker.put(track.childMenu,track.childMenu);
+        }else{
+            for(MenuHierarchy menu : menuTree){
+                if(menu.getMenu().equals(track.parentMenu)){
+                    MenuHierarchy m = new MenuHierarchy();
+                    m.setMenu(track.childMenu);
+                    m.setParentMenu(track.parentMenu);
+                    if(track.isLastPart){
+                     m.setMethodName(track.methodName);
+                     m.setApiPattern(track.apiUrl);
+                    }
+                    menu.getDetails().add(m);
+                    menuTracker.put(track.childMenu,track.childMenu);
+                    break;
+                }else{
+                  this.setUnderParent(menu.getDetails(),track,menuTracker);
                 }
-                try{nextModulePart=apiArr[nextHierarchyIndex+1];}catch (ArrayIndexOutOfBoundsException e){nextModulePart=null;}
-
-                if(newModulePart!=null && !urlContains.contains(newModulePart)){
-                    String type=null;
-                    if(nextModulePart!=null && !urlContains.contains(nextModulePart)){
-                        type=HeirarchyType.SUB_MODULE.name();
-                    }
-                    else if(nextModulePart!=null && urlContains.contains(nextModulePart)){
-                        type=HeirarchyType.MENU.name();
-                    }
-                    else if(nextModulePart==null){
-                        type=HeirarchyType.MENU.name();
-                    }
-
-                        List<MenuHierarchy> childs = new ArrayList<>();
-                        MenuHierarchy hr = new MenuHierarchy();
-                        hr.setMethodName(methodName);
-                        hr.setApiPattern(apiPattern);
-                        hr.setType(type);
-                        hr.setName(newModulePart);
-                        childs.add(hr);
-                        childGoneUnderNewParent.add(obj);
-                        if(!newParentHierarchy.containsKey(newModulePart)){
-                            newParentHierarchy.put(newModulePart,childs);
-                        }else{
-                            newParentHierarchy.get(newModulePart).add(hr);
-                        }
-                }
             }
 
-            parent.getDetails().removeAll(childGoneUnderNewParent);
-            parent.getDetails().addAll(convertToList(newParentHierarchy));
-
-             if(parent.getType().equals(HeirarchyType.MODULE.name())){
-                 parent.setDetails(this.arrangeSubModule(parent.getDetails()));
-             }
-
         }
-
-    }
-
-    private List<MenuHierarchy> arrangeSubModule(List<MenuHierarchy> list){
-        Map<String,List<MenuHierarchy>> newParentHierarchy = new HashMap<>();
-        for(MenuHierarchy x : list){
-            MenuHierarchy child = new MenuHierarchy();
-            child.setApiPattern(x.getApiPattern());
-            child.setType(HeirarchyType.MENU.name());
-            String arr[]= x.getApiPattern().split("/");
-            String name = null;
-            try{
-               name=arr[3];
-            }catch (Exception e){
-                name=arr[2];
-            }
-            child.setName(name);
-            child.setMethodName(x.getMethodName());
-            if(!newParentHierarchy.containsKey(x.getName())){
-                List<MenuHierarchy> m = new ArrayList<>();
-                m.add(child);
-                newParentHierarchy.put(x.getName(),m);
-            }else{
-                newParentHierarchy.get(x.getName()).add(child);
-            }
-        }
-        list.clear();
-
-        for(String subMenu : newParentHierarchy.keySet()){
-            List<MenuHierarchy> menus = newParentHierarchy.get(subMenu);
-            MenuHierarchy parent = new MenuHierarchy();
-            parent.setType(HeirarchyType.SUB_MODULE.name());
-            parent.setName(subMenu);
-            parent.setDetails(menus);
-            list.add(parent);
-        }
-return list;
     }
 
 
-    private List<MenuHierarchy> convertToList(Map<String, List<MenuHierarchy>> newParentHierarchy) {
-        List<MenuHierarchy> newParentList = new ArrayList<>();
-        if(newParentHierarchy.isEmpty()){
-            return newParentList;
-        }
-        for(String newModule : newParentHierarchy.keySet()){
-            MenuHierarchy parent = new MenuHierarchy();
-            List<MenuHierarchy> childs =  newParentHierarchy.get(newModule);
-            parent.setType(HeirarchyType.SUB_MODULE.name());
-            parent.setName(newModule);
-            parent.setDetails(childs);
-            parent.setApiPattern(childs.get(0).getApiPattern());
-            newParentList.add(parent);
-        }
-           return newParentList;
-    }
-
+//    public void saveMenuTree(List<MenuHierarchy> menuTree){
+//
+//            for(MenuHierarchy menu : menuTree){
+//                if(menu.getDetails().size()>0){
+//                   this.saveMenuTree(menu.getDetails());
+//                }else{
+//                  if(!apiAgainstModuleRepo.existsByMenuAndApiPatternInAndParentMenuIn(menu.getMenu(),Arrays.asList(menu.getApiPattern()),Arrays.asList(menu.getParentMenu()))){
+//                      if(menu.getParentMenu()!=null){
+//                          MenuHierarchy dbItem = apiAgainstModuleRepo.findByMenuAndApiPatternAndParentMenu();
+//                      }else{
+//
+//                      }
+//                  }
+//                }
+//            }
+//    }
 }
