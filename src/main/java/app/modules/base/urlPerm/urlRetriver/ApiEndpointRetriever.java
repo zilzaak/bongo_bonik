@@ -17,7 +17,6 @@ public class ApiEndpointRetriever {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private final MenuHierarchyRepo apiAgainstModuleRepo;
-    public List<String> urlContains = Arrays.asList("create", "get", "update", "edit", "delete", "list");
 
     public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
                                 MenuHierarchyRepo apiAgainstModuleRepo) {
@@ -29,11 +28,10 @@ public class ApiEndpointRetriever {
         method = CommonUtil.removeCharFromString(method, '/');
         method = CommonUtil.removeCharFromString(method, '[');
         method = CommonUtil.removeCharFromString(method, ']');
-
         return method;
     }
 
-
+    public List<String> crudMenu = Arrays.asList("create","edit","update","delete","list","get");
     public List<String[]> allUrlWithMethod() {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
         List<String> api = new ArrayList<>();
@@ -58,9 +56,19 @@ public class ApiEndpointRetriever {
         list.add(apiArray);
         list.add(methodArray);
         return  list;
-
     }
 
+public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> partTracker){
+    MenuHierarchy m = new MenuHierarchy();
+    m.setMenu(track.childMenu);
+    m.setParentMenu(track.parentMenu);
+    if(track.isLastPart){
+        m.setMethodName(track.methodName);
+        m.setApiPattern(track.apiUrl);
+    }
+    partTracker.put(track.childMenu,track.childMenu);
+    return m;
+}
 
     @PostConstruct
     public void categoryIntoSubModuleOrMenu() {
@@ -69,8 +77,7 @@ public class ApiEndpointRetriever {
         String[] methods = allApi.get(1);
 
         List<MenuHierarchy> menuTree = new ArrayList<MenuHierarchy>();
-        Map<String,String> menuTracker = new HashMap<>();
-
+        Map<String,String> partTracker = new HashMap<>();
         for(int i=0 ; i<apiUrls.length ;i++){
             String api=apiUrls[i];
             String[] apiParts = api.split("/");
@@ -86,59 +93,41 @@ public class ApiEndpointRetriever {
                 track.parentMenu=parentMenu;
                 track.isLastPart=(apiParts.length==(j+1));
                 track.methodName=method;
-                this.setUnderParent(menuTree,track,menuTracker);
-
-            }
-
-        }
-
-    
-    }
-
-
-    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> menuTracker){
-        if(menuTree.size()<1 && !menuTracker.containsKey(track.childMenu)){
-            MenuHierarchy menu = new MenuHierarchy();
-            menu.setMenu(track.childMenu);
-            menu.setParentMenu(track.parentMenu);
-            menuTree.add(menu);
-            menuTracker.put(track.childMenu,track.childMenu);
-        }else{
-            for(MenuHierarchy menu : menuTree){
-                if(menu.getMenu().equals(track.parentMenu)){
-                    MenuHierarchy m = new MenuHierarchy();
-                    m.setMenu(track.childMenu);
-                    m.setParentMenu(track.parentMenu);
-                    if(track.isLastPart){
-                     m.setMethodName(track.methodName);
-                     m.setApiPattern(track.apiUrl);
+                if(!partTracker.containsKey(track.childMenu) && !crudMenu.contains(track.childMenu)){
+                    if(menuTree.size()<1 || track.parentMenu==null){
+                        menuTree.add(this.makeMenuHierarchy(track,partTracker));
+                    }else{
+                        this.setUnderParent(menuTree,track,partTracker);
                     }
-                    menu.getDetails().add(m);
-                    menuTracker.put(track.childMenu,track.childMenu);
-                    break;
-                }else{
-                  this.setUnderParent(menu.getDetails(),track,menuTracker);
                 }
             }
 
         }
+
+        this.apiAgainstModuleRepo.saveAll(menuTree);
     }
 
 
-//    public void saveMenuTree(List<MenuHierarchy> menuTree){
-//
-//            for(MenuHierarchy menu : menuTree){
-//                if(menu.getDetails().size()>0){
-//                   this.saveMenuTree(menu.getDetails());
-//                }else{
-//                  if(!apiAgainstModuleRepo.existsByMenuAndApiPatternInAndParentMenuIn(menu.getMenu(),Arrays.asList(menu.getApiPattern()),Arrays.asList(menu.getParentMenu()))){
-//                      if(menu.getParentMenu()!=null){
-//                          MenuHierarchy dbItem = apiAgainstModuleRepo.findByMenuAndApiPatternAndParentMenu();
-//                      }else{
-//
-//                      }
-//                  }
-//                }
-//            }
-//    }
+    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> partTracker){
+            for(MenuHierarchy menu : menuTree){
+                    if(menu.getMenu().equals(track.parentMenu)){
+                        menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
+                        break;
+                    }else{
+                        this.setUnderParent(menu.getDetails(),track,partTracker);
+                    }
+               }
+         }
+
+
+    public void printTree(List<MenuHierarchy> menuTree){
+        for(MenuHierarchy menu : menuTree){
+                if(menu.getApiPattern()!=null){
+                    System.out.println("menu="+menu.getMenu()+" , api = "+menu.getApiPattern()+" , method = "+menu.getMethodName());
+                }
+                if(menu.getDetails().size()>0){
+                   this.printTree(menu.getDetails());
+                }
+            }
+    }
 }

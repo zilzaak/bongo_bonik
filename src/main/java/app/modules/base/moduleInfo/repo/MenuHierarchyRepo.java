@@ -20,7 +20,7 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     @Query("SELECT x.apiPattern as apiPattern , " +
             "  x.methodName as methodName , " +
             " x.frontUrl as frontUrl , " +
-            " x.name as moduleName " +
+            " x.menu as moduleName " +
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     Page<Map<String,Object>> getList(Long moduleId , Pageable pageable);
