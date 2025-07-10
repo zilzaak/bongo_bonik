@@ -23,6 +23,7 @@ public class MenuHierarchy extends BaseEntity {
     private String parentMenu;
     private String apiPattern; //backendUrl
     private String methodName; //put , post , delete , update , patch
+    private String apiSeq;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id") // Explicit join column instead of mappedBy

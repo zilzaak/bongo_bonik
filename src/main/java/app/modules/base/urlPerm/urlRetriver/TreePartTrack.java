@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TreePartTrack {
+ public String apiSeq;
  public String parentMenu;
  public String childMenu;
  public Boolean isLastPart;

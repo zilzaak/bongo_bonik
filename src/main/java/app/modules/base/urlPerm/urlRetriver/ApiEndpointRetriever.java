@@ -58,23 +58,37 @@ public class ApiEndpointRetriever {
         return  list;
     }
 
-public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,List<String>> partTracker){
+
+    public TreePartTrack makeTracker(int j ,
+                                     String childMenu,
+                                     String parentMenu,
+                                     String api,
+                                     int length,
+                                     String method,String apiSeq){
+        TreePartTrack track = new TreePartTrack();
+        track.apiUrl=api;
+        track.childMenu=childMenu;
+        track.parentMenu=parentMenu;
+        track.isLastPart=(length==(j+1));
+        track.methodName=method;
+        track.apiSeq=apiSeq;
+        return track;
+    }
+
+
+    public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> partTracker){
     MenuHierarchy m = new MenuHierarchy();
     m.setMenu(track.childMenu);
     m.setParentMenu(track.parentMenu);
+    m.setApiSeq(track.apiSeq);
     if(track.isLastPart){
         m.setMethodName(track.methodName);
         m.setApiPattern(track.apiUrl);
     }
-    if(!partTracker.containsKey(track.apiUrl)){
-        List<String> apiParts = new ArrayList<>();
-        apiParts.add(track.childMenu);
-        partTracker.put(track.apiUrl,apiParts);
-    }else{
-        partTracker.get(track.apiUrl).add(track.childMenu);
-     }
+    partTracker.put(track.apiSeq,track.apiSeq);
     return m;
 }
+
 
     @PostConstruct
     public void categoryIntoSubModuleOrMenu() {
@@ -83,55 +97,61 @@ public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,List<Strin
         String[] methods = allApi.get(1);
 
         List<MenuHierarchy> menuTree = new ArrayList<MenuHierarchy>();
-        Map<String,List<String>> partTracker = new HashMap<>();
+        Map<String,String> partTracker = new HashMap<>();
         for(int i=0 ; i<apiUrls.length ;i++){
             String api=apiUrls[i];
             String[] apiParts = api.split("/");
             String method=methods[i];
 
+            String apiSeq=null;
             for(int j=0;j<apiParts.length;j++){
                 if(j==0)continue;
+
                 String childMenu = apiParts[j];
                 String parentMenu=(j>=2)?apiParts[j-1]:null;
-                TreePartTrack track = new TreePartTrack();
-                track.apiUrl=api;
-                track.childMenu=childMenu;
-                track.parentMenu=parentMenu;
-                track.isLastPart=(apiParts.length==(j+1));
-                track.methodName=method;
-                    if(menuTree.size()<1){
-                        menuTree.add(this.makeMenuHierarchy(track,partTracker));
-                    }
-                    else if(track.parentMenu==null){
+
+                 if(apiSeq==null){apiSeq=childMenu;}else{apiSeq=apiSeq+"/"+childMenu;}
+
+                   TreePartTrack track = this.makeTracker(j,childMenu,parentMenu,api,apiParts.length,method,apiSeq);
+
+                   if(menuTree.size()<1){
                         menuTree.add(this.makeMenuHierarchy(track,partTracker));
                     }
                     else{
-                        if(partTracker.containsKey(track.apiUrl)){
-                            if(!partTracker.get(track.apiUrl).contains(track.childMenu)){
-                                this.setUnderParent(menuTree,track,partTracker);
-                            }
-                        }else{
+                        if(!partTracker.containsKey(track.apiSeq)){
                             this.setUnderParent(menuTree,track,partTracker);
                         }
                     }
-
-            }
-
+               }
         }
 
         this.apiAgainstModuleRepo.saveAll(menuTree);
     }
 
 
-    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,List<String>> partTracker){
+    public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> partTracker){
+             Boolean parentFound=false;
             for(MenuHierarchy menu : menuTree){
-                    if(menu.getMenu().equals(track.parentMenu)){
+                String parentSeq = null ;
+                if(track.apiSeq.contains("/")){
+                    int lastSlashIndex = track.apiSeq.lastIndexOf('/'); // Finds
+                     parentSeq = track.apiSeq.substring(0, lastSlashIndex);
+                }
+                   if(parentSeq==null){
+                       parentFound=true;
+                       break;
+                   }
+                   else if(menu.getApiSeq().equals(parentSeq)){
                         menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
                         break;
                     }else{
                         this.setUnderParent(menu.getDetails(),track,partTracker);
                     }
                }
+
+            if(parentFound){
+                menuTree.add(this.makeMenuHierarchy(track,partTracker));
+            }
          }
 
 
