@@ -125,7 +125,9 @@ public class ApiEndpointRetriever {
                }
         }
 
-        this.apiAgainstModuleRepo.saveAll(menuTree);
+        if(this.apiAgainstModuleRepo.count()<1){
+            this.apiAgainstModuleRepo.saveAll(menuTree);
+        }
     }
 
 
@@ -154,15 +156,4 @@ public class ApiEndpointRetriever {
             }
          }
 
-
-    public void printTree(List<MenuHierarchy> menuTree){
-        for(MenuHierarchy menu : menuTree){
-                if(menu.getApiPattern()!=null){
-                    System.out.println("menu="+menu.getMenu()+" , api = "+menu.getApiPattern()+" , method = "+menu.getMethodName());
-                }
-                if(menu.getDetails().size()>0){
-                   this.printTree(menu.getDetails());
-                }
-            }
-    }
 }
