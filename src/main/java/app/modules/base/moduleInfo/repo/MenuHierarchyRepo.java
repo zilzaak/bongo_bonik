@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
-
-    boolean existsByApiPatternAndMethodName(String apiPattern, String methodName);
-
     @Query("SELECT COUNT(x) from MenuHierarchy x where x.apiPattern=?1  " +
             " and x.id not in ?2 ")
     int existPatternOrName(String apiPattern, List<Long> asList);
@@ -24,6 +21,10 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     Page<Map<String,Object>> getList(Long moduleId , Pageable pageable);
+    boolean existsByApiPattern(String backendUrl);
+    boolean existsByFrontUrl(String frontUrl);
 
-    boolean existsByMenuAndApiPatternInAndParentMenuIn(String menu, List<String> asList, List<String> asList1);
+    MenuHierarchy findByApiPattern(String backendUrl);
+
+    MenuHierarchy findTopByMenu(String parentMenu);
 }
