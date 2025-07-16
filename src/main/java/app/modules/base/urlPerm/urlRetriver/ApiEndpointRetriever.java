@@ -147,10 +147,15 @@ public class ApiEndpointRetriever {
     }
 
     private void createApiPermission(List<MenuHierarchy> menuTree, Role role) {
+        Role permitAll = roleRepository.findByAuthority("PERMIT_ALL");
         List<PermittedApi>  list = new ArrayList<>();
         for(MenuHierarchy m : menuTree){
             PermittedApi x = new PermittedApi();
-            x.setRole(role);
+            if(!m.getApiPattern().contains("/getToken")){
+                x.setRole(role);
+            }else{
+                x.setRole(permitAll);
+            }
             x.setFrontendUrl(m.getFrontUrl());
             x.setBackendUrl(m.getApiPattern());
             x.setMenuId(m.getId());
