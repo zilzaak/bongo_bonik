@@ -43,6 +43,12 @@ public class ModuleInfoService {
             menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiPattern));
             String parentApiSeq=CommonUtil.removeWordFromString(menu.apiSeq,menu.menu);
 
+            if(menu.getApiPattern()!=null && !menu.getApiPattern().isEmpty() && !menu.getApiPattern().contains(menu.menu)){
+                mp.put("hasError",true);
+                mp.put("message","Menu name must be meaningful");
+                return mp;
+            }
+
             if((menu.methodName!=null || !menu.methodName.isEmpty())&& !this.methods.contains(menu.methodName)){
                 mp.put("hasError",true);
                 mp.put("message","Method name is required");

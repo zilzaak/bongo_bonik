@@ -41,4 +41,6 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " where ( ?1 is null or user.id=?1 ) " +
             " and ( ?2 is null or role in ?2  ) ")
     List<PermittedApi> getPermittedApis(Long userid , Set<Role> roles);
+
+    boolean existsByMenuId(Long id);
 }

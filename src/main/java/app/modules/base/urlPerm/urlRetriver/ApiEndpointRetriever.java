@@ -1,9 +1,14 @@
 package app.modules.base.urlPerm.urlRetriver;
 
 import app.common.util.CommonUtil;
-import app.modules.base.moduleInfo.entity.HeirarchyType;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
+import app.modules.base.role.entity.Role;
+import app.modules.base.role.repo.RoleRepository;
+import app.modules.base.urlPerm.entity.PermittedApi;
+import app.modules.base.urlPerm.repo.PermittedApiRepository;
+import app.modules.base.user.entity.User;
+import app.modules.base.user.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -17,11 +22,20 @@ public class ApiEndpointRetriever {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private final MenuHierarchyRepo apiAgainstModuleRepo;
+    private final PermittedApiRepository permittedApiRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
-                                MenuHierarchyRepo apiAgainstModuleRepo) {
+                                MenuHierarchyRepo apiAgainstModuleRepo,
+                                PermittedApiRepository permittedApiRepository,
+                                UserRepository userRepository,
+                                RoleRepository roleRepository) {
         this.requestMappingHandlerMapping = mapping;
         this.apiAgainstModuleRepo = apiAgainstModuleRepo;
+        this.permittedApiRepository=permittedApiRepository;
+        this.userRepository=userRepository;
+        this.roleRepository=roleRepository;
     }
 
     private String getMethod(String method) {
@@ -127,7 +141,35 @@ public class ApiEndpointRetriever {
 
         if(this.apiAgainstModuleRepo.count()<1){
             this.apiAgainstModuleRepo.saveAll(menuTree);
+            Role role = roleRepository.findByAuthority("SUPER_ADMIN");
+            List<MenuHierarchy> menuList = apiAgainstModuleRepo.getAllUrl();
+            this.createApiPermission(menuList,role);
         }
+    }
+
+    private void createApiPermission(List<MenuHierarchy> menuTree, Role role) {
+        List<PermittedApi>  list = new ArrayList<>();
+        for(MenuHierarchy m : menuTree){
+            PermittedApi x = new PermittedApi();
+            x.setRole(role);
+            x.setFrontendUrl(m.getFrontUrl());
+            x.setBackendUrl(m.getApiPattern());
+            x.setMenuId(m.getId());
+            String  ids=m.getId().toString();
+
+           MenuHierarchy k = apiAgainstModuleRepo.findByMenuAndApiSeq(m.getParentMenu(),CommonUtil.removeWordFromString(m.getApiSeq(),m.getMenu()));
+            while(k!=null){
+                    ids=ids+","+k.getId();
+                    k = apiAgainstModuleRepo.findByMenuAndApiSeq(m.getParentMenu(),
+                        CommonUtil.removeLastCharacter(
+                        CommonUtil.removeWordFromString(
+                        m.getApiSeq(),m.getMenu())));
+            }
+            x.setMenuIdsHierarchy(ids);
+            list.add(x);
+        }
+
+        this.permittedApiRepository.saveAll(list);
     }
 
 

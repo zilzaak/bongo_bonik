@@ -42,4 +42,7 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     boolean existsByParentMenuAndIdNotIn(String parentMenu, List<Long> asList);
 
     MenuHierarchy findByMenuAndApiSeq(String parentMenu, String parentApiSeq);
+    @Query("SELECT x FROM MenuHierarchy x " +
+            "WHERE x.apiPattern is not null ")
+    List<MenuHierarchy> getAllUrl();
 }

@@ -92,7 +92,8 @@ public class PermittedModuleService {
               menuIdsHierarchy=menuIdsHierarchy+","+menu.getId();
           }
           if(menu.getParentMenu()!=null){
-              menu=apiAgainstModuleRepo.findTopByMenu(menu.getParentMenu());
+              menu=apiAgainstModuleRepo.findByMenuAndApiSeq(menu.getParentMenu(),
+                      CommonUtil.removeLastCharacter(CommonUtil.removeWordFromString(menu.getApiSeq(),menu.getMenu())));
           }else{
               menu=null;
           }
