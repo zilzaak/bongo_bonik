@@ -7,7 +7,6 @@ import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
-import app.modules.base.user.entity.User;
 import app.modules.base.user.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -157,14 +156,21 @@ public class ApiEndpointRetriever {
             x.setMenuId(m.getId());
             String  ids=m.getId().toString();
 
-           MenuHierarchy k = apiAgainstModuleRepo.findByMenuAndApiSeq(m.getParentMenu(),CommonUtil.removeWordFromString(m.getApiSeq(),m.getMenu()));
+            Long parentId = apiAgainstModuleRepo.findParentIdById(m.getId());
+            MenuHierarchy k=null;
+            if(parentId!=null){
+                k = apiAgainstModuleRepo.findById(parentId).orElse(null);
+            }
+
             while(k!=null){
                     ids=ids+","+k.getId();
-                    k = apiAgainstModuleRepo.findByMenuAndApiSeq(m.getParentMenu(),
-                        CommonUtil.removeLastCharacter(
-                        CommonUtil.removeWordFromString(
-                        m.getApiSeq(),m.getMenu())));
-            }
+                     parentId = apiAgainstModuleRepo.findParentIdById(k.getId());
+                     if(parentId!=null){
+                         k = apiAgainstModuleRepo.findById(parentId).orElse(null);
+                     }else{
+                         k=null;
+                     }
+                        }
             x.setMenuIdsHierarchy(ids);
             list.add(x);
         }

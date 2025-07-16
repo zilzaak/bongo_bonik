@@ -82,7 +82,10 @@ public class PermittedModuleService {
             return mp;
         }
 
-        MenuHierarchy menu = apiAgainstModuleRepo.findByApiPattern(dto.getBackendUrl());
+        MenuHierarchy menu = null;
+        if(dto.getBackendUrl()!=null){
+            menu =  apiAgainstModuleRepo.findByApiPattern(dto.getBackendUrl());
+        }
         String menuIdsHierarchy=null;
         while(menu!=null){
           if(menuIdsHierarchy==null){
@@ -91,9 +94,9 @@ public class PermittedModuleService {
           }else{
               menuIdsHierarchy=menuIdsHierarchy+","+menu.getId();
           }
-          if(menu.getParentMenu()!=null){
-              menu=apiAgainstModuleRepo.findByMenuAndApiSeq(menu.getParentMenu(),
-                      CommonUtil.removeLastCharacter(CommonUtil.removeWordFromString(menu.getApiSeq(),menu.getMenu())));
+              Long parentId = apiAgainstModuleRepo.findParentIdById(menu.getId());
+          if(parentId!=null){
+              menu = apiAgainstModuleRepo.findById(parentId).orElse(null);
           }else{
               menu=null;
           }

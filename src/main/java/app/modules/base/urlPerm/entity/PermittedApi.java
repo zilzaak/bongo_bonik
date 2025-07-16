@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "permitted_api")
+@Table(name = "api_permission")
 public class PermittedApi extends BaseEntity{
     private String backendUrl;
     private String frontendUrl;

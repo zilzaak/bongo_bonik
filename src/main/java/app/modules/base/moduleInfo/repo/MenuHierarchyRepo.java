@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -45,4 +46,7 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     @Query("SELECT x FROM MenuHierarchy x " +
             "WHERE x.apiPattern is not null ")
     List<MenuHierarchy> getAllUrl();
+
+    @Query(value = "SELECT parent_id FROM menu_hierarchy WHERE id = :id", nativeQuery = true)
+    Long findParentIdById(@Param("id") Long id);
 }
