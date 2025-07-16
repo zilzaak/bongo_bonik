@@ -4,6 +4,8 @@ package app.modules.base.security.auth.service;
 
 import app.modules.base.security.auth.entity.AuthorityPermission;
 import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
+import app.modules.base.urlPerm.entity.PermittedApi;
+import app.modules.base.urlPerm.repo.PermittedApiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +17,21 @@ import java.util.Map;
 public class DynamicPermissionService {
 
     @Autowired
-    private AuthorityPermissionRepository authorityPermissionRepository;
+    private PermittedApiRepository permittedApiRepository;
 
     public Map<String, String> getPermissions() {
-        List<AuthorityPermission> permissions = authorityPermissionRepository.findAll();
+        List<Map<String,Object>> permissions = permittedApiRepository.getUsersPermittedMenu();
         Map<String, String> maps = new HashMap<>();
-          for(AuthorityPermission obj :  permissions ){
+          for(Map<String,Object> obj :  permissions ){
              if(maps.isEmpty()){
-                 maps.put(obj.getApiPattern(),obj.getRoleName());
+                 maps.put((String)obj.get("apiPattern"), (String)obj.get("authority"));
              }else{
-                 if(maps.containsKey(obj.getApiPattern())){
-                  String val=maps.get(obj.getApiPattern());
-                  val=val+","+obj.getRoleName();
-                  maps.put(obj.getApiPattern(),val);
+                 if(maps.containsKey((String)obj.get("apiPattern"))){
+                  String val=maps.get((String)obj.get("apiPattern"));
+                  val=val+","+obj.get("authority");
+                  maps.put((String)obj.get("apiPattern"),val);
               }else{
-                     maps.put(obj.getApiPattern(),obj.getRoleName());
+                  maps.put((String)obj.get("apiPattern"), (String) obj.get("authority"));
                  }
 
              }

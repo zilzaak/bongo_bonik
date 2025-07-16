@@ -43,4 +43,8 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     List<PermittedApi> getPermittedApis(Long userid , Set<Role> roles);
 
     boolean existsByMenuId(Long id);
+    @Query("select x.backendUrl as apiPattern , role.authority as authority  " +
+            " from PermittedApi x " +
+            " left join x.role role  ")
+    List<Map<String, Object>> getUsersPermittedMenu();
 }
