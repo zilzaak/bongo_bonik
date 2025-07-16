@@ -2,12 +2,14 @@ package app.modules.base.moduleInfo.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.modules.base.moduleInfo.dto.ModuleInfoDTO;
+import app.modules.base.moduleInfo.dto.MenuDTO;
 import app.modules.base.moduleInfo.service.ModuleInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -18,7 +20,7 @@ public class ModuleInfoController {
     private ModuleInfoService moduleInfoService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody ModuleInfoDTO dto)
+    ResponseEntity<?> create(@RequestBody List<MenuDTO> dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");
@@ -28,7 +30,7 @@ public class ModuleInfoController {
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody ModuleInfoDTO dto)
+    ResponseEntity<?> update(@RequestBody List<MenuDTO> dto)
             throws RuntimeException{
         if(dto==null){
             throw new RuntimeException("null data exist in form");

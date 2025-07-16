@@ -4,8 +4,7 @@ package app.modules.base.moduleInfo.service;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
-import app.modules.base.moduleInfo.dto.AgainstModuleDTO;
-import app.modules.base.moduleInfo.dto.ModuleInfoDTO;
+import app.modules.base.moduleInfo.dto.MenuDTO;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
 import org.springframework.beans.BeanUtils;
@@ -21,85 +20,95 @@ public class ModuleInfoService {
 
 
     @Autowired
-    private MenuHierarchyRepo detailsRepo;
+    private MenuHierarchyRepo hierarchyRepo;
 
     private final RequestMappingHandlerMapping handlerMapping;
     public ModuleInfoService(RequestMappingHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
     }
+    public List<String> methods = Arrays.asList("GET","DELETE","POST","PUT","PATCH");
 
-
-    Map<String,Object> validate(ModuleInfoDTO dto){
+    Map<String,Object> validate(List<MenuDTO> list){
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
-        if(dto.getName()==null && dto.getDetails().isEmpty()){
+        if(list.isEmpty()){
             mp.put("hasError",true);
-            mp.put("message","Module name and menu under module is required field");
+            mp.put("message","No menu selected");
             return mp;
         }
 
-        if(dto.getId()==null){
-//           if(moduleInfoRepo.existsByName(dto.getName())){
-//               mp.put("hasError",true);
-//               mp.put("message","Module name already exist");
-//               return mp;}
-        }else{
-//            if(moduleInfoRepo.existsByNameAndIdNotIn(dto.getName(),Arrays.asList(dto.getId()))){
-//                mp.put("hasError",true);
-//                mp.put("message","Module name already exist");
-//                return mp;
-//            }
+
+        for(MenuDTO menu : list){
+
+            menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiPattern));
+            String parentApiSeq=CommonUtil.removeWordFromString(menu.apiSeq,menu.menu);
+
+            if((menu.methodName!=null || !menu.methodName.isEmpty())&& !this.methods.contains(menu.methodName)){
+                mp.put("hasError",true);
+                mp.put("message","Method name is required");
+                return mp;
+            }
+
+            if(menu.getId()==null){
+                if(!hierarchyRepo.existsByParentMenu(menu.getParentMenu())){
+                    mp.put("hasError",true);
+                    mp.put("message","The parent menu does not exist");
+                    return mp;
+                }
+               if(hierarchyRepo.existsByApiSeqAndParentMenu(parentApiSeq,menu.getParentMenu())){
+                   mp.put("hasError",true);
+                   mp.put("message","Menu already exist");
+                   return mp;
+               }
+           }else{
+                if(!hierarchyRepo.existsByParentMenuAndIdNotIn(menu.getParentMenu(),Arrays.asList(menu.id))){
+                    mp.put("hasError",true);
+                    mp.put("message","The parent menu does not exist");
+                    return mp;
+                }
+               if(hierarchyRepo.existsByApiSeqAndParentMenuAndIdNotIn(parentApiSeq,menu.getParentMenu(),Arrays.asList(menu.id))){
+                   mp.put("hasError",true);
+                   mp.put("message","Menu already exist");
+                   return mp;
+               }
+              }
         }
 
-
-         for(AgainstModuleDTO dtl : dto.getDetails()){
-            if(dtl.getApiPattern()==null || dtl.getMethodName()==null){
-                mp.put("hasError",true);
-                mp.put("message","Api pattern and Method name is required");
-                return mp;
-            }
-            if(detailsRepo.existPatternOrName(dtl.getApiPattern() , Arrays.asList(dtl.getId()))>0){
-                mp.put("hasError",true);
-                mp.put("message","Api pattern and Method name is already exist");
-                return mp;
-            }
-             int duplicity=0;
-            for(AgainstModuleDTO x : dto.getDetails()){
-                if(dtl.getApiPattern().equals(x.getApiPattern())){duplicity++;}}
-            if(duplicity>1){
-                mp.put("hasError",true);
-                mp.put("message","duplicate Api pattern found ");
-                return mp;
-            }
-          }
-
-            return mp;
+        return mp;
 
     }
 
-    public MsgResponse create(ModuleInfoDTO dto) {
-        Map<String,Object> mp = validate(dto);
+    public MsgResponse create(List<MenuDTO> list) {
+        Map<String,Object> mp = validate(list);
         if((boolean)mp.get("hasError")){
             return new MsgResponse(mp.get("message"),false);
         }
-      //  ModuleInfo moduleInfo = new ModuleInfo();
-//        BeanUtils.copyProperties(dto,moduleInfo);
-//        if(moduleInfo.getId()==null){
-//           // moduleInfoRepo.save(moduleInfo);
-//        }
 
-        for(AgainstModuleDTO x : dto.getDetails()){
-            MenuHierarchy dtl = new MenuHierarchy();
-            BeanUtils.copyProperties(x,dtl);
-          //  dtl.setModuleInfo(moduleInfo);
-            detailsRepo.save(dtl);
+        for(MenuDTO obj : list){
+            if(obj.getId()!=null){
+                MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
+                BeanUtils.copyProperties(obj,menu);
+                hierarchyRepo.save(menu);
+            }else{
+                    String[] arr = obj.apiSeq.split("/");
+                    String parentApiSeq = CommonUtil.removeWordFromString(obj.apiSeq,arr[arr.length-1]);
+                    MenuHierarchy menu = hierarchyRepo.findByMenuAndApiSeq(obj.getParentMenu(),parentApiSeq);
+                    MenuHierarchy child = new MenuHierarchy();
+                    BeanUtils.copyProperties(obj,child);
+                    if(menu!=null){
+                        menu.getDetails().add(child);
+                        hierarchyRepo.save(menu);
+                    }else{
+                        hierarchyRepo.save(child);
+                    }
             }
+        }
+
         return new MsgResponse("Successfully created",true);
     }
 
-    public MsgResponse edit(ModuleInfoDTO dto) {
-
-        return create(dto);
+    public MsgResponse edit(List<MenuDTO> list) {
+        return create(list);
     }
 
     public MsgResponse delete(Long id) {
@@ -109,7 +118,7 @@ public class ModuleInfoService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        return CommonUtil.responseFromPage(detailsRepo.getList(dto.getModuleId(),pageable));
+        return CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),pageable));
     }
 
 

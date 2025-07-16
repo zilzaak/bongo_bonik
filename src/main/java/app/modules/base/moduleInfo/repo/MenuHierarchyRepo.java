@@ -32,4 +32,14 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "FROM MenuHierarchy x " +
             "WHERE x.id IN ?1 ")
     List<Map<String,Object>> getMenuNames(List<Long> menuIds);
+
+    boolean existsByApiSeqAndParentMenu(String apiSeq, String parentMenu);
+
+    boolean existsByApiSeqAndParentMenuAndIdNotIn(String apiSeq, String parentMenu, List<Long> asList);
+
+    boolean existsByParentMenu(String parentMenu);
+
+    boolean existsByParentMenuAndIdNotIn(String parentMenu, List<Long> asList);
+
+    MenuHierarchy findByMenuAndApiSeq(String parentMenu, String parentApiSeq);
 }

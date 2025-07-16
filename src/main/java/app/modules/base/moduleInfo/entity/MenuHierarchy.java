@@ -26,7 +26,7 @@ public class MenuHierarchy extends BaseEntity {
     private String apiSeq;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id") // Explicit join column instead of mappedBy
+    @JoinColumn(name = "parent_id")
     @JsonManagedReference
     private List<MenuHierarchy> details = new ArrayList<>();
 }
