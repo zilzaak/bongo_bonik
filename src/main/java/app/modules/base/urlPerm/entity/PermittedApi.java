@@ -22,5 +22,6 @@ public class PermittedApi extends BaseEntity{
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
+    private Long menuId;
     private String menuIdsHierarchy;
 }

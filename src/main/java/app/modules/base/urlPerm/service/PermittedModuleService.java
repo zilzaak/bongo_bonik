@@ -3,6 +3,7 @@ package app.modules.base.urlPerm.service;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
+import app.modules.base.moduleInfo.dto.MenuHierarchyDTO;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
 import app.modules.base.role.repo.RoleRepository;
@@ -86,6 +87,7 @@ public class PermittedModuleService {
         while(menu!=null){
           if(menuIdsHierarchy==null){
               menuIdsHierarchy=menu.getId().toString();
+              dto.setMenuId(menu.getId());
           }else{
               menuIdsHierarchy=menuIdsHierarchy+","+menu.getId();
           }
@@ -96,7 +98,6 @@ public class PermittedModuleService {
           }
         }
         dto.setMenuIdsHierarchy(menuIdsHierarchy);
-
         return mp;
     }
 
@@ -108,7 +109,8 @@ public class PermittedModuleService {
     }
 
     public MsgResponse delete(Long id) {
-        return null;
+        permittedApiRepository.deleteById(id);
+        return new MsgResponse("Successfully deleted",true);
     }
 
     public MsgResponse edit( List<PrmttedApiDTO> dto) {
@@ -140,8 +142,76 @@ public class PermittedModuleService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); // comes from the token subject
         User user = userRepository.findByUsername(username);
-          return null;
+        List<PermittedApi> permittedApis = permittedApiRepository.getPermittedApis(user.getId(),user.getRoles());
+        List<MenuHierarchyDTO> menus=new ArrayList<>();
+        for(PermittedApi obj : permittedApis){
+            List<Long> menuIds = CommonUtil.strListToLong(CommonUtil.bulkStrToList(obj.getMenuIdsHierarchy()));
+            List<Map<String,Object>> sortedMenus = new ArrayList<>();
+            List<Map<String,Object>> dbMenus = apiAgainstModuleRepo.getMenuNames(menuIds);
+            for(Long id : menuIds){
+               for(Map<String,Object> k : dbMenus){
+                  if(k.get("id").equals(id)){
+                      sortedMenus.add(k);
+                  }
+               }
+            }
+            this.makeHierarchy(sortedMenus,menuIds,menus,obj);
+
+        }
+        return new MsgResponse("Menu permission list retrieved ",menus,true);
 
     }
 
+    public MenuHierarchyDTO makeObj(List<Map<String,Object>> names,
+                        PermittedApi obj,int i,boolean child){
+        MenuHierarchyDTO hr = new MenuHierarchyDTO();
+        hr.setId((Long) names.get(i).get("id"));
+        hr.setMenu((String) names.get(i).get("menu"));
+        hr.setParentMenu(Optional.ofNullable(names.get(i+1).get("menu")).map(Object::toString).orElse(null));
+        hr.setMethodName((String) Optional.ofNullable(names.get(i).get("methodName")).orElse(null));
+        if(child){
+            hr.setApiPattern(obj.getBackendUrl());
+            hr.setFrontUrl(obj.getFrontendUrl());
+        }
+        return hr;
+    }
+
+
+    public void findChildAndSet(String parentMenu,String nextParent ,
+                                Long parentId,List<MenuHierarchyDTO> menus,
+                                Boolean childFound){
+        for(MenuHierarchyDTO child : menus){
+           if(child.getParentMenu()!=null && child.getParentMenu().equals(parentMenu)){
+               MenuHierarchyDTO parent = new MenuHierarchyDTO();
+               parent.setId(parentId);
+               parent.setMenu(parentMenu);
+               parent.setParentMenu(nextParent);
+               parent.getDetails().add(child);
+               childFound=Boolean.TRUE;
+               break;
+           }else{
+               if(child.getDetails().size()>0){
+                   this.findChildAndSet(parentMenu,nextParent,parentId,child.getDetails(),childFound);
+               }
+           }
+        }
+    }
+
+    private void makeHierarchy(List<Map<String,Object>> names, List<Long> menuIds, List<MenuHierarchyDTO> menus, PermittedApi obj){
+        if(menus.size()<1){
+            for(int i=0;i<names.size();i++){
+               if(i==0){
+                   menus.add(this.makeObj(names,obj,i,true));
+               }else{
+                   Boolean childFound=Boolean.FALSE;
+                   this.findChildAndSet((String)names.get(i).get("menu"),
+                           Optional.ofNullable(names.get(i+1).get("menu")).map(Object::toString).orElse(null),
+                           (Long)names.get(i).get("id"),menus,childFound);
+                   if(!childFound){
+                       menus.add(this.makeObj(names,obj,i,false));
+                   }
+               }
+            }
+        }
+    }
 }

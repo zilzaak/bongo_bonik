@@ -27,4 +27,9 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     MenuHierarchy findByApiPattern(String backendUrl);
 
     MenuHierarchy findTopByMenu(String parentMenu);
+
+    @Query("SELECT x.id as id , x.menu as menu , x.methodName as methodName " +
+            "FROM MenuHierarchy x " +
+            "WHERE x.id IN ?1 ")
+    List<Map<String,Object>> getMenuNames(List<Long> menuIds);
 }

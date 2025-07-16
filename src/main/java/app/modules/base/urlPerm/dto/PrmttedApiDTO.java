@@ -12,5 +12,6 @@ public class PrmttedApiDTO {
     private String frontendUrl;
     private Long user;
     private Long role;
+    private Long menuId;
     private String menuIdsHierarchy;
 }
