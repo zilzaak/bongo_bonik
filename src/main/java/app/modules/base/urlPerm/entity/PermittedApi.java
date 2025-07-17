@@ -18,9 +18,9 @@ import lombok.Setter;
 public class PermittedApi extends BaseEntity{
     private String backendUrl;
     private String frontendUrl;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
     private Long menuId;
     private String menuIdsHierarchy;

@@ -40,7 +40,7 @@ public class DynamicPermissionService {
 
         List<Map<String,Object>> permissions = new ArrayList<>();
         if(u!=null && role.size()>0){
-            permissions = permittedApiRepository.getUsersPermittedMenu(u.getId() ,role);
+            permissions = permittedApiRepository.getUsersPermittedMenu(u ,role);
         }
         else if(u==null && role.size()>0){
             permissions = permittedApiRepository.getUsersPermittedMenu(role);
