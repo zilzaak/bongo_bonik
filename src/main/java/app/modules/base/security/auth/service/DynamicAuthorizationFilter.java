@@ -2,21 +2,21 @@ package app.modules.base.security.auth.service;
 
 
 
-import app.common.util.CommonUtil;
+import app.modules.base.role.entity.Role;
+import app.modules.base.user.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class DynamicAuthorizationFilter extends OncePerRequestFilter {
@@ -29,12 +29,20 @@ public class DynamicAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.userdetails.User  user  = null;
+        String username=null;
+        if(auth!=null){
+            user  = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+            username=user.getUsername();
+        }
+
 
            String requestURI = request.getRequestURI();
-
+           boolean noNeedAuthenticationUrl=false;
             Map<String, String> permissions = dynamicPermissionService.getPermissions();
             List<String> apiParts=Arrays.asList(requestURI.split("/"));
-            String rolesForUri = null;
+            String rolesOrUserToAccessUri = null;
             String tempApi=null;
             for(String apiPart : apiParts ){
                 if(apiPart.isEmpty() || apiPart.trim().equals("")){
@@ -46,40 +54,45 @@ public class DynamicAuthorizationFilter extends OncePerRequestFilter {
                     tempApi=tempApi+"/"+apiPart;
                 }
                 for(String apiPattern : permissions.keySet()){
-                    String roles=permissions.get(apiPattern);
+                    String data=permissions.get(apiPattern);
                     if(apiPattern.equals(tempApi) || apiPattern.equals(tempApi+"/"+"**")){
-                        if(rolesForUri==null){
-                            rolesForUri= roles;
+                        if(rolesOrUserToAccessUri==null){
+                            rolesOrUserToAccessUri= data;
                         }else{
-                            rolesForUri=rolesForUri+","+ roles;
+                            rolesOrUserToAccessUri=rolesOrUserToAccessUri+","+ data;
                         }
                     }
                 }
             }
 
-            if (rolesForUri != null) {
-                String[] requiredRoles = rolesForUri.split(",");
-                boolean noNeedAuthenticationUrl=false;
-                for(int i=0;i<requiredRoles.length;i++){
-                    if(requiredRoles[i].equals("PERMIT_ALL")){
+            if (rolesOrUserToAccessUri != null) {
+                List<String> perms  = Arrays.asList(rolesOrUserToAccessUri.split(","));
+                  if(perms.contains("PERMIT_ALL")){
                         noNeedAuthenticationUrl=true;
-                        break;
                     }
-                }
 
                 if(!noNeedAuthenticationUrl){
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                    boolean hasRole = Arrays.stream(requiredRoles)
-                            .anyMatch(role -> auth.getAuthorities().stream()
-                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role)));
-                    if (!hasRole) {
+                    boolean hasRole = false;
+                    for(GrantedAuthority au : user.getAuthorities()){
+                        if(perms.contains(au.getAuthority())){
+                            hasRole=true;
+                            break;
+                        }
+                    }
+                    boolean hasUser=perms.contains(username);
+                    if (!hasRole && !hasUser ) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
                         return;
                     }
                 }
             }
-            filterChain.doFilter(request, response);
+        System.out.println("your requested uri is "+requestURI+"  no permission need for this url ?? "+(noNeedAuthenticationUrl?"yes":"no"));
+              if(rolesOrUserToAccessUri == null && !noNeedAuthenticationUrl){
+                  response.sendError(HttpServletResponse.SC_FORBIDDEN, "No role or permission found against the requested url");
+                  return;
+              }
 
+            filterChain.doFilter(request, response);
 
     }
 }

@@ -38,19 +38,44 @@ public class DynamicPermissionService {
         }
         role.add(free);
 
-        List<Map<String,Object>> permissions = permittedApiRepository.getUsersPermittedMenu(role);
+        List<Map<String,Object>> permissions = new ArrayList<>();
+        if(u!=null && role.size()>0){
+            permissions = permittedApiRepository.getUsersPermittedMenu(u.getId() ,role);
+        }
+        else if(u==null && role.size()>0){
+            permissions = permittedApiRepository.getUsersPermittedMenu(role);
+        }
+        else if(u!=null && role.size()<1){
+            permissions = permittedApiRepository.getUsersPermittedMenu(u.getId());
+        }
+
 
         Map<String, String> maps = new HashMap<>();
           for(Map<String,Object> obj :  permissions ){
              if(maps.isEmpty()){
-                 maps.put((String)obj.get("apiPattern"), (String)obj.get("authority"));
+                 if(obj.get("authority")!=null){
+                     maps.put((String)obj.get("apiPattern"), (String)obj.get("authority"));
+                 }
+                 if(obj.get("username")!=null){
+                     maps.put((String)obj.get("apiPattern"), (String)obj.get("username"));
+                 }
              }else{
                  if(maps.containsKey((String)obj.get("apiPattern"))){
                   String val=maps.get((String)obj.get("apiPattern"));
-                  val=val+","+obj.get("authority");
+                  if(obj.get("authority")!=null){
+                      val=val+","+obj.get("authority");
+                  }
+                  if(obj.get("username")!=null){
+                      val=val+","+obj.get("username");
+                  }
                   maps.put((String)obj.get("apiPattern"),val);
               }else{
-                  maps.put((String)obj.get("apiPattern"), (String) obj.get("authority"));
+                     if(obj.get("authority")!=null){
+                         maps.put((String)obj.get("apiPattern"), (String)obj.get("authority"));
+                     }
+                     if(obj.get("username")!=null){
+                         maps.put((String)obj.get("apiPattern"), (String)obj.get("username"));
+                     }
                  }
 
              }

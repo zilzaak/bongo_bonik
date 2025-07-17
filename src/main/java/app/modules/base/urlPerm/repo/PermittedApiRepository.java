@@ -45,11 +45,29 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     List<PermittedApi> getPermittedApis(Long userid , Set<Role> roles);
 
     boolean existsByMenuId(Long id);
-    @Query("select x.backendUrl as apiPattern , role.authority as authority  " +
+    @Query("select x.backendUrl as apiPattern , role.authority as authority , u.username as username " +
             " from PermittedApi x " +
             " left join x.role r  " +
             " left join x.user u  " +
             " where  " +
-            "  r in :role  ")
+            "  r in :role order by x.id desc ")
     List<Map<String, Object>> getUsersPermittedMenu(@Param("role") Set<Role> role );
+
+
+    @Query("select x.backendUrl as apiPattern , role.authority as authority , u.username as username  " +
+            " from PermittedApi x " +
+            " left join x.role r  " +
+            " left join x.user u  " +
+            " where  " +
+            "  u.id=:userid  order by x.id desc")
+    List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") Long userid  );
+
+    @Query("select x.backendUrl as apiPattern , role.authority as authority , u.username as username  " +
+            " from PermittedApi x " +
+            " left join x.role r  " +
+            " left join x.user u  " +
+            " where  " +
+            "  u.id=:userid " +
+            "  or r in :role  order by x.id desc ")
+    List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") Long userid , @Param("role") Set<Role> role );
 }
