@@ -175,4 +175,6 @@ public class CommonUtil {
         return  result;
     }
 
+    public static List<String> permitAllList=Arrays.asList("/auth/getToken");
+
 }

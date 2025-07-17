@@ -2,10 +2,12 @@ package app.modules.base.urlPerm.repo;
 
 import app.modules.base.role.entity.Role;
 import app.modules.base.urlPerm.entity.PermittedApi;
+import app.modules.base.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,9 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     boolean existsByMenuId(Long id);
     @Query("select x.backendUrl as apiPattern , role.authority as authority  " +
             " from PermittedApi x " +
-            " left join x.role role  ")
-    List<Map<String, Object>> getUsersPermittedMenu();
+            " left join x.role r  " +
+            " left join x.user u  " +
+            " where  " +
+            "  r in :role  ")
+    List<Map<String, Object>> getUsersPermittedMenu(@Param("role") Set<Role> role );
 }
