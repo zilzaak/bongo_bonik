@@ -1,9 +1,13 @@
 package app.modules.base.urlPerm.urlRetriver;
 
 import app.common.util.CommonUtil;
-import app.modules.base.moduleInfo.entity.HeirarchyType;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
+import app.modules.base.role.entity.Role;
+import app.modules.base.role.repo.RoleRepository;
+import app.modules.base.urlPerm.entity.PermittedApi;
+import app.modules.base.urlPerm.repo.PermittedApiRepository;
+import app.modules.base.user.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -17,11 +21,20 @@ public class ApiEndpointRetriever {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private final MenuHierarchyRepo apiAgainstModuleRepo;
+    private final PermittedApiRepository permittedApiRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
-                                MenuHierarchyRepo apiAgainstModuleRepo) {
+                                MenuHierarchyRepo apiAgainstModuleRepo,
+                                PermittedApiRepository permittedApiRepository,
+                                UserRepository userRepository,
+                                RoleRepository roleRepository) {
         this.requestMappingHandlerMapping = mapping;
         this.apiAgainstModuleRepo = apiAgainstModuleRepo;
+        this.permittedApiRepository=permittedApiRepository;
+        this.userRepository=userRepository;
+        this.roleRepository=roleRepository;
     }
 
     private String getMethod(String method) {
@@ -77,17 +90,17 @@ public class ApiEndpointRetriever {
 
 
     public MenuHierarchy makeMenuHierarchy(TreePartTrack track,Map<String,String> partTracker){
-    MenuHierarchy m = new MenuHierarchy();
-    m.setMenu(track.childMenu);
-    m.setParentMenu(track.parentMenu);
-    m.setApiSeq(track.apiSeq);
-    if(track.isLastPart){
-        m.setMethodName(track.methodName);
-        m.setApiPattern(track.apiUrl);
+        MenuHierarchy m = new MenuHierarchy();
+        m.setMenu(track.childMenu);
+        m.setParentMenu(track.parentMenu);
+        m.setApiSeq(track.apiSeq);
+        if(track.isLastPart){
+            m.setMethodName(track.methodName);
+            m.setApiPattern(track.apiUrl);
+        }
+        partTracker.put(track.apiSeq,track.apiSeq);
+        return m;
     }
-    partTracker.put(track.apiSeq,track.apiSeq);
-    return m;
-}
 
 
     @PostConstruct
@@ -110,59 +123,90 @@ public class ApiEndpointRetriever {
                 String childMenu = apiParts[j];
                 String parentMenu=(j>=2)?apiParts[j-1]:null;
 
-                 if(apiSeq==null){apiSeq=childMenu;}else{apiSeq=apiSeq+"/"+childMenu;}
+                if(apiSeq==null){apiSeq=childMenu;}else{apiSeq=apiSeq+"/"+childMenu;}
 
-                   TreePartTrack track = this.makeTracker(j,childMenu,parentMenu,api,apiParts.length,method,apiSeq);
+                TreePartTrack track = this.makeTracker(j,childMenu,parentMenu,api,apiParts.length,method,apiSeq);
 
-                   if(menuTree.size()<1){
-                        menuTree.add(this.makeMenuHierarchy(track,partTracker));
+                if(menuTree.size()<1){
+                    menuTree.add(this.makeMenuHierarchy(track,partTracker));
+                }
+                else{
+                    if(!partTracker.containsKey(track.apiSeq)){
+                        this.setUnderParent(menuTree,track,partTracker);
                     }
-                    else{
-                        if(!partTracker.containsKey(track.apiSeq)){
-                            this.setUnderParent(menuTree,track,partTracker);
-                        }
-                    }
-               }
+                }
+            }
         }
 
-        this.apiAgainstModuleRepo.saveAll(menuTree);
+        if(this.apiAgainstModuleRepo.count()<1){
+            this.apiAgainstModuleRepo.saveAll(menuTree);
+            Role role = roleRepository.findByAuthority("SUPER_ADMIN");
+            List<MenuHierarchy> menuList = apiAgainstModuleRepo.getAllUrl();
+            this.createApiPermission(menuList,role);
+        }
+    }
+
+    private void createApiPermission(List<MenuHierarchy> menuTree, Role role) {
+        Role permitAll = roleRepository.findByAuthority("PERMIT_ALL");
+        List<PermittedApi>  list = new ArrayList<>();
+        for(MenuHierarchy m : menuTree){
+            PermittedApi x = new PermittedApi();
+            if(!m.getApiPattern().contains("/getToken")){
+                x.setRole(role);
+            }else{
+                x.setRole(permitAll);
+            }
+            x.setFrontendUrl(m.getFrontUrl());
+            x.setBackendUrl(m.getApiPattern());
+            x.setMenuId(m.getId());
+            String  ids=m.getId().toString();
+
+            Long parentId = apiAgainstModuleRepo.findParentIdById(m.getId());
+            MenuHierarchy k=null;
+            if(parentId!=null){
+                k = apiAgainstModuleRepo.findById(parentId).orElse(null);
+            }
+
+            while(k!=null){
+                ids=ids+","+k.getId();
+                parentId = apiAgainstModuleRepo.findParentIdById(k.getId());
+                if(parentId!=null){
+                    k = apiAgainstModuleRepo.findById(parentId).orElse(null);
+                }else{
+                    k=null;
+                }
+            }
+            x.setMenuIdsHierarchy(ids);
+            list.add(x);
+        }
+
+        this.permittedApiRepository.saveAll(list);
     }
 
 
     public void setUnderParent(List<MenuHierarchy> menuTree,TreePartTrack track,Map<String,String> partTracker){
-             Boolean parentFound=false;
-            for(MenuHierarchy menu : menuTree){
-                String parentSeq = null ;
-                if(track.apiSeq.contains("/")){
-                    int lastSlashIndex = track.apiSeq.lastIndexOf('/'); // Finds
-                     parentSeq = track.apiSeq.substring(0, lastSlashIndex);
-                }
-                   if(parentSeq==null){
-                       parentFound=true;
-                       break;
-                   }
-                   else if(menu.getApiSeq().equals(parentSeq)){
-                        menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
-                        break;
-                    }else{
-                        this.setUnderParent(menu.getDetails(),track,partTracker);
-                    }
-               }
-
-            if(parentFound){
-                menuTree.add(this.makeMenuHierarchy(track,partTracker));
-            }
-         }
-
-
-    public void printTree(List<MenuHierarchy> menuTree){
+        Boolean parentFound=false;
         for(MenuHierarchy menu : menuTree){
-                if(menu.getApiPattern()!=null){
-                    System.out.println("menu="+menu.getMenu()+" , api = "+menu.getApiPattern()+" , method = "+menu.getMethodName());
-                }
-                if(menu.getDetails().size()>0){
-                   this.printTree(menu.getDetails());
-                }
+            String parentSeq = null ;
+            if(track.apiSeq.contains("/")){
+                int lastSlashIndex = track.apiSeq.lastIndexOf('/'); // Finds
+                parentSeq = track.apiSeq.substring(0, lastSlashIndex);
             }
+            if(parentSeq==null){
+                parentFound=true;
+                break;
+            }
+            else if(menu.getApiSeq().equals(parentSeq)){
+                menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
+                break;
+            }else{
+                this.setUnderParent(menu.getDetails(),track,partTracker);
+            }
+        }
+
+        if(parentFound){
+            menuTree.add(this.makeMenuHierarchy(track,partTracker));
+        }
     }
+
 }
