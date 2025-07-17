@@ -1,9 +1,17 @@
 package app.modules.base.urlPerm.dto;
-
-import lombok.Data;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class PrmttedApiDTO {
     private Long id;
-    private Long api;
+    private String backendUrl;
+    private String frontendUrl;
+    private Long user;
+    private Long role;
+    private Long menuId;
+    private String menuIdsHierarchy;
 }

@@ -157,6 +157,24 @@ public class CommonUtil {
               return result;
     }
 
+    public static String removeWordFromString(String stringSeq , String wordToRemove){
+        if(wordToRemove==null){
+            return stringSeq;
+        }
+         String updatedString = stringSeq.replace(wordToRemove, "").trim();
+         return updatedString;
+    }
 
+    public static String removeLastCharacter(String str){
+        String result = str.substring(0, str.length() - 1);
+       return  result;
+    }
+
+    public static String removeFirstChar(String str) {
+        String result =  (str == null || str.length() < 2) ? str : str.substring(1);
+        return  result;
+    }
+
+    public static List<String> permitAllList=Arrays.asList("/auth/getToken");
 
 }

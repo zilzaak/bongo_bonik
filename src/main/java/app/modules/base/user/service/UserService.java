@@ -168,42 +168,12 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
             userRepository.saveAndFlush(super_admin);
         }
 
-
         if(!roleRepository.existsByAuthority("PERMIT_ALL")){
             Role permAllRole = new Role();
             permAllRole.setAuthority("PERMIT_ALL");
             roleRepository.saveAndFlush(permAllRole);
         }
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
-        AuthorityPermission permitAll = new AuthorityPermission("PERMIT_ALL","/auth/getToken");
-        AuthorityPermission getMenu = new AuthorityPermission("PERMIT_ALL","/permittedModule/getMenu");
-        AuthorityPermission roleAcess=new AuthorityPermission("SUPER_ADMIN","/role/**");
-        AuthorityPermission menuAcess=new AuthorityPermission("SUPER_ADMIN","/apiPerm/**");
-        AuthorityPermission userAccess=new AuthorityPermission("SUPER_ADMIN","/user/**");
-        AuthorityPermission moduleAccess=new AuthorityPermission("SUPER_ADMIN","/module/**");
-        AuthorityPermission permittedModule=new AuthorityPermission("SUPER_ADMIN","/permittedModule/**");
-
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("PERMIT_ALL","/permittedModule/getMenu")){
-            authorityPermissionRepository.save(getMenu);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("PERMIT_ALL","/auth/getToken")){
-            authorityPermissionRepository.save(permitAll);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/user/**")){
-            authorityPermissionRepository.save(userAccess);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/role/**")){
-            authorityPermissionRepository.save(roleAcess);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/apiPerm/**")){
-            authorityPermissionRepository.save(menuAcess);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/module/**")){
-            authorityPermissionRepository.save(moduleAccess);
-        }
-        if(!authorityPermissionRepository.existsByRoleNameAndApiPattern("SUPER_ADMIN","/permittedModule/**")){
-            authorityPermissionRepository.save(permittedModule);
-        }
     }
 
 }

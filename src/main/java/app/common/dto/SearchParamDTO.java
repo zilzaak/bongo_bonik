@@ -27,4 +27,6 @@ public class SearchParamDTO {
    private Long roleId;
    private Long moduleId;
    private String apiPattern;
+   private String menuId;
+   private Long userId ;
 }
