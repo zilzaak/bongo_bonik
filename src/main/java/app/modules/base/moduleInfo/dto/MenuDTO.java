@@ -53,6 +53,11 @@ public class MenuDTO {
 
     public void setApiPattern(String apiPattern) {
         this.apiPattern =  CommonUtil.removeAllSpace(apiPattern);
+        if(this.apiPattern!=null){
+            if(CommonUtil.isLastChar(this.apiPattern,'/')){
+               this.apiPattern=CommonUtil.removeLastCharacter(this.apiPattern);
+            }
+        }
     }
 
     public String getMethodName() {

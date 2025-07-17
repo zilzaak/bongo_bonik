@@ -41,8 +41,6 @@ public class ModuleInfoService {
         for(MenuDTO menu : list){
 
             menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiPattern));
-            String parentApiSeq=CommonUtil.removeWordFromString(menu.apiSeq,menu.menu);
-
             if(menu.getApiPattern()!=null && !menu.getApiPattern().isEmpty() && !menu.getApiPattern().contains(menu.menu)){
                 mp.put("hasError",true);
                 mp.put("message","Menu name must be meaningful");
@@ -56,23 +54,23 @@ public class ModuleInfoService {
             }
 
             if(menu.getId()==null){
-                if(!hierarchyRepo.existsByParentMenu(menu.getParentMenu())){
+                if(menu.getParentMenu()!=null && !hierarchyRepo.existsByMenu(menu.getParentMenu())){
                     mp.put("hasError",true);
-                    mp.put("message","The parent menu does not exist");
+                    mp.put("message","The parent menu selected but not created yet");
                     return mp;
                 }
-               if(hierarchyRepo.existsByApiSeqAndParentMenu(parentApiSeq,menu.getParentMenu())){
+               if(hierarchyRepo.existsByApiSeqAndMenu(menu.getApiSeq(),menu.getMenu())){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
                }
            }else{
-                if(!hierarchyRepo.existsByParentMenuAndIdNotIn(menu.getParentMenu(),Arrays.asList(menu.id))){
+                if(menu.getParentMenu()!=null && !hierarchyRepo.existsByMenuAndIdNotIn(menu.getParentMenu(),Arrays.asList(menu.id))){
                     mp.put("hasError",true);
                     mp.put("message","The parent menu does not exist");
                     return mp;
                 }
-               if(hierarchyRepo.existsByApiSeqAndParentMenuAndIdNotIn(parentApiSeq,menu.getParentMenu(),Arrays.asList(menu.id))){
+               if(hierarchyRepo.existsByApiSeqAndMenuAndIdNotIn(menu.apiSeq,menu.getMenu(),Arrays.asList(menu.id))){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
@@ -97,7 +95,11 @@ public class ModuleInfoService {
                 hierarchyRepo.save(menu);
             }else{
                     String[] arr = obj.apiSeq.split("/");
-                    String parentApiSeq = CommonUtil.removeWordFromString(obj.apiSeq,arr[arr.length-1]);
+                    String parentApiSeq = null;
+                    if(arr.length>1){
+                        parentApiSeq = CommonUtil.removeWordFromString(obj.apiSeq,arr[arr.length-1]);
+                    }
+                    parentApiSeq = CommonUtil.isLastChar(parentApiSeq,'/')?CommonUtil.removeLastCharacter(parentApiSeq):parentApiSeq;
                     MenuHierarchy menu = hierarchyRepo.findByMenuAndApiSeq(obj.getParentMenu(),parentApiSeq);
                     MenuHierarchy child = new MenuHierarchy();
                     BeanUtils.copyProperties(obj,child);

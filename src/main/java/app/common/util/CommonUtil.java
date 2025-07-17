@@ -43,6 +43,17 @@ public class CommonUtil {
         return input;
     }
 
+    public static boolean isLastChar(String input,char ch){
+        if(input==null){
+            return false;
+        }
+        char lastCharacter = input.charAt(input.length()-1);
+        if(lastCharacter==ch){
+            return true;
+        }
+        return false;
+    }
+
     //cat,brand,model,
     // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
 
@@ -166,6 +177,9 @@ public class CommonUtil {
     }
 
     public static String removeLastCharacter(String str){
+        if(str==null){
+            return str;
+        }
         String result = str.substring(0, str.length() - 1);
        return  result;
     }
