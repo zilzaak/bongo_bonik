@@ -40,9 +40,10 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     @Query("select  x from PermittedApi x " +
             " left join x.user user " +
             " left join x.role role  " +
-            " where ( ?1 is null or user.id=?1 ) " +
-            " and ( ?2 is null or role in ?2  ) ")
-    List<PermittedApi> getPermittedApis(Long userid , Set<Role> roles);
+            " where user=:ud  " +
+            " or role in :rl order by x.id asc")
+    List<PermittedApi> getPermittedApis(@Param("ud") User ud ,
+                                        @Param("rl") Set<Role> rl);
 
     boolean existsByMenuId(Long id);
     @Query("select x.backendUrl as apiPattern , r.authority as authority , u.username as username " +

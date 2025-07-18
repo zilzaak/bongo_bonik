@@ -29,9 +29,9 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
 
     MenuHierarchy findTopByMenu(String parentMenu);
 
-    @Query("SELECT x.id as id , x.menu as menu , x.methodName as methodName " +
-            "FROM MenuHierarchy x " +
-            "WHERE x.id IN ?1 ")
+    @Query(value="SELECT x.id as id , x.parent_id as parentId , x.menu as menu , x.method_name as methodName " +
+            "FROM menu_hierarchy x " +
+            "WHERE x.id IN ?1 ",nativeQuery = true)
     List<Map<String,Object>> getMenuNames(List<Long> menuIds);
 
     boolean existsByApiSeqAndMenu(String apiSeq, String menu);
@@ -51,4 +51,6 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
 
     @Query(value = "SELECT parent_id FROM menu_hierarchy WHERE id = :id", nativeQuery = true)
     Long findParentIdById(@Param("id") Long id);
+    @Query("SELECT menu FROM MenuHierarchy WHERE id = ?1 ")
+    String getName(Long menuId);
 }

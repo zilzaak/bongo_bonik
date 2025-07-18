@@ -98,6 +98,13 @@ public class CommonUtil {
         return longLst;
     }
 
+    public static List<Long> reverseOrderList(List<Long> list){
+        List<Long> result = new ArrayList<>();
+        for(int i=list.size()-1 ; i>=0 ; i--){
+            result.add(list.get(i));
+        }
+        return result;
+    }
 
     public static Map<String,Object> counterAttribute(String counter){
         Map<String,Object> attr = new HashMap<>();
