@@ -8,6 +8,7 @@ import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
+import app.modules.base.urlPerm.dto.MenuData;
 import app.modules.base.urlPerm.dto.SubMenuTrack;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.user.entity.User;
@@ -162,7 +163,7 @@ public class PermittedModuleService {
                 if(i>0){
                     element.setParentId(menuIdHierarchyOfTheApi.get(i-1));
                 }
-                MenuHierarchy hr = apiAgainstModuleRepo.findById(element.getId()).get();
+                MenuData hr = apiAgainstModuleRepo.getData(element.getId());
                 element.setMenu(hr.getMenu());
                 element.setParentMenu(hr.getParentMenu());
                 element.setMethodName(hr.getMethodName());

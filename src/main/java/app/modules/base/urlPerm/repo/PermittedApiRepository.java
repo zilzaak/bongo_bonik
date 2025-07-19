@@ -71,4 +71,6 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             "  u=:userid " +
             "  or r in :role  order by x.id desc ")
     List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") User userid , @Param("role") Set<Role> role );
+
+    PermittedApi findByMenuId(Long id);
 }

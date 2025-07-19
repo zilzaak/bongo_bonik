@@ -1,6 +1,7 @@
 package app.modules.base.moduleInfo.repo;
 
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
+import app.modules.base.urlPerm.dto.MenuData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -53,4 +54,14 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     Long findParentIdById(@Param("id") Long id);
     @Query("SELECT menu FROM MenuHierarchy WHERE id = ?1 ")
     String getName(Long menuId);
+
+    @Query("SELECT new app.modules.base.urlPerm.dto.MenuData(x.frontUrl  , " +
+            "  x.menu  , " +
+            " x.parentMenu  , " +
+            " x.apiPattern , " +
+            " x.methodName , " +
+            " x.apiSeq )  " +
+            "  from MenuHierarchy x " +
+            "  where x.id=?1 ")
+    MenuData getData(Long id);
 }

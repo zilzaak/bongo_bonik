@@ -7,6 +7,8 @@ import app.common.util.CommonUtil;
 import app.modules.base.moduleInfo.dto.MenuDTO;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
+import app.modules.base.urlPerm.entity.PermittedApi;
+import app.modules.base.urlPerm.repo.PermittedApiRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,9 @@ public class ModuleInfoService {
 
     @Autowired
     private MenuHierarchyRepo hierarchyRepo;
+
+    @Autowired
+    private PermittedApiRepository permittedApiRepository;
 
     private final RequestMappingHandlerMapping handlerMapping;
     public ModuleInfoService(RequestMappingHandlerMapping handlerMapping) {
@@ -93,6 +98,10 @@ public class ModuleInfoService {
                 MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
                 BeanUtils.copyProperties(obj,menu);
                 hierarchyRepo.save(menu);
+                PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
+                permission.setBackendUrl(menu.getApiPattern());
+                permission.setFrontendUrl(menu.getFrontUrl());
+                permittedApiRepository.save(permission);
             }else{
                     String[] arr = obj.apiSeq.split("/");
                     String parentApiSeq = null;
