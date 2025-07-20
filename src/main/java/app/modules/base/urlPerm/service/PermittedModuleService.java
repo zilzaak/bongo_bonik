@@ -150,8 +150,6 @@ public class PermittedModuleService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); // comes from the token subject
         User user = userRepository.findByUsername(username);
-        Role all = roleRepository.findByAuthority("PERMIT_ALL");
-        user.getRoles().add(all);
         List<PermittedApi> permittedApis = permittedApiRepository.getPermittedApis(user,user.getRoles());
         List<MenuHierarchyDTO> menuResponse=new ArrayList<>();
         Map<Long,Long> menuProcessed=new HashMap<>();
