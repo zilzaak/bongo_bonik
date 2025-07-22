@@ -17,9 +17,6 @@ import lombok.Setter;
 @Setter
 public class AccountBalance extends BaseEntity {
     @ManyToOne
-    private Organization org;
-
-    @ManyToOne
     private Branch branch;
     @ManyToOne
     private ChartOfAccount account;

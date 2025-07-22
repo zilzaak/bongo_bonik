@@ -16,10 +16,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChartOfAccount extends BaseEntity {
-
-    @ManyToOne
-    private Organization org;
-
     @ManyToOne
     private Branch branch;
 
