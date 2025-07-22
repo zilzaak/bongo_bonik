@@ -2,7 +2,6 @@ package app.accounting.accounts;
 
 public enum AccountType {
 
-
     ASSETS("ASSETS"),
     //CURRENT_ASSET(CASH,BANK,INVENTORY,ACC_RECEIVABLE,VAT_INPUT,BANK_INTEREST_RECEIVABLE),
     //FIXED_ASSET(FURNITURE,VEHICLE,PERSONAL_ASSET)
@@ -15,13 +14,11 @@ public enum AccountType {
     EXPENSE("EXPENSE") ;
     //COGS,RENT,LOAN_INTEREST_EXPENSE,SALARIES,OFFICE_SUPPLY,DEPRECIATION,UTILITIES,DISCOUNT_GIVEN
 
-
     private final String type;
 
     AccountType(String type){
         this.type=type;
     }
-
     public String getType(){
         return this.type;
     }

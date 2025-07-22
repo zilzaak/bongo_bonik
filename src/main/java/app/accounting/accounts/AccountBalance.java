@@ -15,20 +15,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ChartOfAccount extends BaseEntity {
-
+public class AccountBalance extends BaseEntity {
     @ManyToOne
     private Organization org;
 
     @ManyToOne
     private Branch branch;
-
-    private String accName;
-
     @ManyToOne
-    private ChartOfAccount parent;
-
-    private String accountType; //income,expense,asset,liabilities,equity(withdrawal,owner_capital,retained_earnings)
-    private String accTypeHierarchy; // EXPENSE->UTILITY_EXPENSE->HOUSE_RENT
-
+    private ChartOfAccount account;
+    private Double balance;
+    private Double totDebit;
+    private Double totCredit;
 }

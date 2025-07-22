@@ -27,7 +27,7 @@ public class GeneralLedger extends BaseEntity {
     private ChartOfAccount against;
     private Long refId;
     private String refCode;
-    private String remarks;
+    private String particulars;
     private Double debit;
     private Double credit;
 
