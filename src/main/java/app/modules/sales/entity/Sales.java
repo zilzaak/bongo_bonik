@@ -1,6 +1,5 @@
 package app.modules.sales.entity;
 
-
 import app.common.entity.BaseEntity;
 import app.modules.sales.customer.entity.Customer;
 import app.modules.inventory.entity.Inventory;
