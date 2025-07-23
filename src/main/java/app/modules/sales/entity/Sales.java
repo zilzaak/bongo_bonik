@@ -35,6 +35,9 @@ public class Sales extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Inventory inventory;
+    private String paymentMethods;
+    private String saleType;
+    private Double paidPercentage;
 
     @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
