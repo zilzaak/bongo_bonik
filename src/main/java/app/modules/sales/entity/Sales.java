@@ -28,7 +28,8 @@ public class Sales extends BaseEntity {
     private Double discount;
     private Double vat;
     private Double amount;
-    private Double netAmount;
+    private Double netAmount;// the total price after discount
+    private Double grandAmount;//final amount after adding vat
     private Double paid;
     private Double due;
     private Integer installment;

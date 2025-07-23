@@ -21,7 +21,8 @@ public class SalesItems extends BaseEntity {
     private Double unitPrice;
     private Integer quantity;
     private Double amount;
-    private Double netAmount;
+    private Double netAmount;// the total price after discount
+    private Double grandAmount;//final amount after adding vat
     private Double discPct;
     private Double discAmount;
     private Double vatPct;
