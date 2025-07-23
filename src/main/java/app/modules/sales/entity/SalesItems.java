@@ -26,6 +26,7 @@ public class SalesItems extends BaseEntity {
     private Double discAmount;
     private Double vatPct;
     private Double vatAmount;
+    private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
