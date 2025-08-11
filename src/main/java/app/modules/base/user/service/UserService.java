@@ -2,6 +2,9 @@ package app.modules.base.user.service;
 
 
 import app.common.dto.CustomException;
+import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.base.security.auth.entity.*;
 import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
 import app.modules.base.role.entity.Role;
@@ -10,6 +13,8 @@ import app.modules.base.user.dto.UserDTO;
 import app.modules.base.user.entity.User;
 import app.modules.base.user.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -176,4 +181,27 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
     }
 
+    public MsgResponse list(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Map<String,Object>> page = userRepository.list(dto.getUsername(),pageable);
+        MsgResponse response = CommonUtil.responseFromPage(page);
+        List<Map<String ,Object>> listData = new ArrayList<>();
+        for(Map<String ,Object> m : page.getContent()){
+            Map<String ,Object> cpy = new HashMap<>();
+            cpy.putAll(m);
+            User user = userRepository.findByUsername((String) m.get("username"));
+            String roles = null;
+            for(Role rl : user.getRoles()){
+                if(roles==null){
+                    roles=rl.getAuthority();
+                }else{
+                    roles=roles+","+rl.getAuthority();
+                }
+            }
+            cpy.put("roles",roles);
+            listData.add(cpy);
+        }
+        ((Map<String ,Object>)response.getData()).put("listData",listData);
+        return response;
+    }
 }

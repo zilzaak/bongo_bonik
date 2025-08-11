@@ -3,9 +3,13 @@ package app.modules.base.role.create.service;
 
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -91,5 +95,11 @@ public class CreateRoleService {
         }
 
 
+    }
+
+    public MsgResponse list(SearchParamDTO dto) {
+        Pageable pageable = CommonUtil.getPageable(dto);
+        Page<Object> page = roleRepository.list(pageable);
+         return CommonUtil.responseFromObjectPage(page);
     }
 }

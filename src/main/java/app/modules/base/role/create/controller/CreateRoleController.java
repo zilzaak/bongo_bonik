@@ -3,6 +3,7 @@ package app.modules.base.role.create.controller;
 
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
 import app.modules.base.role.create.service.CreateRoleService;
 import app.modules.base.role.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ private CreateRoleService manageRoleService;
     private ResponseEntity<?> get(@RequestParam Map<String,String> param) throws CustomException {
         Role role = manageRoleService.getById(param);
         return new ResponseEntity<>(role, HttpStatus.OK);
+    }
+
+    @GetMapping("/list")
+    private ResponseEntity<?> list(SearchParamDTO dto) throws CustomException {
+        MsgResponse response = manageRoleService.list(dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
