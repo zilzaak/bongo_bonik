@@ -14,12 +14,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AccountBalance extends BaseEntity {
+public class AccBalPeriodWise extends BaseEntity {
+    private String monthYear;//01-2025 means january month 2025
     @ManyToOne
     private Branch branch;
     @ManyToOne
     private ChartOfAccount account;
-    private Double balance;
-    private Double totDebit;
-    private Double totCredit;
+    private Double periodDebit;
+    private Double periodCredit;
+    private Double periodBalance;
+    private Double totalDebit;
+    private Double totalCredit;
+    private Double totalBalance;
 }
