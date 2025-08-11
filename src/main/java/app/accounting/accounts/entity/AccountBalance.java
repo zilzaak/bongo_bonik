@@ -1,4 +1,4 @@
-package app.accounting.accounts;
+package app.accounting.accounts.entity;
 
 import app.common.entity.BaseEntity;
 import app.common.entity.Branch;

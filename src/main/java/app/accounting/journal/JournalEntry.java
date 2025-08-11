@@ -1,6 +1,6 @@
-package app.accounting.ledger;
+package app.accounting.journal;
 
-import app.accounting.accounts.ChartOfAccount;
+import app.accounting.accounts.entity.ChartOfAccount;
 import app.common.entity.BaseEntity;
 import app.common.entity.Branch;
 import app.modules.purchase.supplier.entity.Supplier;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GeneralLedger extends BaseEntity {
+public class JournalEntry extends BaseEntity {
     @ManyToOne
     private Branch branch;
     @ManyToOne

@@ -1,4 +1,4 @@
-package app.accounting.accounts;
+package app.accounting.accounts.entity;
 
 public enum AccountType {
 

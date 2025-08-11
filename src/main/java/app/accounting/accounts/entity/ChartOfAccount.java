@@ -1,8 +1,7 @@
-package app.accounting.accounts;
+package app.accounting.accounts.entity;
 
 import app.common.entity.BaseEntity;
 import app.common.entity.Branch;
-import app.common.entity.Organization;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,7 @@ public class ChartOfAccount extends BaseEntity {
 
     @ManyToOne
     private ChartOfAccount parent;
-
+    private Boolean itIsRootAcc;
     private String accountType; //income,expense,asset,liabilities,equity(withdrawal,owner_capital,retained_earnings)
     private String accTypeHierarchy; // EXPENSE->UTILITY_EXPENSE->HOUSE_RENT
 
