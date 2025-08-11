@@ -1,4 +1,4 @@
-package app.accounting.journal;
+package app.accounting.journal.entity;
 
 import app.accounting.accounts.entity.ChartOfAccount;
 import app.common.entity.BaseEntity;
