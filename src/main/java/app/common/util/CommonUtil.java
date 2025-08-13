@@ -125,6 +125,14 @@ public class CommonUtil {
             attr.put("name","BARCODE_COUNTER");
             attr.put("prefix","sl-");
         }
+        else if(counter.equals(CounterEnum.BARCODE.name())){
+            attr.put("name","BARCODE_COUNTER");
+            attr.put("prefix","sl-");
+        }
+        else if(counter.equals(CounterEnum.SYS_USER.name())){
+            attr.put("name",CounterEnum.SYS_USER.name());
+            attr.put("prefix","");
+        }
 
         return attr;
     }

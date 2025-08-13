@@ -26,5 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "x.address as address " +
             " from User x where ( :ur is null or x.username=:ur )  ")
     Page<Map<String, Object>> list(@Param("ur") String ur, Pageable pageable);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByPhoneAndIdNotIn(String phone, List<Long> asList);
 }
 

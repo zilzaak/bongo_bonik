@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -26,13 +27,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username;
-
     private String password;
+    @NotBlank(message = "Username is required")
+    @Column(unique = true, nullable = false)
+    private String username;
+    @NotBlank(message = "Phone is required")
+    @Column(unique = true, nullable = false)
     private String phone;
     private String email;
+    @NotBlank(message = "Address is required")
+    @Column(nullable = false)
     private String address;
+    @NotBlank(message = "Full name is required")
+    @Column(nullable = false)
     private String displayName;
     private Boolean enabled;
 

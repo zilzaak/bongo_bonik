@@ -23,15 +23,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    private ResponseEntity<?> create(@RequestBody UserDTO userDTO) throws CustomException {
-        userService.create(userDTO);
-        return new ResponseEntity<>(new MsgResponse("Successfully created user",true), HttpStatus.OK);
+    private ResponseEntity<?> create(@RequestBody UserDTO userDTO){
+        return new ResponseEntity<>(userService.create(userDTO), HttpStatus.OK);
+
     }
 
     @PutMapping("/edit")
-    private ResponseEntity<?> edit(@RequestBody UserDTO userDTO) throws CustomException {
-        userService.edit(userDTO);
-        return new ResponseEntity<>(new MsgResponse("Successfully edited user",true), HttpStatus.OK);
+    private ResponseEntity<?> edit(@RequestBody UserDTO userDTO){
+        return new ResponseEntity<>(userService.edit(userDTO), HttpStatus.OK);
     }
 
     @GetMapping("/get")

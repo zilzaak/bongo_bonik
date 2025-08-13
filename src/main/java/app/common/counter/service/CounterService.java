@@ -3,8 +3,10 @@ package app.common.counter.service;
 
 import app.common.counter.entity.SystemCounter;
 import app.common.counter.repo.SystemCounterRepo;
+import app.common.util.CounterEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,11 @@ public class CounterService {
 
     @Autowired
     private SystemCounterRepo counterRepo;
-
+    @Transactional
     public  String getCounterCode(Long orgId , Long branchId , String counterName, String prefix){
 
-        SystemCounter counter = counterRepo.findByNameAndOrgIdAndBranchId(counterName,orgId,branchId);
+        SystemCounter counter=counterRepo.findByNameAndOrgIdAndBranchId(counterName,orgId,branchId);
+
         if(counter==null){
             counter = new SystemCounter(counterName,orgId,branchId,prefix,10000L,1L);
             counterRepo.save(counter);

@@ -1,10 +1,12 @@
 package app.modules.base.user.service;
 
 
+import app.common.counter.service.CounterService;
 import app.common.dto.CustomException;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
+import app.common.util.CounterEnum;
 import app.modules.base.security.auth.entity.*;
 import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
 import app.modules.base.role.entity.Role;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -34,45 +37,45 @@ public class UserService {
 
     @Autowired
     private AuthorityPermissionRepository authorityPermissionRepository;
+    @Autowired
+    private CounterService counterService;
 
 
 
-public Map<String, Object> checkValidData(UserDTO dto, String operation){
+public Map<String, Object> checkValidData(UserDTO dto){
     Map<String, Object> mp = new HashMap<>();
     mp.put("hasError",false);
     mp.put("message","no error exist");
 
-    if(dto.getUsername()==null || dto.getUsername().trim().isEmpty()){
+    if(dto.getPhone()==null || dto.getPhone().isBlank()){
         mp.put("hasError",true);
-        mp.put("message","Invalid username");
+        mp.put("message","Phone is required");
+        return mp;
+    }
+    if(dto.getAddress()==null || dto.getAddress().isBlank()){
+        mp.put("hasError",true);
+        mp.put("message","Address is required");
+        return mp;
+    }
+    if(dto.getDisplayName()==null || dto.getDisplayName().isBlank()){
+        mp.put("hasError",true);
+        mp.put("message","Name is required");
         return mp;
     }
 
-
-
-    if(operation.equalsIgnoreCase("create")){
-
-        if(dto.getPassword()==null || dto.getPassword().trim().isEmpty()){
-            mp.put("hasError",true);
-            mp.put("message","Invalid password");
-            return mp;
-        }
-
-        if(userRepository.existsByUsername(dto.getUsername())){
-            mp.put("hasError",true);
-            mp.put("message","Need unique username");
-            return mp;
-        }
-
-    }else{
-        if(userRepository.existsByUsernameAndIdNotIn(dto.getUsername(),Arrays.asList(dto.getId()))){
-            mp.put("hasError",true);
-            mp.put("message","Need unique username");
-            return mp;
-        }
-
+    if(dto.getId()==null){
+    if(userRepository.existsByPhone(dto.getPhone())){
+    mp.put("hasError",true);
+    mp.put("message","Phone must be unique");
+    return mp;
     }
-
+    }else{
+        if(userRepository.existsByPhoneAndIdNotIn(dto.getPhone(),Arrays.asList(dto.getId()))){
+            mp.put("hasError",true);
+            mp.put("message","Phone must be unique");
+            return mp;
+        }
+    }
 
     for(String role : dto.getRoles()){
         if(!roleRepository.existsByAuthority(role)){
@@ -86,32 +89,43 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
 }
 
 
-    public void create(UserDTO userDTO) throws CustomException {
-        Map<String,Object> resp = checkValidData(userDTO,"create");
+    @Transactional
+    public MsgResponse create(UserDTO userDTO){
+        Map<String,Object> resp = checkValidData(userDTO);
         if((boolean)resp.get("hasError")){
-            throw new CustomException((String)resp.get("message"));
+            return new MsgResponse((String)resp.get("message"),false);
         }
-
         Set<Role> roleList = new HashSet<>();
         for(String Authority : userDTO.getRoles()){
             Role role = roleRepository.findByAuthority(Authority);
             roleList.add(role);
              }
         User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setDisplayName(userDTO.getDisplayName());
+        user.setPhone(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
         user.setRoles(roleList);
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEnabled(userDTO.getEnabled());
+        String prefix="";
+        user.setUsername(counterService.getCounterCode(null,null,CounterEnum.SYS_USER.name(),prefix.trim()));
+        user.setPassword(passwordEncoder.encode("123456"));
+        if(userRepository.existsByUsername(user.getUsername())){
+            return new MsgResponse("Username must be unique",false);
+        }
         try{
             userRepository.saveAndFlush(user);
         }catch (Exception e){
-            throw new CustomException(e.getMessage());
+            return new MsgResponse(e.getMessage(),false);
         }
+        return new MsgResponse("Successfully created user",false);
     }
 
-    public void edit(UserDTO userDTO) throws CustomException {
-        Map<String,Object> resp = checkValidData(userDTO,"edit");
+    @Transactional
+    public MsgResponse edit(UserDTO userDTO) {
+        Map<String,Object> resp = checkValidData(userDTO);
         if((boolean)resp.get("hasError")){
-            throw new CustomException((String)resp.get("message"));
+            return new MsgResponse((String)resp.get("message"),false);
         }
 
         Set<Role> roleList = new HashSet<>();
@@ -122,16 +136,26 @@ public Map<String, Object> checkValidData(UserDTO dto, String operation){
 
         User user = userRepository.findById(userDTO.getId()).orElse(null);
         if(user==null){
-            throw new CustomException("No user found with id "+ userDTO.getId());
+            return new MsgResponse("No user found with id "+ userDTO.getId(),false);
         }
+        user.setEnabled(userDTO.getEnabled());
         user.setRoles(roleList);
-        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
+        user.setDisplayName(userDTO.getDisplayName());
+        if(userDTO.getPassword()!=null || !userDTO.getPassword().isBlank() && userDTO.getPassword().length()>5){
+           user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
+        if(userRepository.existsByUsernameAndIdNotIn(user.getUsername(),Arrays.asList(userDTO.getId()))){
+            return new MsgResponse("Username must be unique",false);
+        }
         try{
             userRepository.saveAndFlush(user);
         }catch (Exception e){
-            throw new CustomException(e.getMessage());
+            return new MsgResponse(e.getMessage(),false);
         }
-
+        return new MsgResponse("Successfully edited user",false);
 
     }
 
