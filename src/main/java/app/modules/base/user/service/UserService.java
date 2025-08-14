@@ -7,8 +7,6 @@ import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
-import app.modules.base.security.auth.entity.*;
-import app.modules.base.security.auth.repo.AuthorityPermissionRepository;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.user.dto.UserDTO;
@@ -34,9 +32,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthorityPermissionRepository authorityPermissionRepository;
     @Autowired
     private CounterService counterService;
 
@@ -177,7 +172,7 @@ public Map<String, Object> checkValidData(UserDTO dto){
 
     }
 
-
+    @Transactional
     public void createDefaultUser(){
 
         Set<Role> defaultRoleList = new HashSet<>();
@@ -193,6 +188,9 @@ public Map<String, Object> checkValidData(UserDTO dto){
             super_admin.setEnabled(Boolean.TRUE);
             super_admin.setUsername("admin");
             super_admin.setPassword(passwordEncoder.encode("123456"));
+            super_admin.setAddress("admin address");
+            super_admin.setPhone("01753181186");
+            super_admin.setDisplayName("parvez");
             super_admin.setRoles(defaultRoleList);
             userRepository.saveAndFlush(super_admin);
         }

@@ -6,6 +6,7 @@ import app.common.dto.SearchParamDTO;
 import app.modules.base.user.entity.User;
 import app.modules.base.user.dto.UserDTO;
 import app.modules.base.user.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

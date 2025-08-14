@@ -9,6 +9,7 @@ import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
 import app.modules.base.user.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -104,6 +105,7 @@ public class ApiEndpointRetriever {
 
 
     @PostConstruct
+    @Transactional
     public void categoryIntoSubModuleOrMenu() {
         List<String[]> allApi = this.allUrlWithMethod();
         String[] apiUrls = allApi.get(0);
@@ -141,6 +143,9 @@ public class ApiEndpointRetriever {
         if(this.apiAgainstModuleRepo.count()<1){
             this.apiAgainstModuleRepo.saveAll(menuTree);
             Role role = roleRepository.findByAuthority("SUPER_ADMIN");
+            if(role==null){
+                throw new RuntimeException("No default role is found");
+            }
             List<MenuHierarchy> menuList = apiAgainstModuleRepo.getAllUrl();
             this.createApiPermission(menuList,role);
         }
