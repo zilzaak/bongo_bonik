@@ -105,7 +105,6 @@ public class ApiEndpointRetriever {
 
 
     @PostConstruct
-    @Transactional
     public void categoryIntoSubModuleOrMenu() {
         List<String[]> allApi = this.allUrlWithMethod();
         String[] apiUrls = allApi.get(0);
@@ -141,15 +140,16 @@ public class ApiEndpointRetriever {
         }
 
         if(this.apiAgainstModuleRepo.count()<1){
-            this.apiAgainstModuleRepo.saveAll(menuTree);
             Role role = roleRepository.findByAuthority("SUPER_ADMIN");
             if(role==null){
                 throw new RuntimeException("No default role is found");
             }
+            this.apiAgainstModuleRepo.saveAll(menuTree);
             List<MenuHierarchy> menuList = apiAgainstModuleRepo.getAllUrl();
             this.createApiPermission(menuList,role);
         }
     }
+
 
     private void createApiPermission(List<MenuHierarchy> menuTree, Role role) {
         Role permitAll = roleRepository.findByAuthority("PERMIT_ALL");
