@@ -8,8 +8,8 @@ import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
 import app.modules.base.user.repo.UserRepository;
+import app.modules.base.user.service.UserService;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -25,17 +25,20 @@ public class ApiEndpointRetriever {
     private final PermittedApiRepository permittedApiRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserService userService;
 
     public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
                                 MenuHierarchyRepo apiAgainstModuleRepo,
                                 PermittedApiRepository permittedApiRepository,
                                 UserRepository userRepository,
-                                RoleRepository roleRepository) {
+                                RoleRepository roleRepository,
+                                UserService userService) {
         this.requestMappingHandlerMapping = mapping;
         this.apiAgainstModuleRepo = apiAgainstModuleRepo;
         this.permittedApiRepository=permittedApiRepository;
         this.userRepository=userRepository;
         this.roleRepository=roleRepository;
+        this.userService=userService;
     }
 
     private String getMethod(String method) {
@@ -98,6 +101,18 @@ public class ApiEndpointRetriever {
         if(track.isLastPart){
             m.setMethodName(track.methodName);
             m.setApiPattern(track.apiUrl);
+            if(m.getApiPattern().equals("/base/user/list")){
+              m.setFrontUrl("base/user/list");
+            }
+            else if(m.getApiPattern().equals("/base/role/list")){
+                m.setFrontUrl("base/role/list");
+            }
+            else if(m.getApiPattern().equals("/base/module/list")){
+                m.setFrontUrl("base/menu/list");
+            }
+            else if(m.getApiPattern().equals("/base/permittedModule/list")){
+                m.setFrontUrl("base/menuPerm/list");
+            }
         }
         partTracker.put(track.apiSeq,track.apiSeq);
         return m;
@@ -106,6 +121,7 @@ public class ApiEndpointRetriever {
 
     @PostConstruct
     public void categoryIntoSubModuleOrMenu() {
+        userService.createDefaultUser();
         List<String[]> allApi = this.allUrlWithMethod();
         String[] apiUrls = allApi.get(0);
         String[] methods = allApi.get(1);
@@ -138,13 +154,11 @@ public class ApiEndpointRetriever {
                 }
             }
         }
-
+        Role role = roleRepository.findByAuthority("SUPER_ADMIN");
         if(this.apiAgainstModuleRepo.count()<1){
-            Role role = roleRepository.findByAuthority("SUPER_ADMIN");
-            if(role==null){
-                throw new RuntimeException("No default role is found");
-            }
             this.apiAgainstModuleRepo.saveAll(menuTree);
+        }
+        if(permittedApiRepository.countByRole(role)<1){
             List<MenuHierarchy> menuList = apiAgainstModuleRepo.getAllUrl();
             this.createApiPermission(menuList,role);
         }

@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.*;
 
 @Service
@@ -172,18 +173,22 @@ public Map<String, Object> checkValidData(UserDTO dto){
 
     }
 
-    @Transactional
+
+    // when first time the application run then the system by default create a user named as admin
+    // and create a role as super admin
+    // and admin will be assigned super_admin role who can change anything in  whole system
+    // or edit anything,the admin user only created first time only.
     public void createDefaultUser(){
-
         Set<Role> defaultRoleList = new HashSet<>();
-        if(!roleRepository.existsByAuthority("SUPER_ADMIN")){
-            Role superAdmin = new Role();
+        Role superAdmin= roleRepository.findByAuthority("SUPER_ADMIN");
+        if(superAdmin==null){
+            superAdmin = new Role();
             superAdmin.setAuthority("SUPER_ADMIN");
-            roleRepository.saveAndFlush(superAdmin);
-            defaultRoleList.add(superAdmin);
+            roleRepository.save(superAdmin);
         }
+        defaultRoleList.add(superAdmin);
 
-        if(userRepository.count()<1){
+        if(userRepository.count()<1 && superAdmin!=null){
             User super_admin=new User();
             super_admin.setEnabled(Boolean.TRUE);
             super_admin.setUsername("admin");
@@ -192,13 +197,14 @@ public Map<String, Object> checkValidData(UserDTO dto){
             super_admin.setPhone("01753181186");
             super_admin.setDisplayName("parvez");
             super_admin.setRoles(defaultRoleList);
-            userRepository.saveAndFlush(super_admin);
+            userRepository.save(super_admin);
         }
 
-        if(!roleRepository.existsByAuthority("PERMIT_ALL")){
-            Role permAllRole = new Role();
+        Role permAllRole = roleRepository.findByAuthority("PERMIT_ALL");
+        if(permAllRole==null){
+            permAllRole=new Role();
             permAllRole.setAuthority("PERMIT_ALL");
-            roleRepository.saveAndFlush(permAllRole);
+            roleRepository.save(permAllRole);
         }
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
     }

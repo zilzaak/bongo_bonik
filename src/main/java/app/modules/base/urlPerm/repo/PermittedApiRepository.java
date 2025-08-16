@@ -73,4 +73,6 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") User userid , @Param("role") Set<Role> role );
 
     PermittedApi findByMenuId(Long id);
+
+    int countByRole(Role role);
 }
