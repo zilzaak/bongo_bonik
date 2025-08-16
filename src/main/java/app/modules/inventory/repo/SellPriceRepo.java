@@ -1,6 +1,6 @@
 package app.modules.inventory.repo;
 
-import app.modules.inventory.entity.SellPrice;
+import app.common.entity.SellPrice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

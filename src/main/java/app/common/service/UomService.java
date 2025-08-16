@@ -9,6 +9,7 @@ import app.common.entity.ProductCat;
 import app.common.entity.UnitOfMeasure;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package app.modules.inventory.entity;
+package app.common.entity;
 
 import app.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
@@ -12,13 +12,16 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-public class SellPrice extends BaseEntity {
+public class CostPrice extends BaseEntity {
 
     private Double unitPrice;
+
     private Long productId;
     private String productName;
+
     private Long orgId;
     private String orgName;
+
     private Double avgPrice;
     // the product will be under specific org , inventory is ->>under spec branch is -->> under spec org   ----(i)
     // product -->> organization  -----------------------------------------------------------------------------(ii)

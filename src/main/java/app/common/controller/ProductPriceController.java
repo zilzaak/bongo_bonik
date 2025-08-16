@@ -1,9 +1,9 @@
-package app.modules.inventory.controller;
+package app.common.controller;
 
 import app.common.dto.MsgResponse;
 import app.modules.inventory.dto.PricingDTO;
-import app.modules.inventory.service.CostPriceService;
-import app.modules.inventory.service.SellPriceService;
+import app.common.service.CostPriceService;
+import app.common.service.SellPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/pricing")
+@RequestMapping("/setting/pricing")
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProductPriceController {
 

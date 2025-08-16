@@ -2,7 +2,7 @@ package app.modules.inventory.service;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.common.repo.OrgRepo;
+import app.modules.base.org.repo.OrgRepo;
 import app.common.util.CommonUtil;
 import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.entity.Inventory;

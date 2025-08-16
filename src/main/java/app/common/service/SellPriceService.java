@@ -1,10 +1,9 @@
-package app.modules.inventory.service;
+package app.common.service;
 
 
 import app.common.dto.MsgResponse;
 import app.modules.inventory.dto.PricingDTO;
-import app.modules.inventory.entity.SellPrice;
-import app.modules.inventory.repo.CostPriceRepo;
+import app.common.entity.SellPrice;
 import app.modules.inventory.repo.SellPriceRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

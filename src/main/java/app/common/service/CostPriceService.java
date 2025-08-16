@@ -1,4 +1,4 @@
-package app.modules.inventory.service;
+package app.common.service;
 
 import app.common.dto.MsgResponse;
 import app.modules.inventory.dto.PricingDTO;

@@ -73,6 +73,7 @@ public class CreateRoleService {
             return new MsgResponse("role is not found",false);
         }
         entity.setAuthority(role.getAuthority());
+        entity.setRemarks(role.getRemarks());
         roleRepository.saveAndFlush(entity);
         return new MsgResponse("Successfully created role",true);
 

@@ -1,4 +1,4 @@
-package app.common.service;
+package app.modules.base.org.service;
 
 
 import app.common.dto.CommonDTO;
@@ -8,8 +8,9 @@ import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
 import app.common.entity.Branch;
-import app.common.entity.Organization;
+import app.modules.base.org.entity.Organization;
 import app.common.repo.BranchRepo;
+import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
