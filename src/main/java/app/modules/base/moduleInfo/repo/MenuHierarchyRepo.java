@@ -16,14 +16,14 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             " and x.id not in ?2 ")
     int existPatternOrName(String apiPattern, List<Long> asList);
 
-    @Query("SELECT x.id as moduleId , x.apiPattern as apiPattern , " +
+    @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
             "  x.methodName as methodName , " +
             " x.frontUrl as frontUrl , " +
             " x.menu as moduleName , " +
             " x.parentMenu as parentModule " +
             "  from MenuHierarchy x " +
-            "  where 1=1 and (?1 is null or x.id=?1 ) ")
-    Page<Map<String,Object>> getList(Long moduleId , Pageable pageable);
+            "  where ( :mid is null or x.id=:mid ) ")
+    Page<Map<String,Object>> getList(@Param("mid") Long mid , Pageable pageable);
     boolean existsByApiPattern(String backendUrl);
     boolean existsByFrontUrl(String frontUrl);
 
