@@ -96,7 +96,17 @@ public class ModuleInfoService {
         for(MenuDTO obj : list){
             if(obj.getId()!=null){
                 MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
-                BeanUtils.copyProperties(obj,menu);
+                String oldMenu=menu.getMenu();
+                if(menu.getMenu()!=null &&  !menu.getMenu().equals(obj.getMenu())){
+                    BeanUtils.copyProperties(obj,menu,"details");
+                   for(MenuHierarchy db : menu.getDetails()){
+                      db.setParentMenu(obj.getMenu());
+                      if(db.getApiSeq()!=null && db.getApiSeq().contains(oldMenu)){
+                          db.setApiSeq(CommonUtil.replaceWord(db.getApiSeq(),oldMenu,obj.menu));
+                          db.setApiPattern(CommonUtil.replaceWord(db.getApiPattern(),oldMenu,obj.menu));
+                      }
+                   }
+                }
                 hierarchyRepo.save(menu);
                 PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
                 permission.setBackendUrl(menu.getApiPattern());

@@ -144,6 +144,11 @@ public class CommonUtil {
 
     }
 
+    public static String replaceWord(String str, String repWord,String byWord){
+        String finalStr = str.replace(repWord,byWord);
+        return finalStr;
+    }
+
 
 
     public static MsgResponse responseFromPage(Page<Map<String,Object>> page){
