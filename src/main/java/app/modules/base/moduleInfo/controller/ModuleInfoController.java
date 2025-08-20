@@ -23,12 +23,11 @@ public class ModuleInfoController {
     ResponseEntity<?> create(@RequestBody List<MenuDTO> dto)
             throws RuntimeException{
         MsgResponse response=null;
-//        if(dto==null){
-//            response=new MsgResponse("null data exist in form",false);
-//            return new ResponseEntity<>(response , HttpStatus.OK);
-//        }
-         response = new MsgResponse("Successfully created data",true);
-                 //moduleInfoService.create(dto);
+        if(dto==null){
+            response=new MsgResponse("null data exist in form",false);
+            return new ResponseEntity<>(response , HttpStatus.OK);
+        }
+         response = moduleInfoService.create(dto);
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
