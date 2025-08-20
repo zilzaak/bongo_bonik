@@ -36,7 +36,7 @@ public class CommonUtil {
     }
 
     public static String removeAllSpace(String input){
-        if(input==null){
+        if(input==null || input.isBlank()){
             return null;
         }
          input = input.replaceAll("\\s+", "");  //this also remove head and tails space from string
@@ -44,7 +44,7 @@ public class CommonUtil {
     }
 
     public static boolean isLastChar(String input,char ch){
-        if(input==null){
+        if(input==null || input.isBlank()){
             return false;
         }
         char lastCharacter = input.charAt(input.length()-1);
@@ -58,7 +58,7 @@ public class CommonUtil {
     // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
 
     public static String replaceRepeatedChar(String input, char ch) {
-        if(input==null){
+        if(input==null || input.isBlank()){
             return null;
         }
         String regex = Pattern.quote(Character.toString(ch)) + "+";
