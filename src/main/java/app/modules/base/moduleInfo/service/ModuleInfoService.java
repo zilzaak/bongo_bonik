@@ -96,35 +96,67 @@ public class ModuleInfoService {
         for(MenuDTO obj : list){
             if(obj.getId()!=null){
                 MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
-                String oldMenu=menu.getMenu();
-                if(menu.getMenu()!=null &&  !menu.getMenu().equals(obj.getMenu())){
-                    BeanUtils.copyProperties(obj,menu,"details");
-                   for(MenuHierarchy db : menu.getDetails()){
-                      db.setParentMenu(obj.getMenu());
-                      if(db.getApiSeq()!=null && db.getApiSeq().contains(oldMenu)){
-                          db.setApiSeq(CommonUtil.replaceWord(db.getApiSeq(),oldMenu,obj.menu));
-                          db.setApiPattern(CommonUtil.replaceWord(db.getApiPattern(),oldMenu,obj.menu));
-                      }
-                   }
+                String oldParentMenu=menu.getParentMenu();
+                if(oldParentMenu==null || oldParentMenu.isBlank()){
+                    oldParentMenu=null;
                 }
-                hierarchyRepo.save(menu);
+                if(obj.parentMenu==null || obj.parentMenu.isBlank()){
+                    obj.parentMenu=null;
+                }
+
+                //if menu name is changed than menu name is related to
+                 BeanUtils.copyProperties(obj,menu,"details");
+                if((oldParentMenu==null &&  obj.parentMenu==null) || (oldParentMenu.equals(obj.parentMenu))){
+                    //no change occurs
+                    hierarchyRepo.save(menu);
+                }
+                else if((obj.parentMenu!=null && oldParentMenu!=null
+                        && !obj.parentMenu.equals(oldParentMenu)) ||
+                        (obj.parentMenu!=null && oldParentMenu==null) ||
+                        (oldParentMenu!=null && obj.parentMenu==null)){
+                    Long id = hierarchyRepo.findParentIdById(menu.getId());
+                    MenuHierarchy oldParent = null;
+                    if(id!=null) {
+                        oldParent =  hierarchyRepo.findById(id).orElse(null);
+                    }
+
+                    MenuHierarchy toBeRemoveItem=null;
+                    for(MenuHierarchy x : oldParent.getDetails()){
+                        if(x.getId().equals(menu.getId())){
+                            toBeRemoveItem=x;
+                            break;
+                        }
+                    }
+                    if(toBeRemoveItem!=null && oldParent.getDetails().size()>0) {
+                        oldParent.getDetails().remove(toBeRemoveItem);
+                        hierarchyRepo.save(oldParent);
+                    }
+
+                    MenuHierarchy newParent = null;
+                    if(obj.parentId!=null){
+                        newParent = hierarchyRepo.findById(obj.parentId).get();
+                        newParent.getDetails().add(menu);
+                        hierarchyRepo.save(menu);
+                        hierarchyRepo.save(newParent);
+                    }
+                }
+
                 PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
                 permission.setBackendUrl(menu.getApiPattern());
                 permission.setFrontendUrl(menu.getFrontUrl());
                 permittedApiRepository.save(permission);
             }else{
-                    String[] arr = obj.apiSeq.split("/");
-                    String parentApiSeq = null;
-                    if(arr.length>1){
-                        parentApiSeq = CommonUtil.removeWordFromString(obj.apiSeq,arr[arr.length-1]);
+                    Long parentId=obj.parentId;
+                    MenuHierarchy parentMenu = null;
+                    if(parentId!=null){
+                        parentMenu=hierarchyRepo.findById(parentId).orElse(null);
                     }
-                    parentApiSeq = CommonUtil.isLastChar(parentApiSeq,'/')?CommonUtil.removeLastCharacter(parentApiSeq):parentApiSeq;
-                    MenuHierarchy menu = hierarchyRepo.findByMenuAndApiSeq(obj.getParentMenu(),parentApiSeq);
+
                     MenuHierarchy child = new MenuHierarchy();
                     BeanUtils.copyProperties(obj,child);
-                    if(menu!=null){
-                        menu.getDetails().add(child);
-                        hierarchyRepo.save(menu);
+                    if(parentMenu!=null){
+                        parentMenu.getDetails().add(child);
+                        hierarchyRepo.save(parentMenu);
                     }else{
                         hierarchyRepo.save(child);
                     }
@@ -145,7 +177,31 @@ public class ModuleInfoService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        return CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),pageable));
+        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),dto.getMenu(),pageable)) ;
+        if(dto.getMenuDetails()!=null && dto.getModuleId()!=null){
+          Map<String,Object> data = (Map<String, Object>) resp.getData();
+          List<MenuHierarchy> childDetails=new ArrayList<>();
+          if(dto.getModuleId()!=null){
+              MenuHierarchy obj =hierarchyRepo.findById(dto.getModuleId()).orElse(null);
+              if(obj!=null){
+                 for(MenuHierarchy x : obj.getDetails()){
+                     MenuHierarchy temp = new MenuHierarchy();
+                     BeanUtils.copyProperties(x,temp,"details");
+                     childDetails.add(temp);
+                 }
+              }
+          }
+            data.put("childMenus",childDetails);
+          MenuHierarchy parent=null;
+          Long parentId=hierarchyRepo.findParentIdById(dto.getModuleId());
+          if(parentId!=null){
+              parent= hierarchyRepo.findById(parentId).orElse(null);
+          }
+            data.put("parent",parent);
+            resp.setData(data);
+        }
+
+        return resp;
     }
 
 

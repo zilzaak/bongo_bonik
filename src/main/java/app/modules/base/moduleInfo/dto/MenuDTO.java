@@ -11,6 +11,7 @@ public class MenuDTO {
     public String frontUrl;
     public String menu;
     public String parentMenu;
+    public Long parentId;
     public String apiPattern;
     public String methodName;
     public String apiSeq;

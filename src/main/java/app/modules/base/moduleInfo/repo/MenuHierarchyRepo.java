@@ -19,11 +19,11 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
             "  x.methodName as methodName , " +
             " x.frontUrl as frontUrl , " +
-            " x.menu as moduleName , " +
-            " x.parentMenu as parentModule " +
+            " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as ddlCode ," +
+            " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
             "  from MenuHierarchy x " +
-            "  where ( :mid is null or x.id=:mid ) ")
-    Page<Map<String,Object>> getList(@Param("mid") Long mid , Pageable pageable);
+            "  where ( :menu is null or cast(x.menu as String) like concat('%', cast(:menu as String)  ,'%' ) ) and ( :mid is null or x.id=:mid )")
+    Page<Map<String,Object>> getList(@Param("mid") Long mid , @Param("menu") String menu , Pageable pageable);
     boolean existsByApiPattern(String backendUrl);
     boolean existsByFrontUrl(String frontUrl);
 
