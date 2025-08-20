@@ -52,7 +52,7 @@ public class ModuleInfoService {
                 return mp;
             }
 
-            if((menu.methodName!=null || !menu.methodName.isEmpty())&& !this.methods.contains(menu.methodName)){
+            if((menu.methodName!=null && !this.methods.contains(menu.methodName))){
                 mp.put("hasError",true);
                 mp.put("message","Method name is required");
                 return mp;
@@ -142,9 +142,12 @@ public class ModuleInfoService {
                 }
 
                 PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
-                permission.setBackendUrl(menu.getApiPattern());
-                permission.setFrontendUrl(menu.getFrontUrl());
-                permittedApiRepository.save(permission);
+                if(permission!=null){
+                    permission.setBackendUrl(menu.getApiPattern());
+                    permission.setFrontendUrl(menu.getFrontUrl());
+                    permittedApiRepository.save(permission);
+                }
+
             }else{
                     Long parentId=obj.parentId;
                     MenuHierarchy parentMenu = null;
