@@ -144,7 +144,6 @@ public class ModuleInfoService {
                 PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
                 if(permission!=null){
                     permission.setBackendUrl(menu.getApiPattern());
-                    permission.setFrontendUrl(menu.getFrontUrl());
                     permittedApiRepository.save(permission);
                 }
 

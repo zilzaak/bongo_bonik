@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 public class SearchParamDTO {
+   public Long id;
    public Long orgId;
    public Long branchId;
    public Long brandId;

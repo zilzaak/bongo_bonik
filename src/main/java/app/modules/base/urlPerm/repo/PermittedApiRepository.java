@@ -22,7 +22,6 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     @Query("select menu.menu as menu , " +
             " x.id as id , " +
             " x.backendUrl as backendUrl , " +
-            " x.frontendUrl as frontendUrl ," +
             " menu.methodName as methodName, " +
             " user.username as username , " +
             " role.authority as authority , " +
@@ -34,8 +33,11 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " left join MenuHierarchy menu on menu.id=x.menuId " +
             " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') )  " +
             " and ( :uid is null or user.id=:uid ) " +
-            " and ( :rid is null or role.id=:rid )")
-    Page<Map<String, Object>> getList(@Param("mid") String mid ,
+            " and ( :rid is null or role.id=:rid ) " +
+            "  and ( :id is null or x.id=:id )")
+    Page<Map<String, Object>> getList(
+                                      @Param("id") Long id,
+                                      @Param("mid") String mid,
                                       @Param("uid")Long uid ,
                                       @Param("rid")Long rid,
                                       Pageable pageable);

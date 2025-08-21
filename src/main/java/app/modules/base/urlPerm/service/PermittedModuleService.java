@@ -56,11 +56,6 @@ public class PermittedModuleService {
             mp.put("message","BackendUrl is not exist");
             return mp;
         }
-        if(dto.getFrontendUrl()!=null && !apiAgainstModuleRepo.existsByFrontUrl(dto.getFrontendUrl()) ){
-            mp.put("hasError",true);
-            mp.put("message","FrontendUrl is not exist");
-            return mp;
-        }
 
         if(dto.getRole()==null && dto.getUser()==null){
             mp.put("hasError",true);
@@ -112,7 +107,7 @@ public class PermittedModuleService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = permittedApiRepository.getList(dto.getMenuId(),dto.getUserId(),dto.getRoleId(),pageable);
+        Page<Map<String,Object>> page = permittedApiRepository.getList(dto.getId(),dto.getMenuId(),dto.getUserId(),dto.getRoleId(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 

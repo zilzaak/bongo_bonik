@@ -8,10 +8,10 @@ import lombok.*;
 public class PrmttedApiDTO {
     private Long id;
     private String backendUrl;
-    private String frontendUrl;
     private Long user;
     private Long role;
-
+    private Long menuId;
+    private String menuIdsHierarchy;
     public Long getId() {
         return id;
     }
@@ -29,14 +29,6 @@ public class PrmttedApiDTO {
         if(CommonUtil.isLastChar(this.backendUrl,'/')){
             this.backendUrl=CommonUtil.removeLastCharacter(this.backendUrl);
         }
-    }
-
-    public String getFrontendUrl() {
-        return frontendUrl;
-    }
-
-    public void setFrontendUrl(String frontendUrl) {
-        this.frontendUrl = frontendUrl;
     }
 
     public Long getUser() {
@@ -70,7 +62,4 @@ public class PrmttedApiDTO {
     public void setMenuIdsHierarchy(String menuIdsHierarchy) {
         this.menuIdsHierarchy = menuIdsHierarchy;
     }
-
-    private Long menuId;
-    private String menuIdsHierarchy;
 }

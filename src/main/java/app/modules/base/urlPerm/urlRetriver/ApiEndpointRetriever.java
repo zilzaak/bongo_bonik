@@ -175,7 +175,6 @@ public class ApiEndpointRetriever {
             }else{
                 x.setRole(permitAll);
             }
-            x.setFrontendUrl(m.getFrontUrl());
             x.setBackendUrl(m.getApiPattern());
             x.setMenuId(m.getId());
             String  ids=m.getId().toString();
