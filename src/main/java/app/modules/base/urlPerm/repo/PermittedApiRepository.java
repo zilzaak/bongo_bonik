@@ -34,7 +34,7 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') )  " +
             " and ( :uid is null or user.id=:uid ) " +
             " and ( :rid is null or role.id=:rid ) " +
-            "  and ( :id is null or x.id=:id )")
+            " and ( :id is null or x.id=:id ) ")
     Page<Map<String, Object>> getList(
                                       @Param("id") Long id,
                                       @Param("mid") String mid,

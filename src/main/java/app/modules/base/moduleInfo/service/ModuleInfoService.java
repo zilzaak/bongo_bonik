@@ -179,7 +179,7 @@ public class ModuleInfoService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),dto.getMenu(),pageable)) ;
+        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),dto.getMenu(),dto.getLoadMethod(),pageable)) ;
         if(dto.getMenuDetails()!=null && dto.getModuleId()!=null){
           Map<String,Object> data = (Map<String, Object>) resp.getData();
           List<MenuHierarchy> childDetails=new ArrayList<>();

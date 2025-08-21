@@ -33,4 +33,5 @@ public class SearchParamDTO {
    private String menuId;
    private Long userId ;
    private String menuDetails;
+   private String loadMethod;
 }
