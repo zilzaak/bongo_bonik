@@ -20,10 +20,12 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     boolean existsByRoleIdAndUserIdAndBackendUrlAndIdNotIn(Long role, Long user , String backendUrl, List<Long> asList);
 
     @Query("select menu.menu as menu , " +
+            " menu.id as menuId , " +
             " x.id as id , " +
             " x.backendUrl as backendUrl , " +
             " menu.methodName as methodName, " +
             " user.username as username , " +
+            " role.id as roleId , user.id as userId , " +
             " role.authority as authority , " +
             " x.created as created , " +
             " x.updated as updated  " +
@@ -34,7 +36,7 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') )  " +
             " and ( :uid is null or user.id=:uid ) " +
             " and ( :rid is null or role.id=:rid ) " +
-            " and ( :id is null or x.id=:id ) ")
+            " and ( :id is null or x.id=:id ) order by x.backendUrl asc")
     Page<Map<String, Object>> getList(
                                       @Param("id") Long id,
                                       @Param("mid") String mid,
@@ -73,7 +75,7 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " from PermittedApi x " +
             " left join x.role r  " +
             " left join x.user u  " +
-            " where  " +
+            " where  x.backendUrl is not null and  " +
             "  u=:userid " +
             "  or r in :role  order by x.id desc ")
     List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") User userid , @Param("role") Set<Role> role );

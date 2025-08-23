@@ -9,6 +9,7 @@ public class PrmttedApiDTO {
     private Long id;
     private String backendUrl;
     private Long user;
+    private String username;
     private Long role;
     private Long menuId;
     private String menuIdsHierarchy;

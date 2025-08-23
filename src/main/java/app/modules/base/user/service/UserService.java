@@ -213,6 +213,9 @@ public Map<String, Object> checkValidData(UserDTO dto){
         Pageable pageable = CommonUtil.getPageable(dto);
         Page<Map<String,Object>> page = userRepository.list(dto.getUsername(),pageable);
         MsgResponse response = CommonUtil.responseFromPage(page);
+        if(dto.getDropDown()!=null && !dto.getDropDown().isBlank()){
+            return response;
+        }
         List<Map<String ,Object>> listData = new ArrayList<>();
         for(Map<String ,Object> m : page.getContent()){
             Map<String ,Object> cpy = new HashMap<>();

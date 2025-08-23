@@ -34,4 +34,5 @@ public class SearchParamDTO {
    private Long userId ;
    private String menuDetails;
    private String loadMethod;
+   private String dropDown;
 }

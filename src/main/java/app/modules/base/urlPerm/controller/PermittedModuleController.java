@@ -20,20 +20,18 @@ public class PermittedModuleController {
     private PermittedModuleService permittedModuleService;
 
     @PostMapping("/create")
-    ResponseEntity<?> create(@RequestBody List<PrmttedApiDTO> dto)
-            throws RuntimeException{
+    ResponseEntity<?> create(@RequestBody List<PrmttedApiDTO> dto){
         if(dto==null){
-            throw new RuntimeException("null data exist in form");
+            return new ResponseEntity<>(new MsgResponse("No data exist in the form",false) , HttpStatus.OK);
         }
         MsgResponse response = permittedModuleService.create(dto);
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    ResponseEntity<?> update(@RequestBody List<PrmttedApiDTO> dto)
-            throws RuntimeException{
+    ResponseEntity<?> update(@RequestBody List<PrmttedApiDTO> dto){
         if(dto==null){
-            throw new RuntimeException("null data exist in form");
+            return new ResponseEntity<>(new MsgResponse("No data exist in the form",false) , HttpStatus.OK);
         }
         MsgResponse response = permittedModuleService.edit(dto);
         return new ResponseEntity<>(response , HttpStatus.OK);

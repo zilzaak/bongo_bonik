@@ -132,7 +132,17 @@ public class PermittedModuleService {
                 edit=true;
             }
             PermittedApi obj = new PermittedApi();
-            BeanUtils.copyProperties(obj,dto);
+            BeanUtils.copyProperties(x,obj);
+            if(x.getUser()!=null){
+                User u = new User();
+                u.setId(x.getUser());
+                obj.setUser(u);
+            }
+            if(x.getRole()!=null){
+                Role r =new Role();
+                r.setId(x.getRole());
+                obj.setRole(r);
+            }
             permissions.add(obj);
         }
         permittedApiRepository.saveAll(permissions);
