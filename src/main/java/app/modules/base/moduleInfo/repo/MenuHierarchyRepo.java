@@ -18,6 +18,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
 
     @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
             "  x.methodName as methodName , " +
+            "  x.created as created ,  " +
+            "  x.updated as updated ,"+
             " x.frontUrl as frontUrl , " +
             " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as ddlCode ," +
             " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
@@ -26,11 +28,15 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             " and ( :method is null or x.methodName is not null  )")
     Page<Map<String,Object>> getList(@Param("mid") Long mid , @Param("menu") String menu , @Param("method") String method ,  Pageable pageable);
 
-    @Query(value = "select x.id as id, x.api_pattern as apiPattern, " +
+    @Query(value = "select x.id as id,  " +
+            " x.api_pattern as apiPattern, " +
+            "  x.created as created ,  " +
+            "  x.updated as updated ,"+
             "x.method_Name as methodName, " +
             "x.front_url as frontUrl, " +
             "x.menu as moduleName, " +
-            "x.parent_menu as parentModule, x.api_seq as apiSeq " +
+            "x.parent_menu as parentModule, " +
+            " x.api_seq as apiSeq " +
             "from menu_hierarchy x " +
             "where (:parent is null or x.parent_id = :parent) " +
             "and (:backendUrlId is null or x.id = :backendUrlId) " +
@@ -46,7 +52,10 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
                                             @Param("frontendUrl") String frontendUrl,
                                             Pageable pageable);
 
-    @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
+    @Query("SELECT x.id as id , " +
+            "  x.apiPattern as apiPattern ," +
+            "  x.created as created ,  " +
+            "  x.updated as updated , " +
             "  x.methodName as methodName , " +
             " x.frontUrl as frontUrl , " +
             " x.menu as moduleName , x.menu as ddlCode ," +
