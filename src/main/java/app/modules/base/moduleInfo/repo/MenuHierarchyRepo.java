@@ -22,7 +22,7 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as ddlCode ," +
             " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
             "  from MenuHierarchy x " +
-            "  where ( :menu is null or   cast( x.apiSeq as String)  like  concat('%',cast(:menu as String) ,'%') ) and ( :mid is null or x.id=:mid ) " +
+            "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%') ) and ( :mid is null or x.id=:mid ) " +
             " and ( :method is null or x.methodName is not null  )")
     Page<Map<String,Object>> getList(@Param("mid") Long mid , @Param("menu") String menu , @Param("method") String method ,  Pageable pageable);
 

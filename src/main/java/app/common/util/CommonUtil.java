@@ -205,6 +205,7 @@ public class CommonUtil {
     }
 
     public static String removeFirstChar(String str) {
+
         String result =  (str == null || str.length() < 2) ? str : str.substring(1);
         return  result;
     }

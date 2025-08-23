@@ -44,11 +44,31 @@ public class ModuleInfoService {
 
 
         for(MenuDTO menu : list){
-            menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiPattern));
+            if(menu.apiSeq==null || menu.getApiSeq().isBlank()){
+                mp.put("hasError",true);
+                mp.put("message","Api sequence is required");
+                return mp;
+            }
             if((menu.methodName!=null && !this.methods.contains(menu.methodName))){
                 mp.put("hasError",true);
                 mp.put("message","Method name is required");
                 return mp;
+            }
+
+            if(menu.methodName!=null && (menu.apiPattern==null || menu.apiPattern.isBlank())){
+                mp.put("hasError",true);
+                mp.put("message","Backend Url is required");
+                return mp;
+            }
+
+            if(menu.apiPattern!=null && (menu.methodName==null || !this.methods.contains(menu.methodName))){
+                mp.put("hasError",true);
+                mp.put("message","Method of Url is required");
+                return mp;
+            }
+
+            if(menu.apiSeq.startsWith("/")){
+                menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiSeq));
             }
 
             if(menu.getId()==null){
