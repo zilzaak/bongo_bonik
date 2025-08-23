@@ -179,6 +179,16 @@ public class ModuleInfoService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
+        if(dto.getMenuSearch()!=null){
+            MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getListForMenu(dto.getMenu(),pageable)) ;
+            return resp;
+        }
+
+        if(dto.getParentMenuId()!=null || dto.getFrontendUrl()!=null || dto.getBackendUrlId()!=null){
+            MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getListParent(dto.getParentMenuId(),dto.getBackendUrlId(),dto.getFrontendUrl(),pageable)) ;
+            return resp;
+        }
+
         MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),dto.getMenu(),dto.getLoadMethod(),pageable)) ;
         if(dto.getMenuDetails()!=null && dto.getModuleId()!=null){
           Map<String,Object> data = (Map<String, Object>) resp.getData();

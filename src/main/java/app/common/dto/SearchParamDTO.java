@@ -35,4 +35,8 @@ public class SearchParamDTO {
    private String menuDetails;
    private String loadMethod;
    private String dropDown;
+   private String menuSearch; // no url, post, put, get brelated menu in search
+   private Long parentMenuId;
+   private Long backendUrlId;
+   private String frontendUrl;
 }

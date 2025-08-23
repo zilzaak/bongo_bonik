@@ -25,6 +25,37 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  where ( :menu is null or   cast( x.apiSeq as String)  like  concat('%',cast(:menu as String) ,'%') ) and ( :mid is null or x.id=:mid ) " +
             " and ( :method is null or x.methodName is not null  )")
     Page<Map<String,Object>> getList(@Param("mid") Long mid , @Param("menu") String menu , @Param("method") String method ,  Pageable pageable);
+
+    @Query(value = "select x.id as id, x.api_pattern as apiPattern, " +
+            "x.method_Name as methodName, " +
+            "x.front_url as frontUrl, " +
+            "x.menu as moduleName, " +
+            "x.parent_menu as parentModule, x.api_seq as apiSeq " +
+            "from menu_hierarchy x " +
+            "where (:parent is null or x.parent_id = :parent) " +
+            "and (:backendUrlId is null or x.id = :backendUrlId) " +
+            "and (cast(:frontendUrl as text) is null or cast(x.front_url as text) = cast(:frontendUrl as text)) " +
+            "order by id desc",
+            countQuery = "select count(*) from menu_hierarchy x " +
+                    "where (:parent is null or x.parent_id = :parent) " +
+                    "and (:backendUrlId is null or x.id = :backendUrlId) " +
+                    "and (cast(:frontendUrl as text) is null or cast(x.front_url as text) = cast(:frontendUrl as text))",
+            nativeQuery = true)
+    Page<Map<String, Object>> getListParent(@Param("parent") Long parent,
+                                            @Param("backendUrlId") Long backendUrlId,
+                                            @Param("frontendUrl") String frontendUrl,
+                                            Pageable pageable);
+
+    @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
+            "  x.methodName as methodName , " +
+            " x.frontUrl as frontUrl , " +
+            " x.menu as moduleName , x.menu as ddlCode ," +
+            " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
+            "  from MenuHierarchy x " +
+            "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%') )  " +
+            " and x.methodName is null  ")
+    Page<Map<String,Object>> getListForMenu(@Param("menu") String menu  , Pageable pageable);
+
     boolean existsByApiPattern(String backendUrl);
     boolean existsByFrontUrl(String frontUrl);
 
