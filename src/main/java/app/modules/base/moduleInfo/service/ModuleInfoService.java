@@ -44,14 +44,7 @@ public class ModuleInfoService {
 
 
         for(MenuDTO menu : list){
-
             menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiPattern));
-            if(menu.getApiPattern()!=null && !menu.getApiPattern().isEmpty() && !menu.getApiPattern().contains(menu.menu)){
-                mp.put("hasError",true);
-                mp.put("message","Menu name must be meaningful");
-                return mp;
-            }
-
             if((menu.methodName!=null && !this.methods.contains(menu.methodName))){
                 mp.put("hasError",true);
                 mp.put("message","Method name is required");
