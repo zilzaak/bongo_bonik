@@ -128,11 +128,13 @@ public class PermittedModuleService {
             if((boolean)mp.get("hasError")){
                 return new MsgResponse((String)mp.get("message"),false);
             }
+            PermittedApi obj = new PermittedApi();
             if(x.getId()!=null){
                 edit=true;
+                obj=permittedApiRepository.findById(x.getId()).orElse(new PermittedApi());
             }
-            PermittedApi obj = new PermittedApi();
             BeanUtils.copyProperties(x,obj);
+
             if(x.getUser()!=null){
                 User u = new User();
                 u.setId(x.getUser());
