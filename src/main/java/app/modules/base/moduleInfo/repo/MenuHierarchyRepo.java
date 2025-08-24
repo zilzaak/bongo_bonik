@@ -101,4 +101,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     MenuData getData(Long id);
+
+    boolean existsByMenuAndParentMenuAndIdNotIn(String menu, String parentMenu, List<Long> asList);
+
+    boolean existsByMenuAndParentMenu(String menu, String parentMenu);
 }

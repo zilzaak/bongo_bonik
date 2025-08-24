@@ -44,6 +44,11 @@ public class ModuleInfoService {
 
 
         for(MenuDTO menu : list){
+            if(menu.menu==null || menu.getMenu().isBlank()){
+                mp.put("hasError",true);
+                mp.put("message","Menu is required");
+                return mp;
+            }
             if(menu.apiSeq==null || menu.getApiSeq().isBlank()){
                 mp.put("hasError",true);
                 mp.put("message","Api sequence is required");
@@ -72,9 +77,14 @@ public class ModuleInfoService {
             }
 
             if(menu.getId()==null){
-                if(menu.getParentMenu()!=null && !hierarchyRepo.existsByMenu(menu.getParentMenu())){
+                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenu(menu.getParentMenu())){
                     mp.put("hasError",true);
                     mp.put("message","The parent menu selected but not created yet");
+                    return mp;
+                }
+                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenuAndParentMenu(menu.getMenu(),menu.getParentMenu())){
+                    mp.put("hasError",true);
+                    mp.put("message","Duplicate menu creation");
                     return mp;
                 }
                if(hierarchyRepo.existsByApiSeqAndMenu(menu.getApiSeq(),menu.getMenu())){
@@ -83,9 +93,9 @@ public class ModuleInfoService {
                    return mp;
                }
            }else{
-                if(menu.getParentMenu()!=null && !hierarchyRepo.existsByMenuAndIdNotIn(menu.getParentMenu(),Arrays.asList(menu.id))){
+                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenuAndParentMenuAndIdNotIn(menu.getMenu(),menu.getParentMenu(),Arrays.asList(menu.id))){
                     mp.put("hasError",true);
-                    mp.put("message","The parent menu does not exist");
+                    mp.put("message","Duplicate menu creation");
                     return mp;
                 }
                if(hierarchyRepo.existsByApiSeqAndMenuAndIdNotIn(menu.apiSeq,menu.getMenu(),Arrays.asList(menu.id))){
@@ -120,7 +130,6 @@ public class ModuleInfoService {
                 //if menu name is changed than menu name is related to
                  BeanUtils.copyProperties(obj,menu,"details");
                 if((oldParentMenu==null &&  obj.parentMenu==null) || (oldParentMenu.equals(obj.parentMenu))){
-                    //no change occurs
                     hierarchyRepo.save(menu);
                 }
                 else if((obj.parentMenu!=null && oldParentMenu!=null
@@ -128,6 +137,10 @@ public class ModuleInfoService {
                         (obj.parentMenu!=null && oldParentMenu==null) ||
                         (oldParentMenu!=null && obj.parentMenu==null)){
                     Long id = hierarchyRepo.findParentIdById(menu.getId());
+                    if(id.equals(menu.getId())){
+                        return new MsgResponse("A menu can not be parent itself",false);
+                    }
+
                     MenuHierarchy oldParent = null;
                     if(id!=null) {
                         oldParent =  hierarchyRepo.findById(id).orElse(null);
