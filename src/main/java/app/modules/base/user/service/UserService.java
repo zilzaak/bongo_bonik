@@ -97,18 +97,50 @@ public Map<String, Object> checkValidData(UserDTO dto){
             roleList.add(role);
              }
         User user = new User();
+        if(userDTO.getId()!=null){
+            user=userRepository.findById(userDTO.getId()).get();
+        }
         user.setEmail(userDTO.getEmail());
         user.setDisplayName(userDTO.getDisplayName());
         user.setPhone(userDTO.getPhone());
         user.setAddress(userDTO.getAddress());
         user.setRoles(roleList);
         user.setEnabled(userDTO.getEnabled());
-        String prefix="";
-        user.setUsername(counterService.getCounterCode(null,null,CounterEnum.SYS_USER.name(),prefix.trim()));
-        user.setPassword(passwordEncoder.encode("123456"));
-        if(userRepository.existsByUsername(user.getUsername())){
-            return new MsgResponse("Username must be unique",false);
+        if(userDTO.getId()==null){
+            String prefix="";
+            user.setUsername(counterService.getCounterCode(null,null,CounterEnum.SYS_USER.name(),prefix.trim()));
+            if(userRepository.existsByUsername(user.getUsername())){
+                return new MsgResponse("Username must be unique",false);
+            }
+            user.setPassword(passwordEncoder.encode("123456"));
+        }else{
+            if(userDTO.getPassword().length()<8 && !user.getPassword().equals(userDTO.getPassword())){
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            }
+            Set<Role> remove=new HashSet<>();
+            for(Role er : user.getRoles()){
+                boolean exist=false;
+                for(String str : userDTO.getRoles()){
+                    if(er.getAuthority().equals(str)){
+                        exist=true;
+                        break;
+                    }
+                }
+                if(!exist){
+                    remove.add(er);
+                }
+            }
+            user.getRoles().removeAll(remove);
+
+            Set<Role> latest=new HashSet<>();
+            for(String str : userDTO.getRoles()){
+                Role rn = roleRepository.findByAuthority(str);
+                latest.add(rn);
+            }
+            user.getRoles().addAll(latest);
+
         }
+
         try{
             userRepository.saveAndFlush(user);
         }catch (Exception e){
