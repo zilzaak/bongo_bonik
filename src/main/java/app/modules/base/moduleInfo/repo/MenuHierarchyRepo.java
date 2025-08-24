@@ -17,16 +17,24 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
     int existPatternOrName(String apiPattern, List<Long> asList);
 
     @Query("SELECT x.id as id , x.apiPattern as apiPattern , " +
-            "  x.methodName as methodName , " +
+            "  x.methodName as methodName ,x.menu as  menuCode ," +
             "  x.created as created ,  " +
             "  x.updated as updated ,"+
             " x.frontUrl as frontUrl , " +
-            " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as ddlCode ," +
+            " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as urlCode ," +
             " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
             "  from MenuHierarchy x " +
-            "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%') ) and ( :mid is null or x.id=:mid ) " +
-            " and ( :method is null or x.methodName is not null  )")
-    Page<Map<String,Object>> getList(@Param("mid") Long mid , @Param("menu") String menu , @Param("method") String method ,  Pageable pageable);
+            "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%')) " +
+            "  and ( :url is null or   cast( x.apiPattern as String)  like  concat('%',cast(:url as String) ,'%'))"+
+            "  and ( :mid is null or x.id=:mid )  " +
+            "  and ( :loadMethod is null or x.methodName is not null  ) " +
+            "  and ( :loadMenu is null or x.methodName is null ) " )
+    Page<Map<String,Object>> getList(@Param("mid") Long mid ,
+                                     @Param("menu") String menu ,
+                                     @Param("url") String url ,
+                                     @Param("loadMethod") String loadMethod ,
+                                     @Param("loadMenu") String loadMenu ,
+                                     Pageable pageable);
 
     @Query(value = "select x.id as id,  " +
             " x.api_pattern as apiPattern, " +
@@ -51,19 +59,6 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
                                             @Param("backendUrlId") Long backendUrlId,
                                             @Param("frontendUrl") String frontendUrl,
                                             Pageable pageable);
-
-    @Query("SELECT x.id as id , " +
-            "  x.apiPattern as apiPattern ," +
-            "  x.created as created ,  " +
-            "  x.updated as updated , " +
-            "  x.methodName as methodName , " +
-            " x.frontUrl as frontUrl , " +
-            " x.menu as moduleName , x.menu as ddlCode ," +
-            " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
-            "  from MenuHierarchy x " +
-            "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%') )  " +
-            " and x.methodName is null  ")
-    Page<Map<String,Object>> getListForMenu(@Param("menu") String menu  , Pageable pageable);
 
     boolean existsByApiPattern(String backendUrl);
     boolean existsByFrontUrl(String frontUrl);

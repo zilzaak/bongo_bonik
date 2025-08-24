@@ -107,7 +107,11 @@ public class PermittedModuleService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = permittedApiRepository.getList(dto.getId(),dto.getMenuId(),dto.getUserId(),dto.getRoleId(),pageable);
+        String parentMenuId=null;
+        if(dto.getParentMenuId()!=null){
+            parentMenuId= dto.getParentMenuId().toString();
+        }
+        Page<Map<String,Object>> page = permittedApiRepository.getList(dto.getId(),parentMenuId,dto.getMenuId(),dto.getUserId(),dto.getRoleId(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 

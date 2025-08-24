@@ -33,12 +33,14 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " left join x.user user " +
             " left join x.role role " +
             " left join MenuHierarchy menu on menu.id=x.menuId " +
-            " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') )  " +
+            " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') ) " +
+            " and ( :parentMenuId is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:parentMenuId as string) , ',%') )  " +
             " and ( :uid is null or user.id=:uid ) " +
             " and ( :rid is null or role.id=:rid ) " +
             " and ( :id is null or x.id=:id ) order by x.backendUrl asc")
     Page<Map<String, Object>> getList(
                                       @Param("id") Long id,
+                                      @Param("parentMenuId") String parentMenuId,
                                       @Param("mid") String mid,
                                       @Param("uid")Long uid ,
                                       @Param("rid")Long rid,

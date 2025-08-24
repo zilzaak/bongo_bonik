@@ -192,17 +192,31 @@ public class ModuleInfoService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        if(dto.getMenuSearch()!=null){
-            MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getListForMenu(dto.getMenu(),pageable)) ;
-            return resp;
-        }
-
         if(dto.getParentMenuId()!=null || dto.getFrontendUrl()!=null || dto.getBackendUrlId()!=null){
             MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getListParent(dto.getParentMenuId(),dto.getBackendUrlId(),dto.getFrontendUrl(),pageable)) ;
             return resp;
         }
 
-        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),dto.getMenu(),dto.getLoadMethod(),pageable)) ;
+        String url=null;
+        String menu=null;
+        String loadMenu=null;
+        String loadMethod=null;
+        if(dto.getLoadMethod()!=null){
+            loadMethod="loadMethod";
+            loadMenu=null;
+            url=dto.getMenu();
+            menu=null;
+        }
+
+         if(dto.getMenuSearch()!=null){
+            loadMenu="loadMenu";
+            loadMethod=null;
+            menu=dto.getMenu();
+            url=null;
+        }
+
+        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),menu,url,loadMethod,loadMenu,pageable)) ;
+
         if(dto.getMenuDetails()!=null && dto.getModuleId()!=null){
           Map<String,Object> data = (Map<String, Object>) resp.getData();
           List<MenuHierarchy> childDetails=new ArrayList<>();
