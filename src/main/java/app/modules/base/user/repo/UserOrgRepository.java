@@ -19,4 +19,10 @@ public interface UserOrgRepository extends JpaRepository<UserOrg, Long> {
             " left join x.user u " +
             "  where u.id=?1 ")
     List<Map<String,Object>> getList(Long id);
+
+    @Query("select  o.name from UserOrg x " +
+            "  join x.org o " +
+            "  join x.user u " +
+            "  where u.id=?1 ")
+    List<Object[]> orgnames(Long id);
 }

@@ -294,6 +294,7 @@ public Map<String, Object> checkValidData(UserDTO dto){
         for(Map<String ,Object> m : page.getContent()){
             Map<String ,Object> cpy = new HashMap<>();
             cpy.putAll(m);
+            //concat role details as bulk single string
             User user = userRepository.findByUsername((String) m.get("username"));
             String roles = null;
             for(Role rl : user.getRoles()){
@@ -304,6 +305,17 @@ public Map<String, Object> checkValidData(UserDTO dto){
                 }
             }
             cpy.put("roles",roles);
+            //concat organization details as bulk single string
+            String orgs = null;
+            List<Object[]> orgnames=userOrgRepository.orgnames(user.getId());
+            for(Object[] arr : orgnames){
+                if(orgs==null){
+                    orgs= (String) arr[0];
+                }else{
+                    orgs=orgs+","+arr[0];
+                }
+            }
+            cpy.put("orgNames",orgs);
             listData.add(cpy);
         }
         ((Map<String ,Object>)response.getData()).put("listData",listData);
