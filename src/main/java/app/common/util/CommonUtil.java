@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.Security;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -208,6 +211,10 @@ public class CommonUtil {
 
         String result =  (str == null || str.length() < 2) ? str : str.substring(1);
         return  result;
+    }
+
+    public static String currentUser(){
+        return  SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     public static List<String> permitAllList=Arrays.asList("/auth/getToken");

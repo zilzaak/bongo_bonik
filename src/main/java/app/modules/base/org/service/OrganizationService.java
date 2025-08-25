@@ -111,10 +111,12 @@ public class OrganizationService {
              org.setAddress(dto.getAddress());
              org.setRemarks(dto.getRemarks());
              sms="Successfully created";
+             org.setCreateBy(CommonUtil.currentUser());
          }else{
              org = (Organization) mp.get("org");
-             BeanUtils.copyProperties(dto,org,"created","updated");
+             BeanUtils.copyProperties(dto,org,"created","updated","createBy");
              sms="Successfully updated";
+             org.setUpdateBy(CommonUtil.currentUser());
          }
          orgRepo.save(org);
          return new MsgResponse(sms,true);

@@ -132,6 +132,7 @@ public Map<String, Object> checkValidData(UserDTO dto){
                 return new MsgResponse("Username must be unique",false);
             }
             user.setPassword(passwordEncoder.encode("123456"));
+            user.setCreateBy(CommonUtil.currentUser());
         }else{
             operation="update";
             if(userDTO.getPassword().length()<8 && !user.getPassword().equals(userDTO.getPassword())){
@@ -157,6 +158,7 @@ public Map<String, Object> checkValidData(UserDTO dto){
                 latest.add(rn);
             }
             user.getRoles().addAll(latest);
+            user.setUpdateBy(CommonUtil.currentUser());
         }
 
         try{
