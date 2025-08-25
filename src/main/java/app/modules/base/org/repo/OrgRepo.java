@@ -35,4 +35,13 @@ public interface OrgRepo extends JpaRepository<Organization,Long> {
     Page<Object> getList(@Param("oid") Long oid,
                                       @Param("cf") String cf,
                                       Pageable pageable);
+
+    @Query("select b.id as id , b.name as orgName   "+
+            " from Organization b  " +
+            " where ( cast(:cf as String)  is null or upper(cast(b.name as String) ) like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  upper(cast(b.remarks as String)) like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  upper(cast(b.address as String))  like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  cast(b.phone as String) like concat('%', cast(:cf as String) ,'%') ) ")
+    Page<Map<String,Object>> getListAsMenu(@Param("cf") String cf,
+                         Pageable pageable);
 }

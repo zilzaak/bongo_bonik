@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -36,8 +37,7 @@ public class UserController {
 
     @GetMapping("/get")
     private ResponseEntity<?> get(@RequestParam Map<String,String> param) throws CustomException {
-        User user = userService.getByUser(param);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(userService.getByUser(param), HttpStatus.OK);
     }
 
     @GetMapping("/list")

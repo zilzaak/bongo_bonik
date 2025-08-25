@@ -167,9 +167,10 @@ public Map<String, Object> checkValidData(UserDTO dto){
                 List<UserOrg> orgList=new ArrayList<>();
                 for(UserOrgDTO o : userDTO.getUserOrgs()){
                     UserOrg obj =new UserOrg();
-                    obj.setId(o.getOrg());
-                    orgList.add(obj);
+                    Organization org = new Organization();
+                    org.setId(o.getOrg());
                     obj.setUser(user);
+                    orgList.add(obj);
                 }
                 userOrgRepository.saveAll(orgList);
             }else{
@@ -195,6 +196,9 @@ public Map<String, Object> checkValidData(UserDTO dto){
                        if(!k.getUser().getId().equals(user.getId())){
                            throw new Exception("You are editing another persons data");
                        }
+                        k.setUpdateBy(CommonUtil.currentUser());
+                    }else{
+                        k.setCreateBy(CommonUtil.currentUser());
                     }
                     k.setUser(user);
                     Organization org = new Organization();
@@ -209,51 +213,26 @@ public Map<String, Object> checkValidData(UserDTO dto){
         }catch (Exception e){
             return new MsgResponse(e.getMessage(),false);
         }
-        return new MsgResponse("Successfully created user",false);
+        return new MsgResponse("Successfully "+operation+"ed user",true);
     }
 
     @Transactional
     public MsgResponse edit(UserDTO userDTO) {
-        Map<String,Object> resp = checkValidData(userDTO);
-        if((boolean)resp.get("hasError")){
-            return new MsgResponse((String)resp.get("message"),false);
-        }
-
-        Set<Role> roleList = new HashSet<>();
-        for(String Authority : userDTO.getRoles()){
-            Role role = roleRepository.findByAuthority(Authority);
-            roleList.add(role);
-        }
-
-        User user = userRepository.findById(userDTO.getId()).orElse(null);
-        if(user==null){
-            return new MsgResponse("No user found with id "+ userDTO.getId(),false);
-        }
-        user.setEnabled(userDTO.getEnabled());
-        user.setRoles(roleList);
-        user.setEmail(userDTO.getEmail());
-        user.setPhone(userDTO.getPhone());
-        user.setAddress(userDTO.getAddress());
-        user.setDisplayName(userDTO.getDisplayName());
-        if(userDTO.getPassword()!=null || !userDTO.getPassword().isBlank() && userDTO.getPassword().length()>5){
-           user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        }
-        if(userRepository.existsByUsernameAndIdNotIn(user.getUsername(),Arrays.asList(userDTO.getId()))){
-            return new MsgResponse("Username must be unique",false);
-        }
-        try{
-            userRepository.saveAndFlush(user);
-        }catch (Exception e){
-            return new MsgResponse(e.getMessage(),false);
-        }
-        return new MsgResponse("Successfully edited user",false);
+      return this.create(userDTO);
 
     }
 
-    public User getByUser(Map<String, String> param) throws CustomException {
+    public MsgResponse getByUser(Map<String, String> param) throws CustomException {
         try{
             User user = userRepository.findById(Long.parseLong(param.get("id"))).get();
-            return user;
+            MsgResponse resp = new MsgResponse();
+            Map<String,Object> mp = new HashMap<>();
+            mp.put("user",user);
+            mp.put("userOrg",userOrgRepository.getList(user.getId()));
+            resp.setData(mp);
+            resp.setSuccess(true);
+            resp.setMessage("-----------");
+            return resp;
         }catch (Exception e){
             throw new CustomException(e.getMessage());
         }
