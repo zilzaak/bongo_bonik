@@ -25,14 +25,14 @@ public interface OrgRepo extends JpaRepository<Organization,Long> {
             " ( upper(x.name) like concat('%', upper(:nm),'%')  or upper(x.name) like concat('%',upper(:nm),'%') ) and x.id not in :list  ")
     int checkExistNameEdit(@Param("nm") String nm, @Param("list") List<Long> list);
 
-    @Query("select b.id as id , b.name as orgName , b.phone as orgPhone , " +
-            "  b.address as orgAddress , b.location as orgLocation , " +
-            "  b.created as created  " +
-            " from Organization b " +
-            " where ( ?1 is null or b.id=?1 ) and " +
-            "  ( ?2 is null or upper(b.name) like concat('%', upper(?2),'%') or " +
-            "  upper(b.location) like concat('%', upper(?2),'%') or " +
-            "  upper(b.address)  like concat('%', upper(?2),'%') or " +
-            "  b.phone like concat('%', ?2,'%') ) ")
-    Page<Map<String, Object>> getList(Long orgId, String commonField, Pageable pageable);
+    @Query("select b  "+
+            " from Organization b   " +
+            " where ( :oid is null or b.id=:oid ) and " +
+            "  ( cast(:cf as String)  is null or upper(cast(b.name as String) ) like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  upper(cast(b.remarks as String)) like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  upper(cast(b.address as String))  like concat('%', upper(cast(:cf as String)),'%') or " +
+            "  cast(b.phone as String) like concat('%', cast(:cf as String) ,'%') ) ")
+    Page<Object> getList(@Param("oid") Long oid,
+                                      @Param("cf") String cf,
+                                      Pageable pageable);
 }

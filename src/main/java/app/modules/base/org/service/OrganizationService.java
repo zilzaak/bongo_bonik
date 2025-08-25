@@ -109,7 +109,7 @@ public class OrganizationService {
              org.setName(dto.getName());
              org.setPhone(dto.getPhone());
              org.setAddress(dto.getAddress());
-             org.setLocation(dto.getLocation());
+             org.setRemarks(dto.getRemarks());
              sms="Successfully created";
          }else{
              org = (Organization) mp.get("org");
@@ -127,8 +127,8 @@ public class OrganizationService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = orgRepo.getList(dto.orgId,dto.commonField,pageable);
-        return CommonUtil.responseFromPage(page);
+        Page<Object> page = orgRepo.getList(dto.orgId,dto.commonField,pageable);
+        return CommonUtil.responseFromObjectPage(page);
 
     }
 

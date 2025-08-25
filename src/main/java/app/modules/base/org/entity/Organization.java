@@ -17,6 +17,6 @@ public class Organization extends BaseEntity {
    private String name;
    private String phone;
    private String address;
-   private String location;
+   private String remarks;
 
 }

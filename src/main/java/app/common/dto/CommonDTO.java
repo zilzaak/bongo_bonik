@@ -16,6 +16,15 @@ public class CommonDTO {
     private String entity;
     private String address;
     private String location;
+    private String remarks;
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
     public String getProductCatIds() {
         return productCatIds;
@@ -94,11 +103,16 @@ public class CommonDTO {
     }
 
     public void setName(String name) {
-        if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
-            this.name = name!=null? CommonUtil.removeAllSpace(name.trim().toLowerCase()):null;
+        if(this.entity!=null){
+            if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
+                this.name = name!=null? CommonUtil.removeAllSpace(name.trim().toLowerCase()):null;
+            }else{
+                this.name = name!=null?CommonUtil.removeAllSpace(name.trim().toUpperCase()):null;
+            }
         }else{
-            this.name = name!=null?CommonUtil.removeAllSpace(name.trim().toUpperCase()):null;
+            this.name = name;
         }
+
     }
     public void setOrgName(String orgName) {
         this.orgName = orgName!=null?CommonUtil.replaceRepeatedChar(orgName.trim().toUpperCase(),' '):null;
