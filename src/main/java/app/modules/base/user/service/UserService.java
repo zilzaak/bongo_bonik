@@ -285,7 +285,7 @@ public Map<String, Object> checkValidData(UserDTO dto){
 
     public MsgResponse list(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = userRepository.list(dto.getUsername(),pageable);
+        Page<Map<String,Object>> page = userRepository.list(dto.getUsername(),dto.getCommonField(),pageable);
         MsgResponse response = CommonUtil.responseFromPage(page);
         if(dto.getDropDown()!=null && !dto.getDropDown().isBlank()){
             return response;

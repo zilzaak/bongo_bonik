@@ -24,8 +24,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "x.email as email, " +
             "x.phone as phone , " +
             "x.address as address " +
-            " from User x where ( :ur is null or x.username=:ur )  ")
-    Page<Map<String, Object>> list(@Param("ur") String ur, Pageable pageable);
+            " from User x where ( :ur is null or x.username=:ur ) " +
+            " and ( cast(:cf as string) is null or cast(x.phone as string)=cast(:cf as string)  or " +
+            " cast(x.email as string)=cast(:cf as string)  or cast(x.address as string) like concat('%', cast(:cf as string) ,'%' )  ) ")
+    Page<Map<String, Object>> list(@Param("ur") String ur,@Param("cf") String cf, Pageable pageable);
 
     boolean existsByPhone(String phone);
 
