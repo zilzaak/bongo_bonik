@@ -2,6 +2,7 @@ package app.modules.base.user.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,6 +17,6 @@ public class UserDTO {
     private String displayName;
     private Boolean enabled;
     private List<String> roles;
-
+    private List<UserOrgDTO> userOrgs=new ArrayList<>();
 
 }

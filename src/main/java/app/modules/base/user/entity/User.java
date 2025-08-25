@@ -1,5 +1,6 @@
 package app.modules.base.user.entity;
 
+import app.common.entity.BaseEntity;
 import app.modules.base.role.entity.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -20,10 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="acl_user")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity{
     private String password;
     @Column(unique = true, nullable = false)
     private String username;
@@ -35,16 +33,6 @@ public class User {
     @Column(nullable = false)
     private String displayName;
     private Boolean enabled;
-
-    @CreationTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING ,
-            pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created;
-
-    @UpdateTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING ,
-            pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updated;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

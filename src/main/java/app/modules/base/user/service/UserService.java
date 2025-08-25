@@ -7,10 +7,15 @@ import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
+import app.modules.base.org.entity.Organization;
+import app.modules.base.org.repo.OrgRepo;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.user.dto.UserDTO;
+import app.modules.base.user.dto.UserOrgDTO;
 import app.modules.base.user.entity.User;
+import app.modules.base.user.entity.UserOrg;
+import app.modules.base.user.repo.UserOrgRepository;
 import app.modules.base.user.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +32,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private OrgRepo orgRepo;
     @Autowired
     private RoleRepository roleRepository;
 
@@ -35,7 +41,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private CounterService counterService;
-
+    @Autowired
+    private UserOrgRepository userOrgRepository;
 
 
 public Map<String, Object> checkValidData(UserDTO dto){
@@ -81,6 +88,16 @@ public Map<String, Object> checkValidData(UserDTO dto){
         }
     }
 
+
+    for(UserOrgDTO org : dto.getUserOrgs()){
+        if(!orgRepo.existsById(org.getOrg())){
+            mp.put("hasError",true);
+            mp.put("message","No organization exist with id="+org.getOrg());
+            return mp;
+        }
+    }
+
+
     return mp;
 }
 
@@ -106,14 +123,17 @@ public Map<String, Object> checkValidData(UserDTO dto){
         user.setAddress(userDTO.getAddress());
         user.setRoles(roleList);
         user.setEnabled(userDTO.getEnabled());
+        String operation=null;
         if(userDTO.getId()==null){
             String prefix="";
+            operation="create";
             user.setUsername(counterService.getCounterCode(null,null,CounterEnum.SYS_USER.name(),prefix.trim()));
             if(userRepository.existsByUsername(user.getUsername())){
                 return new MsgResponse("Username must be unique",false);
             }
             user.setPassword(passwordEncoder.encode("123456"));
         }else{
+            operation="update";
             if(userDTO.getPassword().length()<8 && !user.getPassword().equals(userDTO.getPassword())){
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
@@ -131,18 +151,59 @@ public Map<String, Object> checkValidData(UserDTO dto){
                 }
             }
             user.getRoles().removeAll(remove);
-
             Set<Role> latest=new HashSet<>();
             for(String str : userDTO.getRoles()){
                 Role rn = roleRepository.findByAuthority(str);
                 latest.add(rn);
             }
             user.getRoles().addAll(latest);
-
         }
 
         try{
-            userRepository.saveAndFlush(user);
+            userRepository.save(user);
+            if(operation.equals("create")){
+                List<UserOrg> orgList=new ArrayList<>();
+                for(UserOrgDTO o : userDTO.getUserOrgs()){
+                    UserOrg obj =new UserOrg();
+                    obj.setId(o.getOrg());
+                    orgList.add(obj);
+                    obj.setUser(user);
+                }
+                userOrgRepository.saveAll(orgList);
+            }else{
+                List<UserOrg> remove=new ArrayList<>();
+                List<UserOrg> latestList=new ArrayList<UserOrg>();
+                List<UserOrg> existList=userOrgRepository.findByUser(user);
+                for(UserOrg obj : existList){
+                    boolean exist=false;
+                    for(UserOrgDTO o : userDTO.getUserOrgs()){
+                        if(o.getOrg().equals(obj.getOrg().getId())){
+                            exist=true;
+                            break;
+                        }}
+                    if(!exist){
+                        remove.add(obj);
+                    }
+                }
+
+                for(UserOrgDTO o : userDTO.getUserOrgs()){
+                    UserOrg k = new UserOrg();
+                    if(o.getId()!=null){
+                       k=userOrgRepository.findById(o.getId()).orElse(null);
+                       if(!k.getUser().getId().equals(user.getId())){
+                           throw new Exception("You are editing another persons data");
+                       }
+                    }
+                    k.setUser(user);
+                    Organization org = new Organization();
+                    org.setId(o.getOrg());
+                    k.setOrg(org);
+                    latestList.add(k);
+                }
+                userOrgRepository.deleteAll(remove);
+                userOrgRepository.saveAll(latestList);
+            }
+
         }catch (Exception e){
             return new MsgResponse(e.getMessage(),false);
         }
