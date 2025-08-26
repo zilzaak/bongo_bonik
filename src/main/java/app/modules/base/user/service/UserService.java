@@ -283,6 +283,23 @@ public Map<String, Object> checkValidData(UserDTO dto){
         // by default create PERMIT_ALL role so that every body can login via /auth/getToken api
     }
 
+    String getBulkRoles(String userName){
+        //concat role details as bulk single string
+        User user = userRepository.findByUsername(userName);
+        String roles = null;
+        for(Role rl : user.getRoles()){
+            if(roles==null){
+                roles=rl.getAuthority();
+            }else{
+                roles=roles+","+rl.getAuthority();
+            }
+        }
+
+        return roles;
+    }
+
+
+
     public MsgResponse list(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
         Page<Map<String,Object>> page = userRepository.list(dto.getUsername(),dto.getCommonField(),pageable);
@@ -291,32 +308,22 @@ public Map<String, Object> checkValidData(UserDTO dto){
             return response;
         }
         List<Map<String ,Object>> listData = new ArrayList<>();
+        List<String> userIndex=new ArrayList<>();
+
         for(Map<String ,Object> m : page.getContent()){
+            String userName=(String) m.get("username");
             Map<String ,Object> cpy = new HashMap<>();
-            cpy.putAll(m);
-            //concat role details as bulk single string
-            User user = userRepository.findByUsername((String) m.get("username"));
-            String roles = null;
-            for(Role rl : user.getRoles()){
-                if(roles==null){
-                    roles=rl.getAuthority();
-                }else{
-                    roles=roles+","+rl.getAuthority();
-                }
+            if(userIndex.isEmpty() || !userIndex.contains(userName) ){
+                cpy.putAll(m);
+                cpy.put("roles",getBulkRoles(userName));
+                listData.add(cpy);
+                userIndex.add(userName);
+            }else{
+                Map<String ,Object> existData =listData.get(userIndex.indexOf(userName));
+                String latestOrgStr=existData.get("orgName")+","+m.get("orgName");
+                existData.put("orgName",latestOrgStr);
             }
-            cpy.put("roles",roles);
-            //concat organization details as bulk single string
-            String orgs = null;
-            List<Object[]> orgnames=userOrgRepository.orgnames(user.getId());
-            for(Object[] arr : orgnames){
-                if(orgs==null){
-                    orgs= (String) arr[0];
-                }else{
-                    orgs=orgs+","+arr[0];
-                }
-            }
-            cpy.put("orgNames",orgs);
-            listData.add(cpy);
+
         }
         ((Map<String ,Object>)response.getData()).put("listData",listData);
         return response;

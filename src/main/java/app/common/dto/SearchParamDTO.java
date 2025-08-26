@@ -39,4 +39,21 @@ public class SearchParamDTO {
    private Long parentMenuId;
    private Long backendUrlId;
    private String frontendUrl;
+
+   public String getCommonField() {
+      return commonField;
+   }
+
+   public void setCommonField(String commonField) {
+      this.commonField = commonField!=null?commonField.trim():null;
+   }
+
+   public String getUsername() {
+      return username;
+   }
+
+   public void setUsername(String username) {
+      this.username = username!=null?username.trim():null;
+   }
+
 }

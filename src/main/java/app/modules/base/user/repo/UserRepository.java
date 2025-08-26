@@ -16,17 +16,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String s);
     boolean existsByUsernameAndIdNotIn(String s, List<Long> ids);
 
-    @Query("SELECT x.created as created ," +
+    @Query("SELECT x.displayName as displayName , x.created as created ," +
             " x.updated as updated , " +
             "x.username as username , " +
             "x.id as id ," +
             " x.enabled as enabled ," +
             "x.email as email, " +
             "x.phone as phone , " +
-            "x.address as address " +
-            " from User x where ( :ur is null or x.username=:ur ) " +
+            "x.address as address , " +
+            " og.name as orgName " +
+            " from User x " +
+             " left join UserOrg ug on ug.user=x  " +
+            "  left join ug.org og" +
+            " where ( :ur is null or x.username=:ur ) " +
             " and ( cast(:cf as string) is null or cast(x.phone as string)=cast(:cf as string)  or " +
-            " cast(x.email as string)=cast(:cf as string)  or cast(x.address as string) like concat('%', cast(:cf as string) ,'%' )  ) ")
+            " cast(x.email as string)=cast(:cf as string) or " +
+            " upper(cast(og.name as string)) like concat('%',upper(cast(:cf as string)),'%') or " +
+            " upper(cast(x.displayName as string)) like concat('%',upper(cast(:cf as string)),'%')  or " +
+            " cast(x.address as string) like concat('%', cast(:cf as string) ,'%' )  ) ")
     Page<Map<String, Object>> list(@Param("ur") String ur,@Param("cf") String cf, Pageable pageable);
 
     boolean existsByPhone(String phone);
