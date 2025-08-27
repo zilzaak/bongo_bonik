@@ -1,4 +1,4 @@
-package app.config;
+package app.modules.base.security.config;
 
 
 import org.springframework.context.annotation.Configuration;
