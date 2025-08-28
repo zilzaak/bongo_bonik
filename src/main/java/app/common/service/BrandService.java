@@ -91,9 +91,11 @@ public class BrandService {
             brand.setName(dto.getName());
             brand.setOrgName(dto.getOrgName());
             brand.setOrgId(dto.getOrgId());
+            brand.setCreateBy(CommonUtil.currentUser());
         }else{
             brand = (Brand) mp.get("brand");
-            BeanUtils.copyProperties(dto,brand,"created");
+            BeanUtils.copyProperties(dto,brand,"created","createBy");
+            brand.setUpdateBy(CommonUtil.currentUser());
         }
         brandRepo.save(brand);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Successfully edited",true);

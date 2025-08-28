@@ -17,6 +17,7 @@ public interface ProductModelRepo extends JpaRepository<ProductModel,Long> {
 
 
     @Query("select b.id as id , b.brandName as brandName , b.orgName as orgName , b.created as created  ,  b.updated as updated " +
+            " , b.createBy as createBy , b.updateBy as updateBy " +
             " from ProductModel b " +
             " where ( ?1 is null or b.brandId=?1 )  " +
             " and ( ?2 is null or b.orgId=?2 ) " +

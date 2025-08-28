@@ -91,9 +91,11 @@ public class ProductSizeService {
             size.setName(dto.getName());
             size.setOrgId(dto.getOrgId());
             size.setOrgName(organization.getName());
+            size.setCreateBy(CommonUtil.currentUser());
         }else{
             size = (ProductSize) mp.get("size");
-            BeanUtils.copyProperties(dto,size,"created","updated");
+            BeanUtils.copyProperties(dto,size,"created","createBy");
+            size.setUpdateBy(CommonUtil.currentUser());
         }
         sizeRepo.save(size);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

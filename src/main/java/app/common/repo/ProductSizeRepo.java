@@ -13,7 +13,7 @@ public interface ProductSizeRepo extends JpaRepository<ProductSize,Long> {
     boolean existsByNameAndIdNotIn(String name, List<Long> list);
 
     @Query("select b.id as id , b.name as sizeName , b.orgName as orgName , b.created as created  ,  b.updated as updated " +
-            " from ProductSize b " +
+            " , b.createBy as createBy , b.updateBy as updateBy from ProductSize b " +
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")
     Page<Map<String, Object>> getList(Long sizeId, Long orgId, Pageable pageable);

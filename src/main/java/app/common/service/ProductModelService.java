@@ -100,9 +100,11 @@ public class ProductModelService {
             model.setBrandName(dto.getBrandName());
             model.setOrgName(dto.getOrgName());
             model.setOrgId(dto.getOrgId());
+            model.setCreateBy(CommonUtil.currentUser());
         }else{
             model = (ProductModel) mp.get("model");
-            BeanUtils.copyProperties(dto,model,"created","updated");
+            BeanUtils.copyProperties(dto,model,"created","createBy");
+            model.setUpdateBy(CommonUtil.currentUser());
         }
         modelRepo.save(model);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

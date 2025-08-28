@@ -92,9 +92,11 @@ public class ProductColorService {
             color.setName(dto.getName());
             color.setOrgName(dto.getOrgName());
             color.setOrgId(dto.getOrgId());
+            color.setCreateBy(CommonUtil.currentUser());
         }else{
             color = (ProductColor) mp.get("color");
-            BeanUtils.copyProperties(dto,color,"created","updated");
+            BeanUtils.copyProperties(dto,color,"created","createBy");
+            color.setUpdateBy(CommonUtil.currentUser());
         }
         colorRepo.save(color);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

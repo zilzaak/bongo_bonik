@@ -89,9 +89,11 @@ public class MadeWithService {
             mdwth.setName(dto.getName());
             mdwth.setOrgName(dto.getOrgName());
             mdwth.setOrgId(dto.getOrgId());
+            mdwth.setCreateBy(CommonUtil.currentUser());
         }else{
             mdwth = (MadeWith) mp.get("mdwth");
-            BeanUtils.copyProperties(dto,mdwth,"created");
+            BeanUtils.copyProperties(dto,mdwth,"created","createBy");
+            mdwth.setUpdateBy(CommonUtil.currentUser());
         }
         madeWithRepo.save(mdwth);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

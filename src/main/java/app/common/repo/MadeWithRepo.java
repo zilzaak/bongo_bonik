@@ -16,7 +16,8 @@ public interface MadeWithRepo extends JpaRepository<MadeWith,Long> {
 
     boolean existsByNameAndOrgId(String name, Long orgId);
 
-    @Query("select x.id as id , x.name as name , x.orgName as orgName , x.created as created " +
+    @Query("select x.id as id , x.name as name , x.orgName as orgName , x.created as created , x.updated as updated " +
+            " , x.createBy as createBy , x.updateBy as updateBy " +
             " from  MadeWith x where ( ?1 is null or x.id=?1 ) and ( ?2 is null or  x.orgId=?2 )  ")
     Page<Map<String, Object>> getList(Long mid, Long orgId, Pageable pageable);
 

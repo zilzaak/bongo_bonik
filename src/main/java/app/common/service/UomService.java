@@ -129,9 +129,11 @@ public class UomService {
             oum.setOrgName(dto.getOrgName());
             oum.setOrgId(dto.getOrgId());
             oum.setProductCatIds(dto.getProductCatIds());
+            oum.setCreateBy(CommonUtil.currentUser());
         }else{
             oum = (UnitOfMeasure) mp.get("oum");
-            BeanUtils.copyProperties(dto,oum,"created","updated");
+            BeanUtils.copyProperties(dto,oum,"created","createBy");
+            oum.setUpdateBy(CommonUtil.currentUser());
         }
         uomRepo.save(oum);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);
