@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/setting/productCriteria/")
 public class CommonController {
 
@@ -30,8 +31,7 @@ public class CommonController {
 
 
   @PostMapping("/create")
-  ResponseEntity<?> create(@RequestBody CommonDTO dto)
-          throws RuntimeException{
+  ResponseEntity<?> create(@RequestBody CommonDTO dto){
       MsgResponse response = new MsgResponse();
       if(dto.getEntity()==null || dto.getEntity().trim().isEmpty()){
           response.setSuccess(false);

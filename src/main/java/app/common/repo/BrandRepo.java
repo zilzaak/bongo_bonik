@@ -20,7 +20,7 @@ public interface BrandRepo extends JpaRepository<Brand,Long> {
     int existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> asList);
 
 
-    @Query("select b.id as id , b.name as brandName , org.name as orgName , b.created as created  ,  b.updated as updated " +
+    @Query("select b.id as id , b.name as name , org.name as orgName , b.created as created  ,  b.updated as updated " +
             " from Brand b join Organization org on org.id=b.orgId " +
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")
