@@ -9,6 +9,7 @@ import app.common.entity.ProductCat;
 import app.common.entity.UnitOfMeasure;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,53 +41,13 @@ public class UomService {
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getName()==null || dto.getProductCatIds()==null){
+        if(dto.getName()==null || dto.getOrgId()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , Product category are required");
+            mp.put("message","Name , Organization is required");
             return mp;
         }
 
-        List<String> cats = CommonUtil.bulkStrToList(dto.getProductCatIds());
-        List<Long> catIdLst = CommonUtil.strListToLong(cats);
-
-        Long orgId=null;
-        for(Long id : catIdLst){
-
-            ProductCat pcat = catRepo.findById(id).orElse(null);
-            if(pcat==null){
-                mp.put("hasError",true);
-                mp.put("message","product category not exist with id"+id);
-                return mp;
-            }
-            if(orgId==null){
-                orgId=pcat.getOrgId();
-            }else{
-                if(!orgId.equals(pcat.getOrgId())){
-                    mp.put("hasError",true);
-                    mp.put("message","product "+pcat.getName()+" is not under same organization");
-                    return mp;
-                }
-            }
-
-        }
-
-        String orgName = orgRepo.getName(orgId);
-        dto.setOrgName(orgName);
-        dto.setOrgId(orgId);
-
-        List<String> existCats = uomRepo.getExistCat(dto.getName(),dto.getOrgId());
-
         if(dto.getId()==null){
-            for(String m : existCats){
-                   for(String k : cats){
-                       if(m.contains(k)){
-                           mp.put("hasError",true);
-                           mp.put("message","product cat already assigned for selected UOM");
-                           return mp;
-                       }
-                   }
-               }
-
 
         }else{
             UnitOfMeasure uom = uomRepo.findById(dto.getId()).orElse(null);
@@ -95,20 +56,9 @@ public class UomService {
                 mp.put("message","Db data not found for edit");
                 return mp;
             }
-            existCats = uomRepo.getExistCatExceptId(dto.getName(),dto.getOrgId(),dto.getId());
-            for(String m : existCats){
-                for(String k : cats){
-                    if(m.contains(k)){
-                        mp.put("hasError",true);
-                        mp.put("message","product cat already assigned for selected UOM");
-                        return mp;
-                    }
-                }
-            }
-
-            if(!uom.getOrgId().equals(dto.getOrgId())){
+            if(!uom.getOrg().getId().equals(dto.getOrgId())){
                 mp.put("hasError",true);
-                mp.put("message","you can not edit the organization because its usual is sensitive");
+                mp.put("message","you can not edit the organization because its already used in many information");
                 return mp;
             }
 
@@ -128,13 +78,16 @@ public class UomService {
         UnitOfMeasure oum = new UnitOfMeasure();
         if(dto.getId()==null){
             oum.setName(dto.getName());
-            oum.setOrgName(dto.getOrgName());
-            oum.setOrgId(dto.getOrgId());
-            oum.setProductCatIds(dto.getProductCatIds());
+            Organization o = new Organization();
+            o.setId(dto.getOrgId());
+            oum.setOrg(o);
             oum.setCreateBy(CommonUtil.currentUser());
         }else{
             oum = (UnitOfMeasure) mp.get("oum");
             BeanUtils.copyProperties(dto,oum,"created","createBy");
+            Organization o = new Organization();
+            o.setId(dto.getOrgId());
+            oum.setOrg(o);
             oum.setUpdateBy(CommonUtil.currentUser());
         }
         uomRepo.save(oum);

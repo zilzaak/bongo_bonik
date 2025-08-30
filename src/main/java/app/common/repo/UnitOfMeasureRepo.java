@@ -11,26 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
-
-    boolean existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> list);
-
-    boolean existsByNameAndOrgId(String name, Long orgId);
-
-    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId ")
-    List<String> getExistCat(@Param("name") String name, @Param("orgId") Long orgId);
-    @Query("select x.productCatIds from UnitOfMeasure x where x.name=:name and x.orgId=:orgId and x.id <> :id ")
-    List<String> getExistCatExceptId(@Param("name") String name, @Param("orgId") Long orgId,  @Param("id")  Long id);
-
     UnitOfMeasure findTopByOrgId(Long id);
 
     boolean existsByOrgId(Long id);
-
-    boolean existsByOrgIdAndId(Long orgId, Long uomId);
-    @Query("select b.id as id , b.name as name , b.orgName as orgName , b.created as created   " +
+    @Query("select b.id as id , b.name as name , b.org.name as orgName , b.created as created   " +
             ",  b.updated as updated, b.createBy as createBy , b.updateBy as updateBy " +
             " from UnitOfMeasure b  " +
             " where ( ?1 is null or b.id=?1 ) and " +
-            " ( ?2 is null or b.orgId=?2 ) and " +
+            " ( ?2 is null or b.org.id=?2 ) and " +
             " cast(?3 as String ) is null or cast(b.name as string) like concat('%',upper(cast(?3 as string)),'%') "+
             " ")
     Page<Map<String, Object>> getList(Long id ,Long orgId, String name,Pageable pageable);

@@ -1,6 +1,8 @@
 package app.common.entity;
 
+import app.modules.base.org.entity.Organization;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import lombok.Setter;
 @Entity
 public class UnitOfMeasure extends BaseEntity{
     private String name;
-    private String productCatIds;
-    private Long orgId;
-    private String orgName;
+    @ManyToOne
+    private Organization org;
+    private String description;
 }

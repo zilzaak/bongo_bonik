@@ -140,7 +140,7 @@ public class ProductService {
               }
 
               if(uom!=null){
-                  if(!uom.getOrgId().equals(prdct.getOrgId())){
+                  if(!uom.getOrg().getId().equals(prdct.getOrgId())){
                       mp.put("hasError",true);
                       mp.put("message","OUM and product must be under same Organization ");
                       return mp;
@@ -214,7 +214,7 @@ public class ProductService {
         if(madeWith!=null && madeWith.getOrgId().equals(org)){
             return "Selected made with is under another organization";
         }
-        if(uom!=null && uom.getOrgId().equals(org)){
+        if(uom!=null && uom.getOrg().getId().equals(org)){
             return "Selected unit of measurement is under another organization";
         }
         return null;
