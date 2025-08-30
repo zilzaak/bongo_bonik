@@ -1,5 +1,6 @@
 package app.common.dto;
 
+import app.common.util.CommonUtil;
 import lombok.*;
 
 @Setter
@@ -39,6 +40,15 @@ public class SearchParamDTO {
    private Long parentMenuId;
    private Long backendUrlId;
    private String frontendUrl;
+   private String name;
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name!=null? CommonUtil.removeHeadTailSpace(name):null;
+   }
 
    public String getCommonField() {
       return commonField;

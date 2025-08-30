@@ -113,7 +113,7 @@ public class BrandService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = brandRepo.getList(dto.brandId,dto.orgId,pageable);
+        Page<Map<String,Object>> page = brandRepo.getList(dto.brandId,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

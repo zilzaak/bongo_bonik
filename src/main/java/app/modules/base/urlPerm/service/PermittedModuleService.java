@@ -12,6 +12,7 @@ import app.modules.base.urlPerm.dto.MenuData;
 import app.modules.base.urlPerm.dto.SubMenuTrack;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.user.entity.User;
+import app.modules.base.user.repo.UserOrgRepository;
 import app.modules.base.user.repo.UserRepository;
 import app.modules.base.urlPerm.dto.PrmttedApiDTO;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
@@ -37,6 +38,8 @@ public class PermittedModuleService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserOrgRepository orgRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -198,7 +201,10 @@ public class PermittedModuleService {
             }
 
         }
-        return new MsgResponse("Menu permission list retrieved ",menuResponse,true);
+        Map<String,Object> resp=new HashMap<>();
+        resp.put("menus",menuResponse);
+        resp.put("orgs",orgRepository.getPermittedOrg(user));
+        return new MsgResponse("Menu permission list retrieved ",resp,true);
     }
 
     public void makeHierarchy(List<MenuHierarchyDTO> menuResponse,MenuHierarchyDTO element,SubMenuTrack track){

@@ -1,9 +1,11 @@
 package app.modules.base.user.repo;
 
+import app.modules.base.org.entity.Organization;
 import app.modules.base.user.entity.User;
 import app.modules.base.user.entity.UserOrg;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +27,8 @@ public interface UserOrgRepository extends JpaRepository<UserOrg, Long> {
             "  join x.user u " +
             "  where u.id=?1 ")
     List<Object[]> orgnames(Long id);
+
+    int countByOrgIdAndUserUsername(Long orgId, String username);
+    @Query("select  x.org from UserOrg x where x.user=:user ")
+    List<Organization> getPermittedOrg(@Param("user") User user);
 }

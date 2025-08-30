@@ -113,7 +113,7 @@ public class ProductSizeService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = sizeRepo.getList(dto.sizeId,dto.orgId,pageable);
+        Page<Map<String,Object>> page = sizeRepo.getList(dto.sizeId,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

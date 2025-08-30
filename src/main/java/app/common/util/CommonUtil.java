@@ -3,6 +3,8 @@ package app.common.util;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
+import app.modules.base.org.entity.Organization;
+import app.modules.base.user.repo.UserOrgRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,10 @@ import java.util.regex.Pattern;
 
 public class CommonUtil {
 
-
+    private static UserOrgRepository orgRepo;
+   public CommonUtil(UserOrgRepository orgRepo){
+        this.orgRepo=orgRepo;
+    }
     public static List<String> bulkStrToList(String bulkStr){
         List<String> list = new ArrayList<>();
         if(bulkStr==null || bulkStr.trim().isEmpty()){
@@ -27,6 +32,7 @@ public class CommonUtil {
         list = Arrays.asList(arr);
         return list;
     }
+
 
     public static List<String> prdctTypes = Arrays.asList("BARCODED_PRODUCT","NORMAL_PRODUCT");
 
@@ -218,5 +224,17 @@ public class CommonUtil {
     }
 
     public static List<String> permitAllList=Arrays.asList("/auth/getToken");
+
+    public static boolean validOrg(Long orgId){
+        if(orgId==null){
+            return false;
+        }
+      String username=  SecurityContextHolder.getContext().getAuthentication().getName();
+        if(username==null){
+            return false;
+        }
+        int x =  orgRepo.countByOrgIdAndUserUsername(orgId,username);
+        return x>0;
+    }
 
 }

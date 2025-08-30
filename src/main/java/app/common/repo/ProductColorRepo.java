@@ -15,7 +15,7 @@ public interface ProductColorRepo extends JpaRepository<ProductColor,Long> {
 
     boolean existsByNameAndOrgId(String name, Long orgId);
 
-    @Query("select b.id as id , b.name as colorName , b.orgName as orgName , b.created as created  ,  b.updated as updated " +
+    @Query("select b.id as id , b.name as name , b.orgName as orgName , b.created as created  ,  b.updated as updated " +
             " , b.createBy as createBy , b.updateBy as updateBy from ProductColor b  " +
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) ")

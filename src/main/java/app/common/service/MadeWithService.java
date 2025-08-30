@@ -111,7 +111,7 @@ public class MadeWithService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = madeWithRepo.getList(dto.madeWithId,dto.orgId,pageable);
+        Page<Map<String,Object>> page = madeWithRepo.getList(dto.madeWithId,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 

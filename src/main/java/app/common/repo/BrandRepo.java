@@ -24,8 +24,9 @@ public interface BrandRepo extends JpaRepository<Brand,Long> {
             " b.updated as updated , b.createBy as createBy , b.updateBy as updateBy " +
             " from Brand b join Organization org on org.id=b.orgId " +
             " where ( ?1 is null or b.id=?1 ) and " +
-            " ( ?2 is null or b.orgId=?2 ) ")
-    Page<Map<String, Object>> getList(Long brandId, Long orgId, Pageable pageable);
+            " ( ?2 is null or b.orgId=?2 ) and " +
+            "   cast(?3 as String) is null or cast(b.name as string) like concat('%',upper(cast(?3 as string)),'%')  ")
+    Page<Map<String, Object>> getList(Long brandId, Long orgId, String name, Pageable pageable);
 
     boolean existsByOrgId(Long id);
 

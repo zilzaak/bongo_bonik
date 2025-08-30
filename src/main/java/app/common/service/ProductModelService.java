@@ -122,7 +122,7 @@ public class ProductModelService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = modelRepo.getList(dto.brandId,dto.orgId,dto.modelId ,pageable);
+        Page<Map<String,Object>> page = modelRepo.getList(dto.brandId,dto.orgId,dto.modelId ,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }
