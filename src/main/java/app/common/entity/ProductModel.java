@@ -21,4 +21,5 @@ public class ProductModel extends BaseEntity{
     private Brand brand;
     @ManyToOne
     private Organization org;
+    private String description;
 }

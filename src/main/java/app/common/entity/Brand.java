@@ -17,4 +17,5 @@ public class Brand extends BaseEntity{
     private String name;
     @ManyToOne
     private Organization org;
+    private String description;
 }
