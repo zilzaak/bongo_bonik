@@ -132,7 +132,7 @@ public class ProductService {
               }
 
               if(model!=null){
-                  if(!model.getOrgId().equals(prdct.getOrgId())){
+                  if(!model.getOrg().getId().equals(prdct.getOrgId())){
                       mp.put("hasError",true);
                       mp.put("message","Product model and and product must be under same Organization ");
                       return mp;
@@ -172,7 +172,7 @@ public class ProductService {
               }
 
               if(brand!=null){
-                  if(!brand.getOrgId().equals(prdct.getOrgId())){
+                  if(!brand.getOrg().getId().equals(prdct.getOrgId())){
                       mp.put("hasError",true);
                       mp.put("message","Brand and product must be under same Organization ");
                       return mp;
@@ -196,13 +196,13 @@ public class ProductService {
         if(!cat.getOrgId().equals(org)){
             return "Product category is under another organization";
         }
-        if(!brand.getOrgId().equals(org)){
+        if(!brand.getOrg().getId().equals(org)){
             return "Brand is under another organization";
         }
-        if(model!=null && !model.getOrgId().equals(org)){
+        if(model!=null && !model.getOrg().getId().equals(org)){
             return "Model is under another organization";
         }
-        if(model!=null && !model.getBrandId().equals(brand.getId())){
+        if(model!=null && !model.getBrand().getId().equals(brand.getId())){
             return "Select model under selected brand";
         }
         if(size!=null){

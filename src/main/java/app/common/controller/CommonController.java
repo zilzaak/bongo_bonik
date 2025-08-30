@@ -5,9 +5,11 @@ import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.service.*;
 import app.common.util.CommonUtil;
+import app.modules.base.user.repo.UserOrgRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +31,20 @@ public class CommonController {
     private UomService uomService;
     @Autowired
     private MadeWithService madeWithService;
+    @Autowired
+    private  UserOrgRepository orgRepo;
 
+    public  boolean validOrg(Long orgId){
+        if(orgId==null){
+            return false;
+        }
+        String username=  SecurityContextHolder.getContext().getAuthentication().getName();
+        if(username==null){
+            return false;
+        }
+        int x =  orgRepo.countByOrgIdAndUserUsername(orgId,username);
+        return x>0;
+    }
 
   @PostMapping("/create")
   ResponseEntity<?> create(@RequestBody CommonDTO dto){
@@ -39,7 +54,7 @@ public class CommonController {
           response.setMessage("Entity is required field its value may be Brand/ProductCat/ProductModel/ProductColor/ProductSize/MadeWith/UnitOfMeasure");
           return new ResponseEntity<>(response ,HttpStatus.OK);
       }
-      if(!CommonUtil.validOrg(dto.getOrgId())){
+      if(!validOrg(dto.getOrgId())){
           response.setSuccess(false);
           response.setMessage("The logged user is not the owner of the selected organization");
           return new ResponseEntity<>(response ,HttpStatus.OK);
@@ -78,7 +93,7 @@ public class CommonController {
             response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
-        if(!CommonUtil.validOrg(dto.getOrgId())){
+        if(!validOrg(dto.getOrgId())){
             response.setSuccess(false);
             response.setMessage("The logged user is not the owner of the selected organization");
             return new ResponseEntity<>(response ,HttpStatus.OK);
@@ -118,7 +133,7 @@ public class CommonController {
             response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
-        if(!CommonUtil.validOrg(dto.getOrgId())){
+        if(!validOrg(dto.getOrgId())){
             response.setSuccess(false);
             response.setMessage("The logged user is not the owner of the selected organization");
             return new ResponseEntity<>(response ,HttpStatus.OK);
@@ -156,7 +171,7 @@ public class CommonController {
             response.setMessage("Entity is required field its value may be Brand or ProductCat or ProductModel or ProductColor or ProductSize or MadeWith or UnitOfMeasure");
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
-        if(!CommonUtil.validOrg(dto.getOrgId())){
+        if(!validOrg(dto.getOrgId())){
             response.setSuccess(false);
             response.setMessage("The logged user is not the owner of the selected organization");
             return new ResponseEntity<>(response ,HttpStatus.OK);

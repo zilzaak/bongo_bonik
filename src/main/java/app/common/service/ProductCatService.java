@@ -116,7 +116,7 @@ public class ProductCatService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = catRepo.getList(dto.catId,dto.orgId,dto.getName(),pageable);
+        Page<Map<String,Object>> page = catRepo.getList(dto.id,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

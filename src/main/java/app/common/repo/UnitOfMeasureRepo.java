@@ -33,5 +33,5 @@ public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
             " ( ?2 is null or b.orgId=?2 ) and " +
             " cast(?3 as String ) is null or cast(b.name as string) like concat('%',upper(cast(?3 as string)),'%') "+
             " ")
-    Page<Map<String, Object>> getList(Long orgId, String name, Pageable pageable);
+    Page<Map<String, Object>> getList(Long id ,Long orgId, String name,Pageable pageable);
 }

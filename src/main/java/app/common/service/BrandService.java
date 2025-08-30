@@ -7,6 +7,7 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
 import app.common.entity.Product;
 import app.common.repo.BrandRepo;
+import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import app.common.repo.ProductRepo;
 import app.common.util.CommonUtil;
@@ -42,7 +43,6 @@ public class BrandService {
         }
 
         String orgName = orgRepo.getName(dto.getOrgId());
-        dto.setOrgName(orgName);
         if(orgName==null){
             mp.put("hasError",true);
             mp.put("message","No Organization exist with id="+dto.getOrgId());
@@ -68,7 +68,7 @@ public class BrandService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
-            if(!brand.getOrgId().equals(dto.getOrgId())){
+            if(!brand.getOrg().getId().equals(dto.getOrgId())){
                 mp.put("hasError",true);
                 mp.put("message","you can not edit the organization because its usual is sensitive");
                 return mp;
@@ -89,12 +89,16 @@ public class BrandService {
         Brand brand = new Brand();
         if(dto.getId()==null){
             brand.setName(dto.getName());
-            brand.setOrgName(dto.getOrgName());
-            brand.setOrgId(dto.getOrgId());
+            Organization o = new Organization();
+            o.setId(dto.getOrgId());
+            brand.setOrg(o);
             brand.setCreateBy(CommonUtil.currentUser());
         }else{
             brand = (Brand) mp.get("brand");
             BeanUtils.copyProperties(dto,brand,"created","createBy");
+            Organization o = new Organization();
+            o.setId(dto.getOrgId());
+            brand.setOrg(o);
             brand.setUpdateBy(CommonUtil.currentUser());
         }
         brandRepo.save(brand);
@@ -113,7 +117,7 @@ public class BrandService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = brandRepo.getList(dto.brandId,dto.orgId,dto.getName(),pageable);
+        Page<Map<String,Object>> page = brandRepo.getList(dto.id,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

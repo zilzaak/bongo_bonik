@@ -114,7 +114,7 @@ public class ProductColorService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = colorRepo.getList(dto.colorId,dto.orgId,pageable);
+        Page<Map<String,Object>> page = colorRepo.getList(dto.id,dto.orgId,pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

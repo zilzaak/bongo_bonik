@@ -12,19 +12,19 @@ import java.util.Map;
 public interface BrandRepo extends JpaRepository<Brand,Long> {
 
     @Query("select count(x) from Brand  x where (   upper(x.name) like concat('%', upper(?1) ,'%')  " +
-            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.orgId=?2 ")
+            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.org.id=?2 ")
     int existsByNameAndOrgId(String name, Long orgId);
 
     @Query("select count(x) from Brand  x where (   upper(x.name) like concat('%', upper(?1) ,'%')  " +
-            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.orgId=?2 and x.id not in ?3  ")
+            " or  upper(?1) like concat('%',upper(x.name),'%')  ) and x.org.id=?2 and x.id not in ?3  ")
     int existsByNameAndOrgIdAndIdNotIn(String name, Long orgId, List<Long> asList);
 
 
     @Query("select b.id as id , b.name as name , org.name as orgName , b.created as created  , " +
             " b.updated as updated , b.createBy as createBy , b.updateBy as updateBy " +
-            " from Brand b join Organization org on org.id=b.orgId " +
+            " from Brand b join Organization org on org.id=b.org.id " +
             " where ( ?1 is null or b.id=?1 ) and " +
-            " ( ?2 is null or b.orgId=?2 ) and " +
+            " ( ?2 is null or b.org.id=?2 ) and " +
             "   cast(?3 as String) is null or cast(b.name as string) like concat('%',upper(cast(?3 as string)),'%')  ")
     Page<Map<String, Object>> getList(Long brandId, Long orgId, String name, Pageable pageable);
 

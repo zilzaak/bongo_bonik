@@ -153,7 +153,7 @@ public class UomService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = uomRepo.getList(dto.orgId,dto.getName(),pageable);
+        Page<Map<String,Object>> page = uomRepo.getList(dto.id,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

@@ -9,6 +9,7 @@ import app.common.entity.Product;
 import app.common.entity.ProductModel;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,7 @@ public class ProductModelService {
             return mp;
         }
 
-        dto.setOrgName(brand.getOrgName());
-        dto.setOrgId(brand.getOrgId());
-        dto.setBrandName(brand.getName());
+        dto.setOrgId(brand.getOrg().getId());
 
         if(dto.getId()==null){
             if(modelRepo.existsByNameAndBrandId(dto.getName(),dto.getOrgId())){
@@ -75,7 +74,7 @@ public class ProductModelService {
                 return mp;
             }
 
-            if(!brand.getOrgId().equals(model.getOrgId())){
+            if(!brand.getOrg().getId().equals(model.getOrg().getId())){
                 mp.put("hasError",true);
                 mp.put("message","you can not edit the organization because its usual is sensitive");
                 return mp;
@@ -96,14 +95,22 @@ public class ProductModelService {
         ProductModel model = new ProductModel();
         if(dto.getId()==null){
             model.setName(dto.getName());
-            model.setBrandId(dto.getBrandId());
-            model.setBrandName(dto.getBrandName());
-            model.setOrgName(dto.getOrgName());
-            model.setOrgId(dto.getOrgId());
+            Brand b=new Brand();
+            b.setId(dto.getBrandId());
+            model.setBrand(b);
+            Organization o=new Organization();
+            o.setId(dto.getOrgId());
+            model.setOrg(o);
             model.setCreateBy(CommonUtil.currentUser());
         }else{
             model = (ProductModel) mp.get("model");
             BeanUtils.copyProperties(dto,model,"created","createBy");
+            Brand b=new Brand();
+            b.setId(dto.getBrandId());
+            model.setBrand(b);
+            Organization o=new Organization();
+            o.setId(dto.getOrgId());
+            model.setOrg(o);
             model.setUpdateBy(CommonUtil.currentUser());
         }
         modelRepo.save(model);
@@ -122,7 +129,7 @@ public class ProductModelService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = modelRepo.getList(dto.brandId,dto.orgId,dto.modelId ,dto.getName(),pageable);
+        Page<Map<String,Object>> page = modelRepo.getList(dto.brandId,dto.orgId,dto.id ,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }
