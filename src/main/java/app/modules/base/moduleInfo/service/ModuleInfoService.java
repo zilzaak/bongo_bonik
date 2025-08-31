@@ -238,7 +238,7 @@ public class ModuleInfoService {
               if(obj!=null){
                  for(MenuHierarchy x : obj.getDetails()){
                      MenuHierarchy temp = new MenuHierarchy();
-                     BeanUtils.copyProperties(x,temp,"details");
+                     BeanUtils.copyProperties(x,temp,"details","parent");
                      childDetails.add(temp);
                  }
               }
@@ -247,7 +247,9 @@ public class ModuleInfoService {
           MenuHierarchy parent=null;
           Long parentId=hierarchyRepo.findParentIdById(dto.getModuleId());
           if(parentId!=null){
-              parent= hierarchyRepo.findById(parentId).orElse(null);
+              parent=new MenuHierarchy();
+              MenuHierarchy mx= hierarchyRepo.findById(parentId).orElse(null);
+              BeanUtils.copyProperties(mx,parent,"details","parent");
           }
             data.put("parent",parent);
             resp.setData(data);

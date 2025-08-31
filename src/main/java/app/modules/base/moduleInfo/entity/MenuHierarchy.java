@@ -25,8 +25,12 @@ public class MenuHierarchy extends BaseEntity {
     private String methodName; //put , post , delete , update , patch
     private String apiSeq;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id") // foreign key column
+    @JsonBackReference
+    private MenuHierarchy parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<MenuHierarchy> details = new ArrayList<>();
 }

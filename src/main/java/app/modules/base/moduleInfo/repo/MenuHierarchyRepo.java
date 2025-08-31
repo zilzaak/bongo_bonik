@@ -36,25 +36,21 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
                                      @Param("loadMenu") String loadMenu ,
                                      Pageable pageable);
 
-    @Query(value = "select x.id as id,  " +
-            " x.api_pattern as apiPattern, " +
+    @Query("select x.id as id,  " +
+            " x.apiPattern as apiPattern, " +
             "  x.created as created ,  " +
             "  x.updated as updated ,"+
-            "x.method_Name as methodName, " +
-            "x.front_url as frontUrl, " +
+            "x.methodName as methodName, " +
+            "x.frontUrl as frontUrl, " +
             "x.menu as moduleName, " +
-            "x.parent_menu as parentModule, " +
-            " x.api_seq as apiSeq " +
-            "from menu_hierarchy x " +
-            "where (:parent is null or x.parent_id = :parent) " +
+            "x.parentMenu as parentModule, " +
+            " x.apiSeq as apiSeq " +
+            " from MenuHierarchy x " +
+            " left join x.parent parent " +
+            "where (:parent is null or parent.id = :parent) " +
             "and (:backendUrlId is null or x.id = :backendUrlId) " +
-            "and (cast(:frontendUrl as text) is null or cast(x.front_url as text) = cast(:frontendUrl as text)) " +
-            "order by id desc",
-            countQuery = "select count(*) from menu_hierarchy x " +
-                    "where (:parent is null or x.parent_id = :parent) " +
-                    "and (:backendUrlId is null or x.id = :backendUrlId) " +
-                    "and (cast(:frontendUrl as text) is null or cast(x.front_url as text) = cast(:frontendUrl as text))",
-            nativeQuery = true)
+            "and (cast(:frontendUrl as text) is null or cast(x.frontUrl as text) = cast(:frontendUrl as text)) " +
+            "order by x.id desc")
     Page<Map<String, Object>> getListParent(@Param("parent") Long parent,
                                             @Param("backendUrlId") Long backendUrlId,
                                             @Param("frontendUrl") String frontendUrl,

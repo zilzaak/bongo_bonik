@@ -215,7 +215,9 @@ public class ApiEndpointRetriever {
                 break;
             }
             else if(menu.getApiSeq().equals(parentSeq)){
-                menu.getDetails().add(this.makeMenuHierarchy(track,partTracker));
+                MenuHierarchy child=this.makeMenuHierarchy(track,partTracker);
+                child.setParent(menu);
+                menu.getDetails().add(child);
                 break;
             }else{
                 this.setUnderParent(menu.getDetails(),track,partTracker);
