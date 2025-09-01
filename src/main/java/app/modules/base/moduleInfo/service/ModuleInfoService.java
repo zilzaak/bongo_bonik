@@ -119,23 +119,18 @@ public class ModuleInfoService {
         for(MenuDTO obj : list){
             if(obj.getId()!=null){
                 MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
-                String oldParentMenu=menu.getParentMenu();
-                if(oldParentMenu==null || oldParentMenu.isBlank()){
-                    oldParentMenu=null;
-                }
-                if(obj.parentMenu==null || obj.parentMenu.isBlank()){
-                    obj.parentMenu=null;
-                }
-
+                Long oldParentId=Optional.ofNullable(menu.getParent()).map(MenuHierarchy::getId).orElse(null);
 
                  BeanUtils.copyProperties(obj,menu,"details");
-                if((oldParentMenu==null &&  obj.parentMenu==null) || (oldParentMenu.equals(obj.parentMenu))){
+                if((oldParentId==null &&  obj.parentId==null) ||
+                  (oldParentId!=null && obj.parentId!=null && 
+                   oldParentId.equals(obj.parentId))){
                     hierarchyRepo.save(menu);
                 }
-                else if((obj.parentMenu!=null && oldParentMenu!=null
-                        && !obj.parentMenu.equals(oldParentMenu)) ||
-                        (obj.parentMenu!=null && oldParentMenu==null) ||
-                        (oldParentMenu!=null && obj.parentMenu==null)){
+                else if((obj.parentId!=null && oldParentId!=null
+                        && !obj.parentId.equals(oldParentId)) ||
+                        (obj.parentMenu!=null && oldParentId==null) ||
+                        (oldParentId!=null && obj.parentId==null)){
 
                     if(menu.getParent()!=null && menu.getParent().getId().equals(menu.getId())){
                         return new MsgResponse("A menu can not be parent itself",false);
@@ -163,7 +158,6 @@ public class ModuleInfoService {
                         updatedParent = hierarchyRepo.findById(obj.parentId).get();
                         menu.setParent(updatedParent);
                         updatedParent.getDetails().add(menu);
-                        hierarchyRepo.save(menu);
                         hierarchyRepo.save(updatedParent);
                     }
                 }
@@ -185,7 +179,6 @@ public class ModuleInfoService {
                     BeanUtils.copyProperties(obj,child);
                     if(parentMenu!=null){
                         child.setParent(parentMenu);
-                        hierarchyRepo.save(child);
                         parentMenu.getDetails().add(child);
                         hierarchyRepo.save(parentMenu);
                     }else{

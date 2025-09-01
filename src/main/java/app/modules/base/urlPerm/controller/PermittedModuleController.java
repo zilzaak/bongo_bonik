@@ -1,5 +1,6 @@
 package app.modules.base.urlPerm.controller;
 
+import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.modules.base.urlPerm.dto.PrmttedApiDTO;
@@ -38,10 +39,10 @@ public class PermittedModuleController {
     }
 
 
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> delete(@PathVariable Long id)
+    @DeleteMapping("/delete")
+    ResponseEntity<?> delete(@RequestBody CommonDTO commonDTO)
             throws RuntimeException{
-        MsgResponse response = permittedModuleService.delete(id);
+        MsgResponse response = permittedModuleService.delete(commonDTO.getId());
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
