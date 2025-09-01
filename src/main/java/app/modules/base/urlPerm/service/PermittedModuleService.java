@@ -176,12 +176,14 @@ public class PermittedModuleService {
                     element.setParentId(menuIdHierarchyOfTheApi.get(i-1));
                 }
                 MenuData hr = apiAgainstModuleRepo.getData(element.getId());
-                element.setMenu(hr.getMenu());
-                element.setParentMenu(hr.getParentMenu());
-                element.setMethodName(hr.getMethodName());
-                element.setApiPattern(hr.getApiPattern());
-                element.setFrontUrl(hr.getFrontUrl());
-                element.setApiSeq(hr.getApiSeq());
+                if(hr!=null){
+                    element.setMenu(hr.getMenu());
+                    element.setParentMenu(hr.getParentMenu());
+                    element.setMethodName(hr.getMethodName());
+                    element.setApiPattern(hr.getApiPattern());
+                    element.setFrontUrl(hr.getFrontUrl());
+                    element.setApiSeq(hr.getApiSeq());
+                }
                 if(menuResponse.size()<1){
                     menuResponse.add(element);
                     menuProcessed.put(element.getId(), element.getId());

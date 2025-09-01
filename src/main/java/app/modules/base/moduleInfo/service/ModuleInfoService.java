@@ -77,7 +77,7 @@ public class ModuleInfoService {
             }
 
             if(menu.getId()==null){
-                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenu(menu.getParentMenu())){
+                if(menu.getParentId()!=null && !hierarchyRepo.existsById(menu.getParentId())){
                     mp.put("hasError",true);
                     mp.put("message","The parent menu selected but not created yet");
                     return mp;
@@ -127,7 +127,7 @@ public class ModuleInfoService {
                     obj.parentMenu=null;
                 }
 
-                //if menu name is changed than menu name is related to
+
                  BeanUtils.copyProperties(obj,menu,"details");
                 if((oldParentMenu==null &&  obj.parentMenu==null) || (oldParentMenu.equals(obj.parentMenu))){
                     hierarchyRepo.save(menu);
@@ -136,34 +136,35 @@ public class ModuleInfoService {
                         && !obj.parentMenu.equals(oldParentMenu)) ||
                         (obj.parentMenu!=null && oldParentMenu==null) ||
                         (oldParentMenu!=null && obj.parentMenu==null)){
-                    Long id = hierarchyRepo.findParentIdById(menu.getId());
-                    if(id.equals(menu.getId())){
+
+                    if(menu.getParent()!=null && menu.getParent().getId().equals(menu.getId())){
                         return new MsgResponse("A menu can not be parent itself",false);
                     }
 
-                    MenuHierarchy oldParent = null;
-                    if(id!=null) {
-                        oldParent =  hierarchyRepo.findById(id).orElse(null);
-                    }
 
-                    MenuHierarchy toBeRemoveItem=null;
-                    for(MenuHierarchy x : oldParent.getDetails()){
-                        if(x.getId().equals(menu.getId())){
-                            toBeRemoveItem=x;
-                            break;
+                    if(menu.getParent()!=null){
+                        MenuHierarchy toBeRemoveItem=null;
+                        for(MenuHierarchy x : menu.getParent().getDetails()){
+                            if(x.getId().equals(menu.getId())){
+                                toBeRemoveItem=x;
+                                break;
+                            }
+                        }
+
+                        if(toBeRemoveItem!=null) {
+                            menu.getParent().getDetails().remove(toBeRemoveItem);
+                            hierarchyRepo.save(menu.getParent());
                         }
                     }
-                    if(toBeRemoveItem!=null && oldParent.getDetails().size()>0) {
-                        oldParent.getDetails().remove(toBeRemoveItem);
-                        hierarchyRepo.save(oldParent);
-                    }
 
-                    MenuHierarchy newParent = null;
+
+                    MenuHierarchy updatedParent = null;
                     if(obj.parentId!=null){
-                        newParent = hierarchyRepo.findById(obj.parentId).get();
-                        newParent.getDetails().add(menu);
+                        updatedParent = hierarchyRepo.findById(obj.parentId).get();
+                        menu.setParent(updatedParent);
+                        updatedParent.getDetails().add(menu);
                         hierarchyRepo.save(menu);
-                        hierarchyRepo.save(newParent);
+                        hierarchyRepo.save(updatedParent);
                     }
                 }
 
@@ -183,6 +184,8 @@ public class ModuleInfoService {
                     MenuHierarchy child = new MenuHierarchy();
                     BeanUtils.copyProperties(obj,child);
                     if(parentMenu!=null){
+                        child.setParent(parentMenu);
+                        hierarchyRepo.save(child);
                         parentMenu.getDetails().add(child);
                         hierarchyRepo.save(parentMenu);
                     }else{
