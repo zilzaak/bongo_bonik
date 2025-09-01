@@ -6,7 +6,9 @@ import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.Brand;
 import app.common.entity.Product;
+import app.common.entity.ProductModel;
 import app.common.repo.BrandRepo;
+import app.common.repo.ProductModelRepo;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import app.common.repo.ProductRepo;
@@ -28,9 +30,10 @@ public class BrandService {
     private BrandRepo brandRepo;
     @Autowired
     private OrgRepo orgRepo;
-
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private ProductModelRepo modelRepo;
 
     Map<String,Object> formValidation(CommonDTO dto){
         Map<String,Object> mp = new HashMap<>();
@@ -109,7 +112,12 @@ public class BrandService {
         if(productRepo.existsByBrandId(dto.getId())){
             Product pd = productRepo.findTopByBrandId(dto.getId());
             return  new MsgResponse("This brand can not be delete , it is used in Product "+pd.getId()+"-"+pd.getName(),false);
-        }else{
+        }
+        else if(modelRepo.existsByBrandId(dto.getId())){
+            ProductModel pd = modelRepo.findTopByBrandId(dto.getId());
+            return  new MsgResponse("This brand can not be delete , it is used in ProductModel "+pd.getId()+"-"+pd.getName(),false);
+        }
+        else{
             brandRepo.deleteById(dto.getId());
         }
         return  new MsgResponse("Deleted successfully",true);
