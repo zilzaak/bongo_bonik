@@ -16,6 +16,7 @@ import app.modules.base.user.repo.UserOrgRepository;
 import app.modules.base.user.repo.UserRepository;
 import app.modules.base.urlPerm.dto.PrmttedApiDTO;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,57 @@ public class PermittedModuleService {
             parentMenuId= dto.getParentMenuId().toString();
         }
         Page<Map<String,Object>> page = permittedApiRepository.getList(dto.getId(),parentMenuId,dto.getMenuId(),dto.getUserId(),dto.getRoleId(),pageable);
-        return CommonUtil.responseFromPage(page);
+        MsgResponse resp=CommonUtil.responseFromPage(page);
+        List<Map<String,Object>> listData=new ArrayList<>();
+        List<Map<String,Object>> orgList= (List<Map<String, Object>>) ((Map<String,Object>)resp.getData()).get("listData");
+        Map<String,Object> apiCache=new HashMap<>();
+
+        Integer index=-1;
+        for(Map<String,Object> dbObj : orgList){
+            Map<String,Object> obj=new HashMap<>();
+            obj.putAll(dbObj);
+            index++;
+            if(apiCache.containsKey((String)obj.get("backendUrl"))){
+                     String[] existInfoInCache= ((String)apiCache.get((String)obj.get("backendUrl"))).split(">");
+                     String users=existInfoInCache[0];
+                     String authority=existInfoInCache[1];
+                     Integer existDataIndex=Integer.parseInt(existInfoInCache[2]);
+                   if(obj.get("authority")!=null){
+                       if(!authority.isEmpty()){
+                           authority=authority+","+ obj.get("authority");
+                       }else{
+                           authority=(String)obj.get("authority");
+                       }
+
+                   }
+                   if(obj.get("username")!=null){
+                       if(!users.isEmpty()){
+                           users=users+","+obj.get("username");
+                       }else{
+                           users=(String)obj.get("username");
+                       }
+                   }
+                   apiCache.put((String) obj.get("backendUrl"),users+">"+authority+">"+existDataIndex);
+                   listData.get(existDataIndex).put("authority",authority);
+                   listData.get(existDataIndex).put("username",users);
+               }else{
+                   String users="";
+                   String authority="";
+                   if(obj.get("authority")!=null){
+                       authority= (String) obj.get("authority");
+                   }
+                   if(obj.get("username")!=null){
+                       users= (String) obj.get("username");
+                   }
+                   obj.put("authority",authority);
+                   obj.put("username",users);
+                   listData.add(obj);
+                   apiCache.put((String) obj.get("backendUrl"),users+">"+authority+">"+index);
+               }
+
+        }
+         ((Map<String,Object>)resp.getData()).put("listData",listData);
+        return  resp;
     }
 
     public MsgResponse delete(Long id) {

@@ -123,7 +123,7 @@ public class ModuleInfoService {
 
                  BeanUtils.copyProperties(obj,menu,"details");
                 if((oldParentId==null &&  obj.parentId==null) ||
-                  (oldParentId!=null && obj.parentId!=null && 
+                  (oldParentId!=null && obj.parentId!=null &&
                    oldParentId.equals(obj.parentId))){
                     hierarchyRepo.save(menu);
                 }
