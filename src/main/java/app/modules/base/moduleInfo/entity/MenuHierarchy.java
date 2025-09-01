@@ -1,7 +1,6 @@
 package app.modules.base.moduleInfo.entity;
 
 import app.common.entity.BaseEntity;
-import app.modules.base.urlPerm.entity.PermittedApi;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
