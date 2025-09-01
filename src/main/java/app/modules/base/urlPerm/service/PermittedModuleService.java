@@ -170,7 +170,11 @@ public class PermittedModuleService {
     }
 
     public MsgResponse delete(Long id) {
-        permittedApiRepository.deleteById(id);
+        try{
+            permittedApiRepository.deleteById(id);
+        }catch (Exception e){
+            return new MsgResponse(e.getMessage(),false);
+        }
         return new MsgResponse("Successfully deleted",true);
     }
 

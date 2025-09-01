@@ -195,8 +195,12 @@ public class ModuleInfoService {
     }
 
     public MsgResponse delete(Long id) {
-
-        return null;
+        try{
+            hierarchyRepo.deleteById(id);
+        }catch (Exception e){
+            return new MsgResponse(e.getMessage(),false);
+        }
+        return new MsgResponse("Successfully deleted",true);
     }
 
     public MsgResponse getList(SearchParamDTO dto) {
