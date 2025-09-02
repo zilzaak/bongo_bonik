@@ -17,9 +17,12 @@ public interface UnitOfMeasureRepo extends JpaRepository<UnitOfMeasure,Long> {
     @Query("select b.id as id , b.name as name , b.org.name as orgName , b.created as created   " +
             ",  b.updated as updated, b.createBy as createBy , b.updateBy as updateBy " +
             " from UnitOfMeasure b  " +
-            " where ( ?1 is null or b.id=?1 ) and " +
-            " ( ?2 is null or b.org.id=?2 ) and " +
-            " cast(?3 as String ) is null or cast(b.name as string) like concat('%',upper(cast(?3 as string)),'%') "+
+            " where ( :id is null or b.id=:id ) and " +
+            " ( :orgId is null or b.org.id=:orgId ) and " +
+            " cast(:name as String ) is null or upper(cast(b.name as string))  like concat('%',upper(cast(:name as string)),'%') "+
             " ")
-    Page<Map<String, Object>> getList(Long id ,Long orgId, String name,Pageable pageable);
+    Page<Map<String, Object>> getList(@Param("id")  Long id ,
+                                      @Param("orgId") Long orgId,
+                                      @Param("name") String name,
+                                      Pageable pageable);
 }
