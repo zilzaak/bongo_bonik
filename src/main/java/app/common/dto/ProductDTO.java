@@ -7,8 +7,18 @@ public class ProductDTO {
 
     private Long id;
     private String name;
+    private String fullName;
     private Long orgId;
     private Long catId;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     private Long brandId;
     private Long modelId;
     private Long sizeId;

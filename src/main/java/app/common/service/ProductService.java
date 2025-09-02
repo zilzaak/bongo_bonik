@@ -108,6 +108,7 @@ public class ProductService {
           String fullName = (String) naming.get("fullName");
           String criteriaIds = (String) naming.get("criteriaIds");
           dto.setCriteriaIds(criteriaIds);
+          dto.setFullName(fullName);
 
           if(dto.getId()==null){
              //check duplicate fullName
@@ -238,7 +239,7 @@ public class ProductService {
 
          Map<String,Object> mp = validate(dto);
          if((boolean)mp.get("hasError")){
-             return new MsgResponse((String)mp.get("message"),false);
+             return new MsgResponse((String)mp.get("message"),mp,false);
          }
 
          Product product = new Product();
