@@ -67,6 +67,10 @@ public class ProductService {
           ProductCat cat = catRepo.findById(dto.getCatId()).orElse(null);
           Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
           UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).orElse(null):null;
+          ProductModel model = dto.getModelId()!=null?modelRepo.findById(dto.getModelId()).get():null;
+          ProductSize size = dto.getSizeId()!=null?sizeRepo.findById(dto.getSizeId()).get():null;
+          ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
+          MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
 
           if(!orgRepo.existsById(dto.getOrgId())){
               mp.put("hasError",true);
@@ -90,12 +94,6 @@ public class ProductService {
               return mp;
           }
 
-
-          ProductModel model = dto.getModelId()!=null?modelRepo.findById(dto.getModelId()).get():null;
-          ProductSize size = dto.getSizeId()!=null?sizeRepo.findById(dto.getSizeId()).get():null;
-          ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
-          MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
-
           String errorMessage = productCriteriaMaintainClassification(org,cat,brand,model,size,color,madeWith,uom);
           if(errorMessage!=null){
               mp.put("hasError",true);
@@ -103,13 +101,12 @@ public class ProductService {
               return mp;
           }
 
-
           Map<String,Object> naming = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName(),uom);
           String fullName = (String) naming.get("fullName");
           String criteriaIds = (String) naming.get("criteriaIds");
           dto.setCriteriaIds(criteriaIds);
           dto.setFullName(fullName);
-
+          Product prdct=new Product();
           if(dto.getId()==null){
              //check duplicate fullName
               List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds());
@@ -120,6 +117,7 @@ public class ProductService {
                   return mp;
               }
           }else{
+              prdct = productRepo.findById(dto.getId()).get();
               List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds(),dto.getId());
               if(existProduct.size()>0){
                   mp.put("hasError",true);
@@ -127,7 +125,6 @@ public class ProductService {
                   mp.put("existsData",existProduct);
                   return mp;
               }
-              Product prdct = productRepo.findById(dto.getId()).get();
 
               if(!prdct.getOrg().getId().equals(dto.getOrgId())){
                   mp.put("hasError",true);
@@ -189,15 +186,16 @@ public class ProductService {
                       return mp;
                   }
               }
-
-              mp.put("product",prdct);
-
           }
 
-          mp.put("brand",brand);
-          if(model!=null){
-              mp.put("model",model);
-          }
+          prdct.setBrand(brand);
+          prdct.setCat(cat);
+          prdct.setModel(model);
+          prdct.setSize(size);
+          prdct.setColor(color);
+          prdct.setMadeWith(madeWith);
+          prdct.setUom(uom);
+          mp.put("product",prdct);
           return mp;
       }
 
@@ -219,16 +217,16 @@ public class ProductService {
         if(model!=null && !model.getBrand().getId().equals(brand.getId())){
             return "Select model under selected brand";
         }
-        if(size!=null && size.getOrgId().equals(org)){
+        if(size!=null && !size.getOrgId().equals(org)){
             return "Selected size is under another organization";
         }
-        if(color!=null && color.getOrgId().equals(org)){
+        if(color!=null && !color.getOrgId().equals(org)){
             return "Selected color is under another organization";
         }
-        if(madeWith!=null && madeWith.getOrgId().equals(org)){
+        if(madeWith!=null && !madeWith.getOrgId().equals(org)){
             return "Selected made with is under another organization";
         }
-        if(uom!=null && uom.getOrg().getId().equals(org)){
+        if(uom!=null && !uom.getOrg().getId().equals(org)){
             return "Selected unit of measurement is under another organization";
         }
         return null;
@@ -241,26 +239,15 @@ public class ProductService {
          if((boolean)mp.get("hasError")){
              return new MsgResponse((String)mp.get("message"),mp,false);
          }
-
-         Product product = new Product();
-         if(dto.getId()!=null){
-             BeanUtils.copyProperties(dto,product);
-             product.setBrand((Brand) mp.get("brand"));
-             if(mp.containsKey("model")){
-              product.setModel((ProductModel) mp.get("model"));
-             }
+         Product product=(Product) mp.get("product");
+         BeanUtils.copyProperties(dto,product);
+         if(dto.getId()==null){
+             product.setCreateBy(CommonUtil.currentUser());
          }else{
-             product = (Product) mp.get("product");
-             BeanUtils.copyProperties(dto,product,"created","updated");
-             product.setBrand((Brand) mp.get("brand"));
-             if(mp.containsKey("model")){
-                 product.setModel((ProductModel) mp.get("model"));
-             }
+             product.setUpdateBy(CommonUtil.currentUser());
          }
-
          productRepo.save(product);
-
-          return new MsgResponse("Successfully created product",true);
+         return new MsgResponse("Successfully created product",true);
     }
 
     public MsgResponse edit(ProductDTO dto) {
