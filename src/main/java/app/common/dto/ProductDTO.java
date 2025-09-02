@@ -13,11 +13,31 @@ public class ProductDTO {
     private Long modelId;
     private Long sizeId;
     private Long colorId;
+
+    public String getCriteriaIds() {
+        return criteriaIds;
+    }
+
+    public void setCriteriaIds(String criteriaIds) {
+        this.criteriaIds = criteriaIds;
+    }
+
     private Long madeWithId;
     private Long uomId;//KG,LITER,ETC
     private Integer qtyPerUnit;//10,20,30
+    private String criteriaIds;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private String unitName;
     private Long parentId;
+    private String description;
 
     public Long getId() {
         return id;

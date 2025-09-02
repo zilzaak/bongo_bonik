@@ -29,20 +29,20 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
             " color.name as colorName , " +
             " org.name as orgName   " +
             " from Product p " +
-            " inner join Organization org on org.id=p.orgId   " +
+            " join p.org org  " +
             " left join p.brand brand " +
             " left join p.model model " +
-            " left join ProductCat cat on p.catId=cat.id " +
-            " left join ProductSize size on p.sizeId = size.id " +
-            " left join ProductColor color on p.colorId=color.id " +
-            " left join MadeWith mdwth on mdwth.id=p.madeWithId  " +
+            " left join  p.cat  cat " +
+            " left join p.size size" +
+            " left join p.color  color " +
+            " left join p.madeWith mdwth  " +
             " where ( ?1 is null or p.id=?1 ) " +
-            " and ( ?2 is null or p.orgId= ?2 ) " +
+            " and ( ?2 is null or org.id= ?2 ) " +
             " and ( ?3 is null or brand.id=?3 )  " +
-            " and ( ?4 is null or p.catId= ?4 ) " +
+            " and ( ?4 is null or cat.id= ?4 ) " +
             " and  (?5 is null or model.id= ?5 )  " +
-            " and ( ?6 is null or p.sizeId=?6 )  " +
-            " and  ( ?7 is null or p.colorId= ?7 ) " )
+            " and ( ?6 is null or size.id=?6 )  " +
+            " and  ( ?7 is null or color.id= ?7 ) " )
     Page<Map<String, Object>> getList(Long productId,
                                       Long orgId,
                                       Long brandId,
@@ -83,4 +83,19 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     boolean existsByOrgId(Long id);
 
     Product findTopByOrgId(Long id);
+
+    @Query("select x.id as id , x.name as name , x.description as description , x.fullName as fullName " +
+            " from Product x where x.org.id=:orgId and  " +
+            "  cast(x.name as string) like concat('%',:name,'%') and x.criteriaIds=:criteriaIds ")
+    List<Map<String, Object>> similarProduct(@Param("orgId") Long orgId,
+                                             @Param("name") String name,
+                                             @Param("criteriaIds") String criteriaIds);
+
+    @Query("select x.id as id , x.name as name , x.description as description , x.fullName as fullName " +
+            " from Product x where x.org.id=:orgId and  " +
+            "  cast(x.name as string) like concat('%',:name,'%') and x.criteriaIds=:criteriaIds and x.id <> :id ")
+    List<Map<String, Object>> similarProduct(@Param("orgId") Long orgId,
+                                             @Param("name") String name,
+                                             @Param("criteriaIds") String criteriaIds,
+                                             @Param("id") Long id);
 }

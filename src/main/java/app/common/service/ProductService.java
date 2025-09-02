@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -56,9 +57,9 @@ public class ProductService {
       Map<String,Object> validate(ProductDTO dto){
           Map<String,Object> mp = new HashMap<>();
           mp.put("hasError",false);
-          if(dto.getOrgId()==null || dto.getCatId()==null || dto.getBrandId()==null || dto.getUomId()==null){
+          if(dto.getOrgId()==null || dto.getCatId()==null || dto.getUomId()==null){
            mp.put("hasError",true);
-           mp.put("message","Organization , category , brand , unit of measurement is required ");
+           mp.put("message","Organization , category , unit of measurement is required ");
            return mp;
           }
 
@@ -67,12 +68,18 @@ public class ProductService {
           Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
           UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).orElse(null):null;
 
+          if(!orgRepo.existsById(dto.getOrgId())){
+              mp.put("hasError",true);
+              mp.put("message","No Organization exist under id="+dto.getOrgId());
+              return mp;
+          }
+
           if(cat==null){
               mp.put("hasError",true);
               mp.put("message","No category exist under id="+dto.getCatId());
               return mp;
           }
-          if(brand==null){
+          if(dto.getBrandId()!=null && brand==null){
               mp.put("hasError",true);
               mp.put("message","No brand exist under id="+dto.getBrandId());
               return mp;
@@ -82,11 +89,7 @@ public class ProductService {
               mp.put("message","No Uom exist under id="+dto.getUomId());
               return mp;
           }
-          if(!orgRepo.existsById(dto.getOrgId())){
-              mp.put("hasError",true);
-              mp.put("message","No Organization exist under id="+dto.getOrgId());
-              return mp;
-          }
+
 
           ProductModel model = dto.getModelId()!=null?modelRepo.findById(dto.getModelId()).get():null;
           ProductSize size = dto.getSizeId()!=null?sizeRepo.findById(dto.getSizeId()).get():null;
@@ -101,30 +104,37 @@ public class ProductService {
           }
 
 
-          String fullName = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName(),uom);
+          Map<String,Object> naming = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName(),uom);
+          String fullName = (String) naming.get("fullName");
+          String criteriaIds = (String) naming.get("criteriaIds");
+          dto.setCriteriaIds(criteriaIds);
 
           if(dto.getId()==null){
              //check duplicate fullName
-              if(productRepo.existsByOrgIdAndFullName(dto.getOrgId(),fullName)){
+              List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds());
+              if(existProduct.size()>0){
                   mp.put("hasError",true);
-                  mp.put("message","The product already exist");
+                  mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
+                  mp.put("existsData",existProduct);
                   return mp;
               }
           }else{
-              if(productRepo.existsByOrgIdAndFullNameAndIdNotIn(dto.getOrgId(),fullName, Arrays.asList(dto.getId()))){
+              List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds(),dto.getId());
+              if(existProduct.size()>0){
                   mp.put("hasError",true);
-                  mp.put("message","The product already exist");
+                  mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
+                  mp.put("existsData",existProduct);
                   return mp;
               }
               Product prdct = productRepo.findById(dto.getId()).get();
 
-              if(!prdct.getOrgId().equals(dto.getOrgId())){
+              if(!prdct.getOrg().getId().equals(dto.getOrgId())){
                   mp.put("hasError",true);
                   mp.put("message","Organization can not edit bcz it is a sensitive data and related with accounting ");
                   return mp;
               }
               if(cat!=null){
-                  if(!cat.getOrgId().equals(prdct.getOrgId())){
+                  if(!cat.getOrgId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Product category and and product must be under same Organization ");
                       return mp;
@@ -132,7 +142,7 @@ public class ProductService {
               }
 
               if(model!=null){
-                  if(!model.getOrg().getId().equals(prdct.getOrgId())){
+                  if(!model.getOrg().getId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Product model and and product must be under same Organization ");
                       return mp;
@@ -140,7 +150,7 @@ public class ProductService {
               }
 
               if(uom!=null){
-                  if(!uom.getOrg().getId().equals(prdct.getOrgId())){
+                  if(!uom.getOrg().getId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","OUM and product must be under same Organization ");
                       return mp;
@@ -148,7 +158,7 @@ public class ProductService {
               }
 
               if(size!=null){
-                  if(!size.getOrgId().equals(prdct.getOrgId())){
+                  if(!size.getOrgId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Product size and product must be under same Organization ");
                       return mp;
@@ -156,7 +166,7 @@ public class ProductService {
               }
 
               if(color!=null){
-                  if(!color.getOrgId().equals(prdct.getOrgId())){
+                  if(!color.getOrgId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Product color and product must be under same Organization ");
                       return mp;
@@ -164,7 +174,7 @@ public class ProductService {
               }
 
               if(madeWith!=null){
-                  if(!madeWith.getOrgId().equals(prdct.getOrgId())){
+                  if(!madeWith.getOrgId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Made with and product must be under same Organization ");
                       return mp;
@@ -172,7 +182,7 @@ public class ProductService {
               }
 
               if(brand!=null){
-                  if(!brand.getOrg().getId().equals(prdct.getOrgId())){
+                  if(!brand.getOrg().getId().equals(prdct.getOrg().getId())){
                       mp.put("hasError",true);
                       mp.put("message","Brand and product must be under same Organization ");
                       return mp;
@@ -196,16 +206,19 @@ public class ProductService {
         if(!cat.getOrgId().equals(org)){
             return "Product category is under another organization";
         }
-        if(!brand.getOrg().getId().equals(org)){
+        if(brand!=null && !brand.getOrg().getId().equals(org)){
             return "Brand is under another organization";
         }
         if(model!=null && !model.getOrg().getId().equals(org)){
             return "Model is under another organization";
         }
+        if(model!=null && brand==null){
+            return "Select model under selected brand";
+        }
         if(model!=null && !model.getBrand().getId().equals(brand.getId())){
             return "Select model under selected brand";
         }
-        if(size!=null){
+        if(size!=null && size.getOrgId().equals(org)){
             return "Selected size is under another organization";
         }
         if(color!=null && color.getOrgId().equals(org)){

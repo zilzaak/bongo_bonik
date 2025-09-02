@@ -1,5 +1,6 @@
 package app.common.entity;
 
+import app.modules.base.org.entity.Organization;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -17,19 +18,26 @@ public class Product extends BaseEntity{
     private String name;
     private String fullName;
     private String code;
-
-    private Long orgId;
-    private Long catId;
+    @ManyToOne
+    private Organization org;
+    @ManyToOne
+    private ProductCat cat;
     @ManyToOne
     private Brand brand;
     @ManyToOne
     private ProductModel model;
-    private Long sizeId;
-    private Long colorId;
-    private Long madeWithId;
-    private Long uomId;
-    private Integer qtyPerUnit; // amount per unit
+    @ManyToOne
+    private ProductSize size;
+    @ManyToOne
+    private ProductColor color;
+    @ManyToOne
+    private MadeWith madeWith;
+    @ManyToOne
+    private UnitOfMeasure uom;
+    private Integer qtyPerUnit; // amount per unit(ml,liter,kg , gm ,kilo,km ,meter etc)
     private String unitName;  // for example ml , liter , kg , gm , kilo , km  , meter etc
     private Long parentId;
+    private String description;
+    private String criteriaIds; //124,247,584
     //full name = brand+model+color+size+madeWith+qtyPerUnit+qtyUnit+uomId
 }

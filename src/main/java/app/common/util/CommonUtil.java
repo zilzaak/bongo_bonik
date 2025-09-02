@@ -71,28 +71,51 @@ public class CommonUtil {
         return input.replaceAll(regex, Character.toString(ch));
     }
 
-    public static String getProductFullname(String rootName , ProductCat cat, Brand brand, ProductModel model,
+    public static Map<String,Object> getProductFullname(String rootName , ProductCat cat, Brand brand, ProductModel model,
                                             MadeWith madeWith,ProductSize size,ProductColor color,
                                             Integer qtyPerUnit,String qtyUnit,UnitOfMeasure uom){
-        String fullName=rootName+">"+cat.getName()+">"+brand.getName()+">"+
+        Map<String,Object> mp=new HashMap<>();
+        String fullName=rootName+">"+cat.getName()+">"+Optional.ofNullable(brand).map(Brand::getName).orElse("")+">"+
                 Optional.ofNullable(model).map(ProductModel::getName).orElse("")+">"+
                 Optional.ofNullable(madeWith).map(MadeWith::getName).orElse("")+">"+
                 Optional.ofNullable(size).map(ProductSize::getName).orElse("")+">"+
                 Optional.ofNullable(color).map(ProductColor::getName).orElse("")+">";
 
                  if(qtyPerUnit!=null){
-                     fullName=fullName+qtyPerUnit+">";
+                     fullName=fullName+qtyPerUnit+"/";
                  }
                  if(qtyUnit!=null){
                      fullName=fullName+qtyUnit+">";
                  }
                  if(uom!=null){
-                     fullName=fullName+uom.getName().toLowerCase();
+                     fullName=fullName+uom.getName().toLowerCase();//mg,kg,ml,l,etc
                  }
 
             fullName = replaceRepeatedChar(fullName,'>');
             fullName = replaceRepeatedChar(fullName,' ');  //replace double white space or blank space
-        return fullName;
+
+        mp.put("fullName",fullName);
+
+        String criteriaIds=cat.getId()+","+Optional.ofNullable(brand).map(Brand::getId).map(Object::toString).orElse("")+","+
+                Optional.ofNullable(model).map(ProductModel::getId).map(Object::toString).orElse("")+","+
+                Optional.ofNullable(madeWith).map(MadeWith::getId).map(Object::toString).orElse("")+","+
+                Optional.ofNullable(size).map(ProductSize::getId).map(Object::toString).orElse("")+","+
+                Optional.ofNullable(color).map(ProductColor::getId).map(Object::toString).orElse("")+",";
+
+        if(qtyPerUnit!=null){
+            criteriaIds=criteriaIds+qtyPerUnit+"/";
+        }
+        if(qtyUnit!=null){
+            criteriaIds=criteriaIds+qtyUnit+",";
+        }
+        if(uom!=null){
+            criteriaIds=criteriaIds+uom.getName().toLowerCase();//mg,kg,ml,l,etc
+        }
+
+        criteriaIds = replaceRepeatedChar(criteriaIds,'>');
+        criteriaIds = replaceRepeatedChar(criteriaIds,' ');  //replace double white space or blank space
+        mp.put("criteriaIds",criteriaIds);
+        return mp;
     }
 
 
