@@ -10,7 +10,17 @@ public class ProductDTO {
     private String fullName;
     private Long orgId;
     private Long catId;
-
+    private Long brandId;
+    private Long modelId;
+    private Long sizeId;
+    private Long colorId;
+    private Long madeWithId;
+    private Long uomId;//KG,LITER,ETC
+    private Integer qtyPerUnit;//10,20,30
+    private String criteriaIds;
+    private String unitName;
+    private Long parentId;
+    private String description;
     public String getFullName() {
         return fullName;
     }
@@ -18,11 +28,6 @@ public class ProductDTO {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-
-    private Long brandId;
-    private Long modelId;
-    private Long sizeId;
-    private Long colorId;
 
     public String getCriteriaIds() {
         return criteriaIds;
@@ -32,11 +37,6 @@ public class ProductDTO {
         this.criteriaIds = criteriaIds;
     }
 
-    private Long madeWithId;
-    private Long uomId;//KG,LITER,ETC
-    private Integer qtyPerUnit;//10,20,30
-    private String criteriaIds;
-
     public String getDescription() {
         return description;
     }
@@ -44,10 +44,6 @@ public class ProductDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private String unitName;
-    private Long parentId;
-    private String description;
 
     public Long getId() {
         return id;
@@ -156,6 +152,5 @@ public class ProductDTO {
     public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
-
 
 }

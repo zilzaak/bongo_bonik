@@ -112,7 +112,7 @@ public class CommonUtil {
             criteriaIds=criteriaIds+uom.getName().toLowerCase();//mg,kg,ml,l,etc
         }
 
-        criteriaIds = replaceRepeatedChar(criteriaIds,'>');
+        criteriaIds = replaceRepeatedChar(criteriaIds,',');
         criteriaIds = replaceRepeatedChar(criteriaIds,' ');  //replace double white space or blank space
         mp.put("criteriaIds",criteriaIds);
         return mp;
