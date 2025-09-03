@@ -97,7 +97,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
     @Query("select x.id as id , x.name as name , x.description as description , x.fullName as fullName " +
             " from Product x where x.org.id=:orgId and  " +
-            "  cast(x.name as string) like concat('%',:name,'%') and x.criteriaIds=:criteriaIds ")
+            "  upper(cast(x.name as string)) like concat('%',upper(cast(:name as string )),'%') and x.criteriaIds=:criteriaIds ")
     List<Map<String, Object>> similarProduct(@Param("orgId") Long orgId,
                                              @Param("name") String name,
                                              @Param("criteriaIds") String criteriaIds);

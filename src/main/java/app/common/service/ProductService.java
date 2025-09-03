@@ -116,6 +116,13 @@ public class ProductService {
           if(dto.getId()==null){
              //check duplicate fullName
               List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds());
+              for(Map<String,Object> objm : existProduct){
+                  if(objm.get("name").equals(dto.getName())){
+                      mp.put("hasError",true);
+                      mp.put("message","Duplicate Product found");
+                      return mp;
+                  }
+              }
               if(existProduct.size()>0){
                   mp.put("hasError",true);
                   mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
@@ -125,6 +132,13 @@ public class ProductService {
           }else{
               prdct = productRepo.findById(dto.getId()).get();
               List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds(),dto.getId());
+              for(Map<String,Object> objm : existProduct){
+                  if(objm.get("name").equals(dto.getName())){
+                      mp.put("hasError",true);
+                      mp.put("message","Duplicate Product found");
+                      return mp;
+                  }
+              }
               if(existProduct.size()>0){
                   mp.put("hasError",true);
                   mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
