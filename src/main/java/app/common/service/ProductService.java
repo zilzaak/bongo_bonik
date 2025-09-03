@@ -63,6 +63,12 @@ public class ProductService {
            return mp;
           }
 
+          if(!CommonUtil.validUserOrg(dto.getOrgId())){
+              mp.put("hasError",true);
+              mp.put("message","Invalid User Organization selected ");
+              return mp;
+          }
+
           Long org = dto.getOrgId();
           ProductCat cat = catRepo.findById(dto.getCatId()).orElse(null);
           Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
@@ -259,12 +265,16 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
         Page<Map<String,Object>> page = productRepo.getList(dto.productId,dto.orgId,dto.brandId,
-                dto.catId,dto.modelId,dto.sizeId,dto.colorId ,pageable);
+                dto.catId,dto.modelId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
 
     }
 
     public Product getById(Long id) {
         return productRepo.findById(id).orElse(null);
+    }
+
+    public MsgResponse delete(Long id) {
+          return new MsgResponse();
     }
 }

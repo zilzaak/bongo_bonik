@@ -39,5 +39,5 @@ public class Product extends BaseEntity{
     private Long parentId;
     private String description;
     private String criteriaIds; //124,247,584
-    //full name = brand+model+color+size+madeWith+qtyPerUnit+qtyUnit+uomId
+    //full name = brand+model+color+size+madeWith+qtyPerUnit+unitName+uomId
 }

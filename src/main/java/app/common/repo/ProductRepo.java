@@ -19,38 +19,49 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     @Query("select p.name from Product p where p.id=:pid ")
     String getProductName(@Param("pid") Long pid);
 
-    @Query("select p.id as id , " +
-            " p.name as productName , " +
-            " brand.name as brandName , " +
-            " model.name as modelName , " +
-            " cat.name as categoryName ," +
-            " mdwth.name as madeWithName , " +
-            " size.name as sizeName , " +
-            " color.name as colorName , " +
-            " org.name as orgName   " +
-            " from Product p " +
-            " join p.org org  " +
-            " left join p.brand brand " +
-            " left join p.model model " +
-            " left join  p.cat  cat " +
-            " left join p.size size" +
-            " left join p.color  color " +
-            " left join p.madeWith mdwth  " +
-            " where ( ?1 is null or p.id=?1 ) " +
-            " and ( ?2 is null or org.id= ?2 ) " +
-            " and ( ?3 is null or brand.id=?3 )  " +
-            " and ( ?4 is null or cat.id= ?4 ) " +
-            " and  (?5 is null or model.id= ?5 )  " +
-            " and ( ?6 is null or size.id=?6 )  " +
-            " and  ( ?7 is null or color.id= ?7 ) " )
-    Page<Map<String, Object>> getList(Long productId,
-                                      Long orgId,
-                                      Long brandId,
-                                      Long catId,
-                                      Long modelId,
-                                      Long sizeId,
-                                      Long colorId,
-                                      Pageable pageable);
+    @Query("""
+        SELECT p.id as id, p.name as name,p.fullName as fullName, brand.id as brandId , 
+               brand.name as brandName, 
+               model.id as modelId , 
+               model.name as modelName, cat.id as catId , 
+               cat.name as categoryName, 
+               mdwth.id as madeWithId , 
+               mdwth.name as madeWithName, 
+               size.id as sizeId , 
+               size.name as sizeName, 
+               color.id as colorId , 
+               color.name as colorName, org.id as orgId , 
+               org.name as orgName ,
+               um.id as uomId , 
+               um.name as uomName, 
+               p.qtyPerUnit  as qtyPerUnit , 
+               p.unitName as unitName,
+               p.description as description
+        FROM Product p 
+        JOIN p.org org 
+        LEFT JOIN p.brand brand 
+        LEFT JOIN p.model model 
+        LEFT JOIN p.cat cat 
+        LEFT JOIN p.size size 
+        LEFT JOIN p.color color 
+        LEFT JOIN p.madeWith mdwth 
+        left join p.uom um 
+        WHERE (:id IS NULL OR p.id = :id)
+          AND (:orgId IS NULL OR org.id = :orgId)
+          AND (:brandId IS NULL OR brand.id = :brandId)
+          AND (:catId IS NULL OR cat.id = :catId)
+          AND (:modelId IS NULL OR model.id = :modelId)
+          AND ( cast(:searchTerm as string) IS NULL OR UPPER(cast(p.fullName as string)) LIKE CONCAT('%', UPPER(cast(:searchTerm as string)), '%'))
+        """)
+    Page<Map<String,Object>> getList(
+            @Param("id") Long id,
+            @Param("orgId") Long orgId,
+            @Param("brandId") Long brandId,
+            @Param("catId") Long catId,
+            @Param("modelId") Long modelId,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
 
     boolean existsByBrandId(Long id);
 

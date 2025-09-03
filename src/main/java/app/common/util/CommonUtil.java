@@ -12,13 +12,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.security.Security;
 import java.util.*;
 import java.util.regex.Pattern;
 
-
+@Component
 public class CommonUtil {
+
+    public static UserOrgRepository userOrgRepository;
+
+    public CommonUtil(UserOrgRepository userOrgRepository) {
+        CommonUtil.userOrgRepository = userOrgRepository;
+    }
+
+    public static boolean validUserOrg(Long orgId){
+        String username=  SecurityContextHolder.getContext().getAuthentication().getName();
+        if(username==null){
+            return false;
+        }
+        int x =  userOrgRepository.countByOrgIdAndUserUsername(orgId,username);
+        return x>0;
+    }
+
 
     public static List<String> bulkStrToList(String bulkStr){
         List<String> list = new ArrayList<>();
