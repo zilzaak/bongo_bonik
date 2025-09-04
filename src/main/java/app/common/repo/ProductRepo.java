@@ -20,7 +20,9 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     String getProductName(@Param("pid") Long pid);
 
     @Query("""
-        SELECT p.id as id, p.name as name,p.fullName as fullName, brand.id as brandId , 
+        SELECT p.id as id, p.name as name,
+        p.fullName as fullName,
+         brand.id as brandId , 
                brand.name as brandName, 
                model.id as modelId , 
                model.name as modelName, cat.id as catId , 
@@ -36,7 +38,9 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
                um.name as uomName, 
                p.qtyPerUnit  as qtyPerUnit , 
                p.unitName as unitName,
-               p.description as description
+               p.description as description,
+               p.createBy as createBy , 
+               p.updateBy as updateBy
         FROM Product p 
         JOIN p.org org 
         LEFT JOIN p.brand brand 

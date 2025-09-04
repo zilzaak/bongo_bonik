@@ -1,12 +1,14 @@
 package app.common.service;
 
 
+import app.common.counter.service.CounterService;
 import app.common.dto.MsgResponse;
 import app.common.dto.ProductDTO;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.common.util.CounterEnum;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +46,8 @@ public class ProductService {
 
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private CounterService service;
 
     @Autowired
     private OrgRepo orgRepo;
@@ -308,6 +312,7 @@ public class ProductService {
          BeanUtils.copyProperties(dto,product);
          if(dto.getId()==null){
              product.setCreateBy(CommonUtil.currentUser());
+             product.setCode(service.getCounterCode(dto.getOrgId(),null, CounterEnum.PRODUCT.getValue(),"PDCT" ));
          }else{
              product.setUpdateBy(CommonUtil.currentUser());
          }
