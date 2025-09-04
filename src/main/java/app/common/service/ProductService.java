@@ -7,6 +7,7 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.common.repo.*;
 import app.common.util.CommonUtil;
+import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -50,6 +48,45 @@ public class ProductService {
     @Autowired
     private OrgRepo orgRepo;
 
+
+    String getStr(String arr[] , int toIndex){
+        String k=null;
+        for(int i=0;i<toIndex;i++){
+            if(k==null){
+                k=arr[i];
+            }else{
+                k=k+","+arr[i];
+            }
+        }
+        return k;
+    }
+    // product full name = name->Cat->brand->model->madeWith->size->color->amount per unit->measure by
+
+    boolean checkSimilarity(Map<String,Object> mp , ProductDTO dto,boolean compareAllCatIds, int compareTill){
+
+        String catIds=dto.getCriteriaIds();
+        if(!compareAllCatIds){
+            catIds=this.getStr(catIds.split(","),compareTill);
+        }
+
+        List<Map<String,Object>>  existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),catIds,dto.getId());
+        if(compareAllCatIds){
+            for(Map<String,Object> objm : existProduct){
+                if(objm.get("name").equals(dto.getName())){
+                    mp.put("hasError",true);
+                    mp.put("message","Duplicate Product found");
+                    return true;
+                }
+            }
+        }
+        if(existProduct.size()>0 && !dto.getConfirmSimilarity()){
+            mp.put("hasError",true);
+            mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
+            mp.put("existsData",existProduct);
+            return true;
+        }
+        return false;
+    }
 
     //1>>first check required field are null
     //2>>check all criteria of product belongs to same organization
@@ -113,38 +150,9 @@ public class ProductService {
           dto.setCriteriaIds(criteriaIds);
           dto.setFullName(fullName);
           Product prdct=new Product();
-          if(dto.getId()==null){
-             //check duplicate fullName
-              List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds());
-              for(Map<String,Object> objm : existProduct){
-                  if(objm.get("name").equals(dto.getName())){
-                      mp.put("hasError",true);
-                      mp.put("message","Duplicate Product found");
-                      return mp;
-                  }
-              }
-              if(existProduct.size()>0){
-                  mp.put("hasError",true);
-                  mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
-                  mp.put("existsData",existProduct);
-                  return mp;
-              }
-          }else{
+
+          if(dto.getId()!=null){
               prdct = productRepo.findById(dto.getId()).get();
-              List<Map<String,Object>> existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),dto.getCriteriaIds(),dto.getId());
-              for(Map<String,Object> objm : existProduct){
-                  if(objm.get("name").equals(dto.getName())){
-                      mp.put("hasError",true);
-                      mp.put("message","Duplicate Product found");
-                      return mp;
-                  }
-              }
-              if(existProduct.size()>0){
-                  mp.put("hasError",true);
-                  mp.put("message","Similar product name exist , be confirm duplicity or not before create ");
-                  mp.put("existsData",existProduct);
-                  return mp;
-              }
 
               if(!prdct.getOrg().getId().equals(dto.getOrgId())){
                   mp.put("hasError",true);
@@ -208,6 +216,25 @@ public class ProductService {
               }
           }
 
+          boolean similarFound=this.checkSimilarity(mp,dto,true,dto.getCriteriaIds().length());
+          if(similarFound){
+              return mp;
+          }else{
+              String arr[]=dto.getCriteriaIds().split(",");
+              int length=arr.length;
+              if(length>3){
+                  for(int i=1;i<4;i++){
+                      similarFound=this.checkSimilarity(mp,dto,false,length-i);
+                      if(similarFound){
+                          return mp;
+                      }
+                  }
+              }
+          }
+
+          Organization orgn=new Organization();
+          orgn.setId(prdct.getId());
+          prdct.setOrg(orgn);
           prdct.setBrand(brand);
           prdct.setCat(cat);
           prdct.setModel(model);

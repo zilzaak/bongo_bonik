@@ -21,6 +21,7 @@ public class ProductDTO {
     private String unitName;
     private Long parentId;
     private String description;
+    private Boolean confirmSimilarity=Boolean.FALSE;
     public String getFullName() {
         return fullName;
     }
@@ -143,6 +144,14 @@ public class ProductDTO {
 
     public void setQtyUnit(String qtyUnit) {
 
+    }
+
+    public Boolean getConfirmSimilarity() {
+        return confirmSimilarity;
+    }
+
+    public void setConfirmSimilarity(Boolean confirmSimilarity) {
+        this.confirmSimilarity = confirmSimilarity;
     }
 
     public Long getParentId() {

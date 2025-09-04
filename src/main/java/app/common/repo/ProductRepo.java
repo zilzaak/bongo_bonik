@@ -95,16 +95,11 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
     Product findTopByOrgId(Long id);
 
-    @Query("select x.id as id , x.name as name , x.description as description , x.fullName as fullName " +
-            " from Product x where x.org.id=:orgId and  " +
-            "  upper(cast(x.name as string)) like concat('%',upper(cast(:name as string )),'%') and x.criteriaIds=:criteriaIds ")
-    List<Map<String, Object>> similarProduct(@Param("orgId") Long orgId,
-                                             @Param("name") String name,
-                                             @Param("criteriaIds") String criteriaIds);
 
     @Query("select x.id as id , x.name as name , x.description as description , x.fullName as fullName " +
             " from Product x where x.org.id=:orgId and  " +
-            "  cast(x.name as string) like concat('%',:name,'%') and x.criteriaIds=:criteriaIds and x.id <> :id ")
+            "  cast(x.name as string) like concat('%',:name,'%') and cast(x.criteriaIds as string) like concat('%', cast(:criteriaIds as string),'%' )" +
+            "  and ( :id is null or x.id <> :id ) ")
     List<Map<String, Object>> similarProduct(@Param("orgId") Long orgId,
                                              @Param("name") String name,
                                              @Param("criteriaIds") String criteriaIds,

@@ -88,6 +88,7 @@ public class CommonUtil {
         return input.replaceAll(regex, Character.toString(ch));
     }
 
+    //full name = name->Cat->brand->model->madeWith->size->color->amount per unit->measure by
     public static Map<String,Object> getProductFullname(String rootName , ProductCat cat, Brand brand, ProductModel model,
                                             MadeWith madeWith,ProductSize size,ProductColor color,
                                             Integer qtyPerUnit,String qtyUnit,UnitOfMeasure uom){
@@ -99,7 +100,7 @@ public class CommonUtil {
                 Optional.ofNullable(color).map(ProductColor::getName).orElse("")+">";
 
                  if(qtyPerUnit!=null){
-                     fullName=fullName+qtyPerUnit+"/";
+                     fullName=fullName+qtyPerUnit+">";
                  }
                  if(qtyUnit!=null){
                      fullName=fullName+qtyUnit+">";
@@ -120,7 +121,7 @@ public class CommonUtil {
                 Optional.ofNullable(color).map(ProductColor::getId).map(Object::toString).orElse("")+",";
 
         if(qtyPerUnit!=null){
-            criteriaIds=criteriaIds+qtyPerUnit+"/";
+            criteriaIds=criteriaIds+qtyPerUnit+",";
         }
         if(qtyUnit!=null){
             criteriaIds=criteriaIds+qtyUnit+",";
