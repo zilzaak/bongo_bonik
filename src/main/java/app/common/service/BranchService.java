@@ -115,7 +115,7 @@ public class BranchService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = branchRepo.getList(dto.branchId,dto.orgId,pageable);
+        Page<Map<String,Object>> page = branchRepo.getList(dto.id,dto.orgId,pageable);
         return CommonUtil.responseFromPage(page);
     }
 

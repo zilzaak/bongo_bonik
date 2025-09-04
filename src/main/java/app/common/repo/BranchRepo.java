@@ -29,7 +29,8 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
 
 
 
-    @Query("select b.id as id , b.name as name , " +
+    @Query("select b.id as id , " +
+            " b.name as name , " +
             " org.id as orgId , " +
             "  b.phone as phone , " +
             "  b.address as address , " +
@@ -40,8 +41,10 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
             "  b.updateBy as updateBy , " +
             "  b.updated as updated " +
             " from Branch b join b.org org " +
-            " where ( ?1 is null or b.id=?1 ) and ( ?2 is null or org.id=?2 ) ")
-    Page<Map<String, Object>> getList(Long branchId, Long orgId, Pageable pageable);
+            " where ( :id is null or b.id=:id ) and ( :org is null or org.id=:org ) ")
+    Page<Map<String, Object>> getList(@Param("id") Long id,
+                                      @Param("org") Long org,
+                                      Pageable pageable);
 
     boolean existsByOrgId(Long id);
 
