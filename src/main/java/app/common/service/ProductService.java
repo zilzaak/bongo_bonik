@@ -60,6 +60,8 @@ public class ProductService {
         }
         return k;
     }
+
+    public List<String> units=Arrays.asList("ml","l","kg","gm","mg","ton","feet","inch","meter","piece","dozen","pair","sqft");
     // product full name = name->Cat->brand->model->madeWith->size->color->amount per unit->measure by
 
     boolean checkSimilarity(Map<String,Object> mp , ProductDTO dto,boolean compareAllCatIds, int compareTill){
@@ -108,12 +110,28 @@ public class ProductService {
 
           Long org = dto.getOrgId();
           ProductCat cat = catRepo.findById(dto.getCatId()).orElse(null);
-          Brand brand = brandRepo.findById(dto.getBrandId()).orElse(null);
+          Brand brand = dto.getBrandId()!=null?brandRepo.findById(dto.getBrandId()).orElse(null):null;
           UnitOfMeasure uom = dto.getUomId()!=null?uomRepo.findById(dto.getUomId()).orElse(null):null;
           ProductModel model = dto.getModelId()!=null?modelRepo.findById(dto.getModelId()).get():null;
           ProductSize size = dto.getSizeId()!=null?sizeRepo.findById(dto.getSizeId()).get():null;
           ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
           MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
+
+          if(dto.getQtyPerUnit()!=null && dto.getUnitName()==null){
+              mp.put("hasError",true);
+              mp.put("message","Amount/quantity unit is not provided for amount"+dto.getQtyPerUnit());
+              return mp;
+          }
+          if(dto.getUnitName()!=null && dto.getQtyPerUnit()==null ){
+              mp.put("hasError",true);
+              mp.put("message","Amount/quantity unit is not provided for unit "+dto.getUnitName());
+              return mp;
+          }
+          if(dto.getUnitName()!=null && this.units.contains(dto.getUnitName().toLowerCase())){
+              mp.put("hasError",true);
+              mp.put("message","Unit name is missing ");
+              return mp;
+          }
 
           if(!orgRepo.existsById(dto.getOrgId())){
               mp.put("hasError",true);
@@ -233,7 +251,7 @@ public class ProductService {
           }
 
           Organization orgn=new Organization();
-          orgn.setId(prdct.getId());
+          orgn.setId(dto.getOrgId());
           prdct.setOrg(orgn);
           prdct.setBrand(brand);
           prdct.setCat(cat);
