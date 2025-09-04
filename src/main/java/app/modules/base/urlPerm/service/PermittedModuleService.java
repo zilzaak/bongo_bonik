@@ -73,13 +73,13 @@ public class PermittedModuleService {
         }
 
 
-        if(dto.getId()==null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrl(dto.getRole(),dto.getUser(),dto.getBackendUrl())){
+        if(dto.getId()==null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrlAndMenuId(dto.getRole(),dto.getUser(),dto.getBackendUrl(),dto.getMenuId())){
             mp.put("hasError",true);
             mp.put("message","This Api permission already given for this role/user");
             return mp;
         }
-        else if(dto.getId()!=null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrlAndIdNotIn(dto.getRole(),dto.getUser(),
-                dto.getBackendUrl(),Arrays.asList(dto.getId()))){
+        else if(dto.getId()!=null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrlAndAndMenuIdAndIdNotIn(dto.getRole(),dto.getUser(),
+                dto.getBackendUrl(),dto.getMenuId(),Arrays.asList(dto.getId()))){
             mp.put("hasError",true);
             mp.put("message","This Api permission already given for this role/user");
             return mp;
@@ -87,7 +87,7 @@ public class PermittedModuleService {
 
         MenuHierarchy menu = null;
         if(dto.getBackendUrl()!=null){
-            menu =  apiAgainstModuleRepo.findByApiPattern(dto.getBackendUrl());
+            menu =  apiAgainstModuleRepo.findById(dto.getMenuId()).orElse(null);
         }
         String menuIdsHierarchy=null;
         while(menu!=null){
@@ -126,8 +126,9 @@ public class PermittedModuleService {
             Map<String,Object> obj=new HashMap<>();
             obj.putAll(dbObj);
             index++;
-            if(apiCache.containsKey((String)obj.get("backendUrl"))){
-                     String[] existInfoInCache= ((String)apiCache.get((String)obj.get("backendUrl"))).split(">");
+            String key=(String) obj.get("menuId")+obj.get("backendUrl");
+            if(apiCache.containsKey(key)){
+                     String[] existInfoInCache= ((String)apiCache.get(key)).split(">");
                      String users=existInfoInCache[0];
                      String authority=existInfoInCache[1];
                      Integer existDataIndex=Integer.parseInt(existInfoInCache[2]);
@@ -146,7 +147,7 @@ public class PermittedModuleService {
                            users=(String)obj.get("username");
                        }
                    }
-                   apiCache.put((String) obj.get("backendUrl"),users+">"+authority+">"+existDataIndex);
+                   apiCache.put(key,users+">"+authority+">"+existDataIndex);
                    listData.get(existDataIndex).put("authority",authority);
                    listData.get(existDataIndex).put("username",users);
                }else{
@@ -161,7 +162,7 @@ public class PermittedModuleService {
                    obj.put("authority",authority);
                    obj.put("username",users);
                    listData.add(obj);
-                   apiCache.put((String) obj.get("backendUrl"),users+">"+authority+">"+index);
+                   apiCache.put(key,users+">"+authority+">"+index);
                }
 
         }

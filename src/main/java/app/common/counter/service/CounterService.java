@@ -22,7 +22,7 @@ public class CounterService {
         SystemCounter counter=counterRepo.findByNameAndOrgIdAndBranchId(counterName,orgId,branchId);
 
         if(counter==null){
-            counter = new SystemCounter(counterName,orgId,branchId,prefix,100000L,1L);
+            counter = new SystemCounter(counterName,orgId,branchId,prefix,10000L,1L);
             counterRepo.save(counter);
             return (counter.getPrefix()+counter.getCurrentNumber());
         }else{

@@ -120,7 +120,7 @@ public class BranchService {
     }
 
     public MsgResponse delete(CommonDTO dto) {
-        if(!branchRepo.existsById(dto.getId())){
+        if(!branchRepo.existsByIdAndOrgId(dto.getId(),dto.getOrgId())){
             return  new MsgResponse("This branch with id="+dto.getId()+" don't exist in DB",false);
         }
         if(inventoryRepo.existsByBranchId(dto.getId())){

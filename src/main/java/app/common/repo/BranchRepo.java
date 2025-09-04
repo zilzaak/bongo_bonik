@@ -29,11 +29,16 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
 
 
 
-    @Query("select b.id as id , b.name as branchName , org.id as orgId , " +
-            "  b.phone as branchPhone , " +
-            "  b.address as branchAddress , " +
+    @Query("select b.id as id , b.name as name , " +
+            " org.id as orgId , " +
+            "  b.phone as phone , " +
+            "  b.address as address , " +
+            "  b.location as  location ," +
             "  b.created as created ," +
-            "   org.name as orgName " +
+            "   org.name as orgName , " +
+            "  b.createBy as createBy , " +
+            "  b.updateBy as updateBy , " +
+            "  b.updated as updated " +
             " from Branch b join b.org org " +
             " where ( ?1 is null or b.id=?1 ) and ( ?2 is null or org.id=?2 ) ")
     Page<Map<String, Object>> getList(Long branchId, Long orgId, Pageable pageable);
@@ -41,6 +46,8 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
     boolean existsByOrgId(Long id);
 
     Branch findTopByOrgId(Long id);
+
+    boolean existsByIdAndOrgId(Long id, Long orgId);
 
     interface OrgRepo extends JpaRepository<Organization,Long> {
 

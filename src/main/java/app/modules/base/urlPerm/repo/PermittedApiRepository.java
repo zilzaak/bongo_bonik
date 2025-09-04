@@ -14,10 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long> {
-
-    boolean existsByRoleIdAndUserIdAndBackendUrl(Long role,Long user, String backendUrl);
-
-    boolean existsByRoleIdAndUserIdAndBackendUrlAndIdNotIn(Long role, Long user , String backendUrl, List<Long> asList);
+    boolean existsByRoleIdAndUserIdAndBackendUrlAndMenuId(Long role,Long user, String backendUrl , Long menuId);
+    boolean existsByRoleIdAndUserIdAndBackendUrlAndAndMenuIdAndIdNotIn(Long role, Long user , String backendUrl, Long menuId,List<Long> asList);
 
     @Query("select menu.menu as menu , " +
             " menu.id as menuId , " +
