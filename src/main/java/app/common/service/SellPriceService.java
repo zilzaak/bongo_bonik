@@ -24,24 +24,24 @@ public class SellPriceService {
         mp.put("hasError",false);
         if(dto.getEntity()==null || dto.getEntity().isBlank()){
              mp.put("hasError",true);
-             mp.put("message","Entity is message ,SellPrice or CostPrice");
+             mp.put("message","Entity is missing,SellPrice or CostPrice");
              return mp;
         }
 
-        if(dto.getUnitPrice()==null || dto.getOrgId()==null || dto.getProductId()==null){
+        if(dto.getPrice()==null || dto.getOrgId()==null || dto.getProductId()==null){
             mp.put("hasError",true);
             mp.put("message","Unit price , Organization , Product is required field ");
             return mp;
         }
 
         if(dto.getId()==null){
-               if(sellPriceRepo.existsByProductIdAndOrgIdAndUnitPrice(dto.getProductId(),dto.getOrgId(),dto.getUnitPrice())){
+               if(sellPriceRepo.existsByProductIdAndPrice(dto.getProductId(),dto.getPrice())){
                    mp.put("hasError",true);
                    mp.put("message","Unit price , Organization , Product already exist ");
                    return mp;
                }
         }else{
-            if(sellPriceRepo.existsByProductIdAndOrgIdAndUnitPriceAndIdNotIn(dto.getProductId(),dto.getOrgId(),dto.getUnitPrice(), Arrays.asList(dto.getId()))){
+            if(sellPriceRepo.existsByProductIdAndPriceAndIdNotIn(dto.getProductId(),dto.getPrice(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Unit price , Organization , Product already exist ");
                 return mp;

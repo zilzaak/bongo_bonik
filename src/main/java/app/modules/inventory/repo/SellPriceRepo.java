@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SellPriceRepo extends JpaRepository<SellPrice,Long> {
 
-    boolean existsByProductIdAndOrgIdAndUnitPrice(Long productId, Long orgId, Double unitPrice);
+    boolean existsByProductIdAndPrice(Long productId, Double unitPrice);
 
-    boolean existsByProductIdAndOrgIdAndUnitPriceAndIdNotIn(Long productId, Long orgId, Double unitPrice, List<Long> list);
+    boolean existsByProductIdAndPriceAndIdNotIn(Long productId, Double unitPrice, List<Long> list);
 }

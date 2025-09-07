@@ -2,6 +2,8 @@ package app.common.entity;
 
 import app.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,15 +16,13 @@ import lombok.Setter;
 @Entity
 public class CostPrice extends BaseEntity {
 
-    private Double unitPrice;
-
-    private Long productId;
-    private String productName;
-
-    private Long orgId;
-    private String orgName;
-
-    private Double avgPrice;
+    private Double price; //org price
+    @ManyToOne
+    @JoinColumn(unique = true)
+    private Product product;
+    private Double avgPrice;//avg org price
+    private String branchIds;
+    private String branchPrices;
     // the product will be under specific org , inventory is ->>under spec branch is -->> under spec org   ----(i)
     // product -->> organization  -----------------------------------------------------------------------------(ii)
     // (i=> org) = (ii=> org)

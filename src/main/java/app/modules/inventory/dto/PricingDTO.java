@@ -6,7 +6,7 @@ import lombok.Data;
 public class PricingDTO {
 
     private Long id;
-    private Double unitPrice;
+    private Double price;
     private Long productId;
     private Long orgId;
     private String entity;
