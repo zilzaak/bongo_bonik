@@ -3,7 +3,7 @@ package app.common.service;
 
 import app.common.dto.MsgResponse;
 import app.modules.inventory.dto.PricingDTO;
-import app.common.entity.SellPrice;
+import app.common.entity.Pricing;
 import app.modules.inventory.repo.SellPriceRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class SellPriceService {
             return new MsgResponse((String) mp.get("message"),false);
         }
 
-        SellPrice sp = new SellPrice();
+        Pricing sp = new Pricing();
         if(dto.getId()!=null){
             sp = sellPriceRepo.findById(dto.getId()).get();
         }

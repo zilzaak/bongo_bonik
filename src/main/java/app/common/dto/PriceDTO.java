@@ -16,5 +16,5 @@ public class PriceDTO {
   private Double defaultSellPrice;
   private String costBranchIds;
   private String costPrices;
-  private Float  defaultCostPrice;
+  private Double  defaultCostPrice;
 }

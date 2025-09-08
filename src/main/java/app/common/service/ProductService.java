@@ -325,11 +325,14 @@ public class ProductService {
              product.setUpdateBy(CommonUtil.currentUser());
          }
           productRepo.save(product);
-         SellPrice sellPrice=sellPriceRepo.findByProduct(product);
+         Pricing sellPrice=sellPriceRepo.findByProduct(product);
          if(sellPrice==null){
-             sellPrice=new SellPrice();
+             sellPrice=new Pricing();
+             sellPrice.setProduct(product);
+             BeanUtils.copyProperties(dto.getPrice(),sellPrice);
+         }else{
+             BeanUtils.copyProperties(dto.getPrice(),sellPrice,"id");
          }
-         BeanUtils.copyProperties(dto.getPrice(),sellPrice);
          sellPriceRepo.save(sellPrice);
         return new MsgResponse("Successfully created product",true);
     }
@@ -343,7 +346,7 @@ public class ProductService {
     public MsgResponse getList(SearchParamDTO dto) {
 
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
-        Page<Map<String,Object>> page = productRepo.getList(dto.productId,dto.orgId,dto.brandId,
+        Page<Map<String,Object>> page = productRepo.getList(dto.id,dto.orgId,dto.brandId,
                 dto.catId,dto.modelId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
 

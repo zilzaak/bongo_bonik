@@ -1,10 +1,6 @@
 package app.common.entity;
 
-import app.common.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,14 +11,17 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-public class SellPrice extends BaseEntity {
+public class Pricing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @ManyToOne
-    @JoinColumn(unique = true)
+    @JoinColumn(unique = true,nullable = false)
     private Product product;
     private String sellBranchIds;
     private String sellPrices;
     private Double defaultSellPrice;
     private String costBranchIds;
     private String costPrices;
-    private Float  defaultCostPrice;
+    private Double  defaultCostPrice;
 }
