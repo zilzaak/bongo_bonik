@@ -35,13 +35,13 @@ public class SellPriceService {
         }
 
         if(dto.getId()==null){
-               if(sellPriceRepo.existsByProductIdAndPrice(dto.getProductId(),dto.getPrice())){
+               if(sellPriceRepo.existsByProductIdAndDefaultSellPrice(dto.getProductId(),dto.getPrice())){
                    mp.put("hasError",true);
                    mp.put("message","Unit price , Organization , Product already exist ");
                    return mp;
                }
         }else{
-            if(sellPriceRepo.existsByProductIdAndPriceAndIdNotIn(dto.getProductId(),dto.getPrice(), Arrays.asList(dto.getId()))){
+            if(sellPriceRepo.existsByProductIdAndDefaultSellPriceAndIdNotIn(dto.getProductId(),dto.getPrice(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message","Unit price , Organization , Product already exist ");
                 return mp;

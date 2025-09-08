@@ -40,8 +40,13 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
                p.unitName as unitName,
                p.description as description,
                p.createBy as createBy , 
-               p.updateBy as updateBy
-        FROM Product p 
+               p.updateBy as updateBy,
+               sp.defaultSellPrice as defaultSellPrice,
+               sp.sellBranchIds as sellBranchIds , 
+               sp.sellPrices as sellPrices
+               
+        FROM Product p  
+        join SellPrice sp on sp.product=p 
         JOIN p.org org 
         LEFT JOIN p.brand brand 
         LEFT JOIN p.model model 

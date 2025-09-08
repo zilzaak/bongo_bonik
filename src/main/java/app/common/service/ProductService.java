@@ -11,6 +11,9 @@ import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
+import app.modules.inventory.repo.CostPriceRepo;
+import app.modules.inventory.repo.SellPriceRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,6 +54,10 @@ public class ProductService {
 
     @Autowired
     private OrgRepo orgRepo;
+    @Autowired
+    private SellPriceRepo sellPriceRepo;
+    @Autowired
+    private CostPriceRepo costPriceRepo;
 
 
     String getStr(String arr[] , int toIndex){
@@ -302,6 +309,7 @@ public class ProductService {
 
     }
 
+    @Transactional
     public MsgResponse create(ProductDTO dto) {
 
          Map<String,Object> mp = validate(dto);
@@ -316,10 +324,17 @@ public class ProductService {
          }else{
              product.setUpdateBy(CommonUtil.currentUser());
          }
-         productRepo.save(product);
-         return new MsgResponse("Successfully created product",true);
+          productRepo.save(product);
+         SellPrice sellPrice=sellPriceRepo.findByProduct(product);
+         if(sellPrice==null){
+             sellPrice=new SellPrice();
+         }
+         BeanUtils.copyProperties(dto.getPrice(),sellPrice);
+         sellPriceRepo.save(sellPrice);
+        return new MsgResponse("Successfully created product",true);
     }
 
+    @Transactional
     public MsgResponse edit(ProductDTO dto) {
 
         return this.create(dto);

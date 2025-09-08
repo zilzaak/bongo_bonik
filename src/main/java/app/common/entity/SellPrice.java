@@ -16,13 +16,13 @@ import lombok.Setter;
 @Getter
 @Entity
 public class SellPrice extends BaseEntity {
-
-    private Double price;
     @ManyToOne
     @JoinColumn(unique = true)
     private Product product;
-    private Double avgPrice;
-    // the product will be under specific org , inventory is ->>under spec branch is -->> under spec org   ----(i)
-    // product -->> organization  -----------------------------------------------------------------------------(ii)
-    // (i=> org) = (ii=> org)
+    private String sellBranchIds;
+    private String sellPrices;
+    private Double defaultSellPrice;
+    private String costBranchIds;
+    private String costPrices;
+    private Float  defaultCostPrice;
 }

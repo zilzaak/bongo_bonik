@@ -21,8 +21,7 @@ public class CostPrice extends BaseEntity {
     @JoinColumn(unique = true)
     private Product product;
     private Double avgPrice;//avg org price
-    private String branchIds;
-    private String branchPrices;
+
     // the product will be under specific org , inventory is ->>under spec branch is -->> under spec org   ----(i)
     // product -->> organization  -----------------------------------------------------------------------------(ii)
     // (i=> org) = (ii=> org)

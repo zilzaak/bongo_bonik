@@ -18,9 +18,20 @@ public class ProductDTO {
     private Long uomId;//KG,LITER,ETC
     private Integer qtyPerUnit;//10,20,30
     private String criteriaIds;
+
+    public PriceDTO getPrice() {
+        return price;
+    }
+
+    public void setPrice(PriceDTO price) {
+        this.price = price;
+    }
+
     private String unitName;
     private Long parentId;
     private String description;
+    private PriceDTO price;
+
     private Boolean confirmSimilarity=Boolean.FALSE;
     public String getFullName() {
         return fullName;
