@@ -21,7 +21,7 @@ public interface BrandRepo extends JpaRepository<Brand,Long> {
 
 
     @Query("select b.id as id , b.name as name , org.name as orgName , b.created as created  , " +
-            " b.updated as updated , b.createBy as createBy , b.updateBy as updateBy " +
+            " b.updated as updated , b.createBy as createBy , b.updateBy as updateBy , b.description as description " +
             " from Brand b join Organization org on org.id=b.org.id " +
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.org.id=?2 ) and " +

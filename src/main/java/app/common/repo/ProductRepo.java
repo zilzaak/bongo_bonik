@@ -34,8 +34,6 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
                color.id as colorId , 
                color.name as colorName, org.id as orgId , 
                org.name as orgName ,
-               um.id as uomId , 
-               um.name as uomName, 
                p.qtyPerUnit  as qtyPerUnit , 
                p.unitName as unitName,
                p.description as description,
@@ -56,7 +54,6 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
         LEFT JOIN p.size size 
         LEFT JOIN p.color color 
         LEFT JOIN p.madeWith mdwth 
-        left join p.uom um 
         WHERE (:id IS NULL OR p.id = :id)
           AND (:orgId IS NULL OR org.id = :orgId)
           AND (:brandId IS NULL OR brand.id = :brandId)

@@ -17,7 +17,7 @@ public interface MadeWithRepo extends JpaRepository<MadeWith,Long> {
     boolean existsByNameAndOrgId(String name, Long orgId);
 
     @Query("select x.id as id , x.name as name , x.orgName as orgName , x.created as created , x.updated as updated " +
-            " , x.createBy as createBy , x.updateBy as updateBy " +
+            " , x.createBy as createBy , x.updateBy as updateBy , x.description as description " +
             " from  MadeWith x where ( ?1 is null or x.id=?1 ) and ( ?2 is null or  x.orgId=?2 ) and " +
             " cast(?3 as String ) is null or cast(x.name as string) like concat('%',upper(cast(?3 as string)),'%') " +
             "  ")

@@ -92,6 +92,7 @@ public class ProductSizeService {
             size.setOrgId(dto.getOrgId());
             size.setOrgName(organization.getName());
             size.setCreateBy(CommonUtil.currentUser());
+            size.setDescription(dto.getDescription());
         }else{
             size = (ProductSize) mp.get("size");
             BeanUtils.copyProperties(dto,size,"created","createBy");

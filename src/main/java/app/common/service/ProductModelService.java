@@ -102,6 +102,7 @@ public class ProductModelService {
             o.setId(dto.getOrgId());
             model.setOrg(o);
             model.setCreateBy(CommonUtil.currentUser());
+            model.setDescription(dto.getDescription());
         }else{
             model = (ProductModel) mp.get("model");
             BeanUtils.copyProperties(dto,model,"created","createBy");
@@ -112,6 +113,7 @@ public class ProductModelService {
             o.setId(dto.getOrgId());
             model.setOrg(o);
             model.setUpdateBy(CommonUtil.currentUser());
+            model.setDescription(dto.getDescription());
         }
         modelRepo.save(model);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

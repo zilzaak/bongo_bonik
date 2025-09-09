@@ -21,7 +21,7 @@ public interface ProductCatRepo extends JpaRepository<ProductCat,Long> {
 
 
     @Query("select b.id as id , b.name as name , org.name as orgName , b.created as created   " +
-            ",  b.updated as updated, b.createBy as createBy , b.updateBy as updateBy " +
+            ",  b.updated as updated, b.createBy as createBy , b.updateBy as updateBy , b.description as description " +
             " from ProductCat b join Organization org on org.id=b.orgId " +
             " where ( ?1 is null or b.id=?1 ) and " +
             " ( ?2 is null or b.orgId=?2 ) and " +

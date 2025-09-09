@@ -23,6 +23,7 @@ public class CommonDTO {
     private String phone;
     private String entity;
     private String address;
+    private String description;
     private String location;
     private String remarks;
 

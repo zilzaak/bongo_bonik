@@ -91,7 +91,7 @@ public class CommonUtil {
     //full name = name->Cat->brand->model->madeWith->size->color->amount per unit->measure by
     public static Map<String,Object> getProductFullname(String rootName , ProductCat cat, Brand brand, ProductModel model,
                                             MadeWith madeWith,ProductSize size,ProductColor color,
-                                            Integer qtyPerUnit,String qtyUnit,UnitOfMeasure uom){
+                                            Integer qtyPerUnit,String qtyUnit){
         Map<String,Object> mp=new HashMap<>();
         String fullName=rootName+">"+cat.getName()+">"+Optional.ofNullable(brand).map(Brand::getName).orElse("")+">"+
                 Optional.ofNullable(model).map(ProductModel::getName).orElse("")+">"+
@@ -103,10 +103,7 @@ public class CommonUtil {
                      fullName=fullName+qtyPerUnit+">";
                  }
                  if(qtyUnit!=null){
-                     fullName=fullName+qtyUnit+">";
-                 }
-                 if(uom!=null){
-                     fullName=fullName+uom.getName().toLowerCase();//mg,kg,ml,l,etc
+                     fullName=fullName+qtyUnit;
                  }
 
             fullName = replaceRepeatedChar(fullName,'>');
@@ -125,9 +122,6 @@ public class CommonUtil {
         }
         if(qtyUnit!=null){
             criteriaIds=criteriaIds+qtyUnit+",";
-        }
-        if(uom!=null){
-            criteriaIds=criteriaIds+uom.getName().toLowerCase();//mg,kg,ml,l,etc
         }
 
         criteriaIds = replaceRepeatedChar(criteriaIds,',');

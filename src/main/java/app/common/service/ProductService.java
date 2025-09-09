@@ -107,9 +107,9 @@ public class ProductService {
       Map<String,Object> validate(ProductDTO dto){
           Map<String,Object> mp = new HashMap<>();
           mp.put("hasError",false);
-          if(dto.getOrgId()==null || dto.getCatId()==null || dto.getUomId()==null){
+          if(dto.getOrgId()==null || dto.getCatId()==null){
            mp.put("hasError",true);
-           mp.put("message","Organization , category , unit of measurement is required ");
+           mp.put("message","Organization , category  is required ");
            return mp;
           }
 
@@ -138,7 +138,7 @@ public class ProductService {
               mp.put("message","Amount/quantity unit is not provided for unit "+dto.getUnitName());
               return mp;
           }
-          if(dto.getUnitName()!=null && this.units.contains(dto.getUnitName().toLowerCase())){
+          if(dto.getUnitName()!=null && !this.units.contains(dto.getUnitName().toLowerCase())){
               mp.put("hasError",true);
               mp.put("message","Unit name is missing ");
               return mp;
@@ -150,7 +150,7 @@ public class ProductService {
               return mp;
           }
 
-          if(cat==null){
+          if(dto.getCatId()!=null && cat==null){
               mp.put("hasError",true);
               mp.put("message","No category exist under id="+dto.getCatId());
               return mp;
@@ -160,7 +160,7 @@ public class ProductService {
               mp.put("message","No brand exist under id="+dto.getBrandId());
               return mp;
           }
-          if(uom==null){
+          if(dto.getUomId()!=null && uom==null){
               mp.put("hasError",true);
               mp.put("message","No Uom exist under id="+dto.getUomId());
               return mp;
@@ -173,7 +173,7 @@ public class ProductService {
               return mp;
           }
 
-          Map<String,Object> naming = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName(),uom);
+          Map<String,Object> naming = CommonUtil.getProductFullname(dto.getName(),cat,brand,model,madeWith,size,color,dto.getQtyPerUnit(),dto.getUnitName());
           String fullName = (String) naming.get("fullName");
           String criteriaIds = (String) naming.get("criteriaIds");
           dto.setCriteriaIds(criteriaIds);

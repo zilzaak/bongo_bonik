@@ -92,6 +92,7 @@ public class BrandService {
         Brand brand = new Brand();
         if(dto.getId()==null){
             brand.setName(dto.getName());
+            brand.setDescription(dto.getDescription());
             Organization o = new Organization();
             o.setId(dto.getOrgId());
             brand.setOrg(o);

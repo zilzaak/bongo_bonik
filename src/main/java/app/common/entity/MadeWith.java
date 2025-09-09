@@ -15,4 +15,5 @@ public class MadeWith extends BaseEntity{
     private String name;
     private Long orgId;
     private String  orgName;
+    private String description;
 }

@@ -89,6 +89,7 @@ public class MadeWithService {
             mdwth.setName(dto.getName());
             mdwth.setOrgName(dto.getOrgName());
             mdwth.setOrgId(dto.getOrgId());
+            mdwth.setDescription(dto.getDescription());
             mdwth.setCreateBy(CommonUtil.currentUser());
         }else{
             mdwth = (MadeWith) mp.get("mdwth");

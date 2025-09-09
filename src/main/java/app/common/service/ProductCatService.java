@@ -93,12 +93,14 @@ public class ProductCatService {
             cat.setOrgName(dto.getOrgName());
             cat.setOrgId(dto.getOrgId());
             cat.setCreateBy(CommonUtil.currentUser());
+            cat.setDescription(dto.getDescription());
         }else{
             cat = (ProductCat) mp.get("cat");
             cat.setName(dto.getName());
             cat.setOrgName(dto.getOrgName());
             cat.setOrgId(dto.getOrgId());
             cat.setUpdateBy(CommonUtil.currentUser());
+            cat.setDescription(dto.getDescription());
         }
         catRepo.save(cat);
         return new MsgResponse(dto.getId()==null?"Successfully created":"Edited successfully",true);

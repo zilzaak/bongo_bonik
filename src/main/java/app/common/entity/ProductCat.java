@@ -15,5 +15,6 @@ public class ProductCat extends BaseEntity {
 
     private String name;
     private Long parentId;
+    private String description;
 
 }
