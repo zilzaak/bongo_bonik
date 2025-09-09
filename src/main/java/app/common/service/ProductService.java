@@ -3,6 +3,7 @@ package app.common.service;
 
 import app.common.counter.service.CounterService;
 import app.common.dto.MsgResponse;
+import app.common.dto.PriceDTO;
 import app.common.dto.ProductDTO;
 import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
@@ -58,6 +59,8 @@ public class ProductService {
     private SellPriceRepo sellPriceRepo;
     @Autowired
     private CostPriceRepo costPriceRepo;
+    @Autowired
+    private BranchService branchService;
 
 
     String getStr(String arr[] , int toIndex){
@@ -107,9 +110,11 @@ public class ProductService {
       Map<String,Object> validate(ProductDTO dto){
           Map<String,Object> mp = new HashMap<>();
           mp.put("hasError",false);
-          if(dto.getOrgId()==null || dto.getCatId()==null){
+          if(dto.getName()==null || dto.getName().isBlank() || dto.getOrgId()==null ||
+                  dto.getCatId()==null || dto.getPrice().getDefaultCostPrice()==null
+                  || dto.getPrice().getDefaultSellPrice()==null){
            mp.put("hasError",true);
-           mp.put("message","Organization , category  is required ");
+           mp.put("message","Product Name , Organization , category , sell price , cost price is required ");
            return mp;
           }
 
@@ -118,6 +123,47 @@ public class ProductService {
               mp.put("message","Invalid User Organization selected ");
               return mp;
           }
+
+              if(dto.getPrice().getSellBranchIds()!=null && !dto.getPrice().getSellBranchIds().isBlank()){
+                  String branches[]  = dto.getPrice().getSellBranchIds().split(",");
+                  String prices[]=dto.getPrice().getSellPrices().split(",");
+                  if(branches.length!=prices.length){
+                      mp.put("hasError",true);
+                      mp.put("message","Sell Price is missing for a specific branch");
+                      return mp;
+                  }
+                  int index=-1;
+                  for(String bn : branches){
+                      index++;
+                      Double pv=Double.parseDouble(prices[index]);
+                      if(!branchService.validBranch(dto.getOrgId(),Long.parseLong(bn))){
+                          mp.put("hasError",true);
+                          mp.put("message","Invalid branch is selected");
+                          return mp;
+                      }
+                  }
+              }
+
+          if(dto.getPrice().getCostBranchIds()!=null && !dto.getPrice().getCostBranchIds().isBlank()){
+              String branches[]  = dto.getPrice().getCostBranchIds().split(",");
+              String prices[]=dto.getPrice().getCostPrices().split(",");
+              if(branches.length!=prices.length){
+                  mp.put("hasError",true);
+                  mp.put("message","Cost Price is missing for a specific branch");
+                  return mp;
+              }
+              int index=-1;
+              for(String bn : branches){
+                  index++;
+                  Double pv=Double.parseDouble(prices[index]);
+                  if(!branchService.validBranch(dto.getOrgId(),Long.parseLong(bn))){
+                      mp.put("hasError",true);
+                      mp.put("message","Invalid branch is selected");
+                      return mp;
+                  }
+              }
+          }
+
 
           Long org = dto.getOrgId();
           ProductCat cat = catRepo.findById(dto.getCatId()).orElse(null);
@@ -128,17 +174,17 @@ public class ProductService {
           ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
           MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
 
-          if(dto.getQtyPerUnit()!=null && dto.getUnitName()==null){
+          if(dto.getQtyPerUnit()!=null  && ( dto.getUnitName()==null || !dto.getUnitName().isBlank())){
               mp.put("hasError",true);
               mp.put("message","Amount/quantity unit is not provided for amount"+dto.getQtyPerUnit());
               return mp;
           }
-          if(dto.getUnitName()!=null && dto.getQtyPerUnit()==null ){
+          if(dto.getUnitName()!=null && !dto.getUnitName().isBlank() && dto.getQtyPerUnit()==null ){
               mp.put("hasError",true);
               mp.put("message","Amount/quantity unit is not provided for unit "+dto.getUnitName());
               return mp;
           }
-          if(dto.getUnitName()!=null && !this.units.contains(dto.getUnitName().toLowerCase())){
+          if(dto.getUnitName()!=null && !dto.getUnitName().isBlank() && !this.units.contains(dto.getUnitName().toLowerCase())){
               mp.put("hasError",true);
               mp.put("message","Unit name is missing ");
               return mp;

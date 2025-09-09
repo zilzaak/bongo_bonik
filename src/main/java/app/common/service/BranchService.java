@@ -133,4 +133,7 @@ public class BranchService {
     }
 
 
+    public boolean validBranch(Long orgId, Long branchId) {
+        return branchRepo.existsByIdAndOrgId(branchId,orgId);
+    }
 }
