@@ -136,13 +136,19 @@ public class InventoryService {
     }
 
     public MsgResponse getList(SearchParamDTO dto) {
+        if(dto.id!=null){
+            Inventory inv = inventoryRepo.findById(dto.id).get();
+            if(!CommonUtil.validUserOrg(inv.getOrg().getId())){
+               throw new RuntimeException("Invalid organization");
+            }
+        }
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
         Page<Object> page=null;
         if(dto.getOrgId()==null){
             List<Organization> orgs=userOrgRepository.getPermittedOrg(userRepository.findByUsername(CommonUtil.currentUser()));
-            page = inventoryRepo.getList(orgs, dto.branchId,pageable);
+            page = inventoryRepo.getList(orgs, dto.branchId,dto.id,pageable);
         }else{
-            page = inventoryRepo.getList(dto.orgId, dto.branchId,pageable);
+            page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,pageable);
         }
         return CommonUtil.responseFromObjectPage(page);
     }

@@ -61,6 +61,7 @@ public class InventoryController {
             }
             if(dto.branchId!=null){
                 if(!branchRepo.existsByIdAndOrgId(dto.branchId,dto.orgId)){
+                    return new ResponseEntity<>(new MsgResponse("Invalid organization") ,HttpStatus.OK);
                 }
             }
         }else{
