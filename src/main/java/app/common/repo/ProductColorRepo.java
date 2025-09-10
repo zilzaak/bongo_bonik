@@ -19,8 +19,9 @@ public interface ProductColorRepo extends JpaRepository<ProductColor,Long> {
     @Query("select b.id as id , b.name as name , b.orgName as orgName , b.created as created  ,  b.updated as updated " +
             " , b.createBy as createBy , b.updateBy as updateBy,b.description as description  from ProductColor b  " +
             " where ( ?1 is null or b.id=?1 ) and " +
-            " ( ?2 is null or b.orgId=?2 ) ")
-    Page<Map<String, Object>> getList(Long colorId, Long orgId, Pageable pageable);
+            " ( ?2 is null or b.orgId=?2 ) and " +
+            "  ( cast(?3 as string) is null or cast(b.name as string) like concat('%',cast(?3 as string),'%') ) ")
+    Page<Map<String, Object>> getList(Long colorId, Long orgId, String name ,Pageable pageable);
 
     boolean existsByOrgId(Long id);
 

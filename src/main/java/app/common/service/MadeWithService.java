@@ -96,7 +96,7 @@ public class MadeWithService {
     public MsgResponse create(CommonDTO dto) {
         Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse("fail",false);
+            return new MsgResponse((String) mp.get("message"),mp,false);
         }
         MadeWith mdwth = new MadeWith();
         if(dto.getId()==null){

@@ -98,7 +98,7 @@ public class ProductSizeService {
     public MsgResponse create(CommonDTO dto) {
         Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse("fail",false);
+            return new MsgResponse((String) mp.get("message"),mp,false);
         }
         ProductSize size = new ProductSize();
         if(dto.getId()==null){

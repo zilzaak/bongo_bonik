@@ -20,7 +20,7 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
     String getProductName(@Param("pid") Long pid);
 
     @Query("""
-        SELECT p.id as id, p.name as name,
+        SELECT p.id as id, p.code as code , p.name as name,
         p.fullName as fullName,
          brand.id as brandId , 
                brand.name as brandName, 

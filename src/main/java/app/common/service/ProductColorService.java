@@ -100,7 +100,7 @@ public class ProductColorService {
     public MsgResponse create(CommonDTO dto) {
         Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse("fail",false);
+            return new MsgResponse((String) mp.get("message"),mp,false);
         }
         ProductColor color = new ProductColor();
         if(dto.getId()==null){
@@ -131,7 +131,7 @@ public class ProductColorService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-        Page<Map<String,Object>> page = colorRepo.getList(dto.id,dto.orgId,pageable);
+        Page<Map<String,Object>> page = colorRepo.getList(dto.id,dto.orgId,dto.getName(),pageable);
         return CommonUtil.responseFromPage(page);
     }
 }

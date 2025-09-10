@@ -104,7 +104,7 @@ public class ProductModelService {
     public MsgResponse create(CommonDTO dto) {
         Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse((String) mp.get("message"),false);
+            return new MsgResponse((String) mp.get("message"),mp,false);
         }
         ProductModel model = new ProductModel();
         if(dto.getId()==null){
