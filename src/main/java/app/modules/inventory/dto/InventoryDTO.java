@@ -7,7 +7,15 @@ public class InventoryDTO {
     private Long id;
     private String name;
     private String phone;
-    private String address;
+    private String others;
+    public String getOthers(){
+        return others;
+    }
+
+    public void setOthers(String others) {
+        this.others = others;
+    }
+
     private Long branchId;
     private String branchName;
 
@@ -64,14 +72,6 @@ public class InventoryDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public Long getBranchId() {

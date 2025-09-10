@@ -3,6 +3,9 @@ package app.modules.inventory.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.common.entity.Branch;
+import app.common.repo.BranchRepo;
+import app.common.util.CommonUtil;
 import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ public class InventoryController {
 
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private BranchRepo branchRepo;
 
     @PostMapping("/create")
     ResponseEntity<?> create(@RequestBody InventoryDTO dto)
@@ -50,6 +55,22 @@ public class InventoryController {
     @GetMapping("/list")
     ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
+        if(dto.getOrgId()!=null){
+            if(!CommonUtil.validUserOrg(dto.getOrgId())){
+                return new ResponseEntity<>(new MsgResponse("Invalid organization") ,HttpStatus.OK);
+            }
+            if(dto.branchId!=null){
+                if(!branchRepo.existsByIdAndOrgId(dto.branchId,dto.orgId)){
+                }
+            }
+        }else{
+            if(dto.branchId!=null){
+                Branch b=branchRepo.findById(dto.branchId).get();
+                if(!CommonUtil.validUserOrg(b.getOrg().getId())){
+                    return new ResponseEntity<>(new MsgResponse("Invalid organization") ,HttpStatus.OK);
+                }
+            }
+        }
         MsgResponse response = inventoryService.getList(dto);
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }

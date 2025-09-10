@@ -5,6 +5,8 @@ import app.common.dto.SearchParamDTO;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import app.common.util.CommonUtil;
+import app.modules.base.user.repo.UserOrgRepository;
+import app.modules.base.user.repo.UserRepository;
 import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.entity.StockBalance;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,6 +35,11 @@ public class InventoryService {
 
     @Autowired
     private BranchRepo branchRepo;
+
+    @Autowired
+    private UserOrgRepository userOrgRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private StockBalanceRepo stockBalanceRepo;
@@ -129,7 +137,13 @@ public class InventoryService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
-        Page<Object> page = inventoryRepo.getList(dto.orgId, dto.branchId,pageable);
+        Page<Object> page=null;
+        if(dto.getOrgId()==null){
+            List<Organization> orgs=userOrgRepository.getPermittedOrg(userRepository.findByUsername(CommonUtil.currentUser()));
+            page = inventoryRepo.getList(orgs, dto.branchId,pageable);
+        }else{
+            page = inventoryRepo.getList(dto.orgId, dto.branchId,pageable);
+        }
         return CommonUtil.responseFromObjectPage(page);
     }
 

@@ -1,5 +1,6 @@
 package app.modules.inventory.repo;
 
+import app.modules.base.org.entity.Organization;
 import app.modules.inventory.entity.Inventory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,7 @@ public interface InventoryRepo extends JpaRepository<Inventory,Long> {
 
     @Query("select x from Inventory x where ( ?1 is null or x.org.id=?1 ) and ( ?2 is null or x.branch.id=?2 ) ")
     Page<Object> getList(Long orgId, Long branchId, Pageable pageable);
+
+    @Query("select x from Inventory x where  x.org in ?1  and ( ?2 is null or x.branch.id=?2 ) ")
+    Page<Object> getList(List<Organization> orgs, Long branchId, Pageable pageable);
 }

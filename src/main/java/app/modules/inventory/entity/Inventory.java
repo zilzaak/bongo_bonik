@@ -27,7 +27,6 @@ public class Inventory  extends BaseEntity{
     @ManyToOne
     @JoinColumn(nullable = false)
     private Organization org;
-
     private String phone;
-    private String address;
+    private String others;
 }
