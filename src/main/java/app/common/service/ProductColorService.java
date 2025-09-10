@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -55,6 +56,13 @@ public class ProductColorService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
+            List<Map<String,Object>> existBrand=colorRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
+                return mp;
+            }
 
         }else{
             ProductColor color = colorRepo.findById(dto.getId()).orElse(null);
@@ -66,6 +74,13 @@ public class ProductColorService {
             if(colorRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
+                return mp;
+            }
+            List<Map<String,Object>> existBrand=colorRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
                 return mp;
             }
 

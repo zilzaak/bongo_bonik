@@ -26,9 +26,7 @@ public class CommonDTO {
     private String description;
     private String location;
     private String remarks;
-
-
-
+    public Boolean confirmSimilarity=Boolean.FALSE;
     public void setProductCatIds(String productCatIds) {
         this.productCatIds = productCatIds!=null?productCatIds.trim().replaceAll("\\s+", ""):null;
     }
@@ -52,9 +50,10 @@ public class CommonDTO {
     public void setName(String name) {
         if(this.entity!=null){
             if(this.entity.equalsIgnoreCase("UnitOfMeasure")){
-                this.name = name!=null? CommonUtil.removeAllSpace(name.trim().toLowerCase()):null;
+                this.name = name!=null? CommonUtil.removeHeadTailSpace(name.trim().toLowerCase()):null;
             }else{
-                this.name = name!=null?CommonUtil.removeAllSpace(name.trim().toUpperCase()):null;
+                this.name = name!=null?CommonUtil.removeHeadTailSpace(name.trim().toUpperCase()):null;
+                this.name=CommonUtil.replaceRepeatedChar(this.name,' ');
             }
         }else{
             this.name = name;

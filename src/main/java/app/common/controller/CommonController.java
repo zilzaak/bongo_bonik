@@ -78,7 +78,7 @@ public class CommonController {
           response = madeWithService.create(dto);
       }
       else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
-          response = uomService.create(dto);
+        //  response = uomService.create(dto);
       }
 
       return new ResponseEntity<>(response ,HttpStatus.OK);
@@ -117,7 +117,7 @@ public class CommonController {
             response = madeWithService.create(dto);
         }
         else if(dto.getEntity().equalsIgnoreCase("UnitOfMeasure")){
-            response = uomService.create(dto);
+            //response = uomService.create(dto);
         }
 
         return new ResponseEntity<>(response ,HttpStatus.OK);

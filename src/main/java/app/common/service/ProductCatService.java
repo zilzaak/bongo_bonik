@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -57,6 +58,13 @@ public class ProductCatService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
+            List<Map<String,Object>> existBrand=catRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
+                return mp;
+            }
 
         }else{
             ProductCat cat = catRepo.findById(dto.getId()).orElse(null);
@@ -69,6 +77,13 @@ public class ProductCatService {
             if(catRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
+                return mp;
+            }
+            List<Map<String,Object>> existBrand=catRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
                 return mp;
             }
 
@@ -85,7 +100,7 @@ public class ProductCatService {
     public MsgResponse create(CommonDTO dto) {
          Map<String,Object> mp = formValidation(dto);
         if((boolean)mp.get("hasError")){
-            return new MsgResponse((String)mp.get("message"),false);
+            return new MsgResponse((String)mp.get("message"),mp,false);
         }
         ProductCat cat = new ProductCat();
         if(dto.getId()==null){

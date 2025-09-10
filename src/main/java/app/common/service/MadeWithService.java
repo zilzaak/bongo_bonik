@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -53,6 +54,13 @@ public class MadeWithService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
+            List<Map<String,Object>> existBrand=madeWithRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
+                return mp;
+            }
 
         }else{
             MadeWith mdwth = madeWithRepo.findById(dto.getId()).orElse(null);
@@ -66,7 +74,13 @@ public class MadeWithService {
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
                 return mp;
             }
-
+            List<Map<String,Object>> existBrand=madeWithRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
+                return mp;
+            }
             if(!mdwth.getOrgId().equals(dto.getOrgId())){
                 mp.put("hasError",true);
                 mp.put("message","you can not edit the organization because its usual is sensitive");

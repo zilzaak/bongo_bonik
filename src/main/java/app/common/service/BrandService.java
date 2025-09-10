@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -59,6 +60,14 @@ public class BrandService {
                return mp;
            }
 
+           List<Map<String,Object>> existBrand=brandRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+           if(!dto.confirmSimilarity && existBrand.size()>0){
+               mp.put("hasError",true);
+               mp.put("message","Similar criteria value exist , please recheck before confirm");
+               mp.put("productCrit",existBrand);
+               return mp;
+           }
+
         }else{
             Brand brand = brandRepo.findById(dto.getId()).orElse(null);
             if(brand==null){
@@ -69,6 +78,13 @@ public class BrandService {
             if(brandRepo.existsByNameAndOrgIdAndIdNotIn(dto.getName(),dto.getOrgId(), Arrays.asList(dto.getId()))>0){
                 mp.put("hasError",true);
                 mp.put("message",dto.getName()+" is exist under organization "+dto.getOrgName()+" give unique name");
+                return mp;
+            }
+            List<Map<String,Object>> existBrand=brandRepo.existData(dto.getOrgId(),dto.getName(),dto.getId());
+            if(!dto.confirmSimilarity && existBrand.size()>0){
+                mp.put("hasError",true);
+                mp.put("message","Similar criteria value exist , please recheck before confirm");
+                mp.put("productCrit",existBrand);
                 return mp;
             }
             if(!brand.getOrg().getId().equals(dto.getOrgId())){
