@@ -1,5 +1,7 @@
 package app.modules.inventory.dto;
 
+import app.common.util.CommonUtil;
+
 public class InventoryDTO {
 
     private Long id;
@@ -52,6 +54,7 @@ public class InventoryDTO {
     public void setName(String name) {
 
         this.name = name!=null?name.trim().toUpperCase():null;
+        this.name= CommonUtil.replaceRepeatedChar(this.name,' ');
 
     }
 

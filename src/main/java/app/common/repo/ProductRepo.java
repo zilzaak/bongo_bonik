@@ -59,7 +59,9 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
           AND (:brandId IS NULL OR brand.id = :brandId)
           AND (:catId IS NULL OR cat.id = :catId)
           AND (:modelId IS NULL OR model.id = :modelId)
-          AND ( cast(:searchTerm as string) IS NULL OR UPPER(cast(p.fullName as string)) LIKE CONCAT('%', UPPER(cast(:searchTerm as string)), '%'))
+          AND ( cast(:searchTerm as string) IS NULL OR 
+           UPPER(cast(p.fullName as string)) LIKE CONCAT('%', UPPER(cast(:searchTerm as string)), '%') OR 
+           UPPER(cast(p.code as string))= UPPER(cast(:searchTerm as string)) )
         """)
     Page<Map<String,Object>> getList(
             @Param("id") Long id,

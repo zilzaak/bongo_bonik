@@ -20,6 +20,6 @@ public interface InventoryRepo extends JpaRepository<Inventory,Long> {
 
     Inventory findTopByBranchId(Long id);
 
-    @Query("select x from Inventory x where ( ?1 is null or x.orgId=?1 ) and ( ?2 is null or x.branchId=?2 ) ")
+    @Query("select x from Inventory x where ( ?1 is null or x.org.id=?1 ) and ( ?2 is null or x.branch.id=?2 ) ")
     Page<Object> getList(Long orgId, Long branchId, Pageable pageable);
 }

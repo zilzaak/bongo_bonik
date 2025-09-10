@@ -193,7 +193,7 @@ public class SalesService {
         if(dto.getId()==null){
             inventory= inventoryRepo.findById(dto.getInventory()).get();
             Map<String,Object> attr =  CommonUtil.counterAttribute("INVOICE");
-            dto.setCode(counterService.getCounterCode(inventory.getOrgId(),inventory.getBranchId(), (String) attr.get("name"), (String) attr.get("prefix")));
+            dto.setCode(counterService.getCounterCode(inventory.getOrg().getId(),inventory.getBranch().getId(), (String) attr.get("name"), (String) attr.get("prefix")));
             customer.setId(dto.getCustomer());
         }else{
             sales = saleRepo.findById(dto.getId()).get();

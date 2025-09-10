@@ -67,7 +67,7 @@ public class PurchaseService {
         Inventory inv = inventoryService.getById(dto.getInventoryId());
         Supplier supplier = supplierService.getById(dto.getSupplierId());
 
-        if(!supplier.getOrgId().equals(inv.getOrgId())){
+        if(!supplier.getOrgId().equals(inv.getOrg().getId())){
             mp.put("hasError",true);
             mp.put("message","The supplier you selected is under another organization");
             return mp;
@@ -137,10 +137,10 @@ public class PurchaseService {
         }
             purchase.setInventoryId(inv.getId());
             purchase.setInventoryName(inv.getName());
-            purchase.setOrgId(inv.getOrgId());
-            purchase.setBranchId(inv.getBranchId());
-            purchase.setOrgName(inv.getOrgName());
-            purchase.setBranchName(inv.getBranchName());
+            purchase.setOrgId(inv.getOrg().getId());
+            purchase.setBranchId(inv.getBranch().getId());
+            purchase.setOrgName(inv.getOrg().getName());
+            purchase.setBranchName(inv.getBranch().getName());
             purchase.setInventoryName(inv.getName());
 
             List<PurchaseDetails> dtls =(List<PurchaseDetails>) mp.get("list");
@@ -158,7 +158,7 @@ public class PurchaseService {
                 }
             }else{
                 Map<String,Object> cnt = CommonUtil.counterAttribute(CounterEnum.PURCHASE.name());
-                String code = counterService.getCounterCode(inv.getOrgId(),inv.getBranchId(), (String) cnt.get("name"), (String) cnt.get("prefix"));
+                String code = counterService.getCounterCode(inv.getOrg().getId(),inv.getBranch().getId(), (String) cnt.get("name"), (String) cnt.get("prefix"));
                 purchase.setCode(code);
                 for(PurchaseDetails obj : dtls){
                     obj.setPurchase(purchase);

@@ -2,6 +2,7 @@ package app.modules.inventory.service;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
+import app.modules.base.org.entity.Organization;
 import app.modules.base.org.repo.OrgRepo;
 import app.common.util.CommonUtil;
 import app.modules.inventory.dto.InventoryDTO;
@@ -41,16 +42,22 @@ public class InventoryService {
     Map<String ,Object> validate(InventoryDTO dto){
         Map<String ,Object> mp = new HashMap<>();
         mp.put("hasError",false);
-        if(dto.getName()==null || dto.getBranchId()==null || dto.getName().length()<1){
+        if(dto.getName()==null || dto.getName().isBlank() || dto.getBranchId()==null){
             mp.put("hasError",true);
-            mp.put("message","Name , Branch is required field");
+            mp.put("message","Name , Name and Branch is required field");
+            return mp;
+        }
+        Branch branch = branchRepo.findById(dto.getBranchId()).get();
+        if(!CommonUtil.validUserOrg(branch.getOrg().getId())){
+            mp.put("hasError",true);
+            mp.put("message","Selected branch is not under user's Organization");
             return mp;
         }
 
-        Branch branch = branchRepo.findById(dto.getBranchId()).get();
          dto.setOrgId(branch.getOrg().getId());
          dto.setOrgName(branch.getOrg().getName());
          dto.setBranchName(branch.getName());
+
         if(dto.getId()==null){
             if(inventoryRepo.existsByNameAndBranchId(dto.getName(),dto.getBranchId())){
                 mp.put("hasError",true);
@@ -64,12 +71,12 @@ public class InventoryService {
                 return mp;
             }
             Inventory inv = inventoryRepo.findById(dto.getId()).get();
-            if(!inv.getOrgId().equals(branch.getOrg().getId())){
+            //user is editing other persons inventory
+            if(!CommonUtil.validUserOrg(inv.getOrg().getId())){
                 mp.put("hasError",true);
-                mp.put("message"," The edited branch is must be under same organization for this inventory");
+                mp.put("message","You are editing other persons inventory which is punishable");
                 return mp;
             }
-
         }
 
         return mp;
@@ -82,7 +89,18 @@ public class InventoryService {
             return new MsgResponse((String) mp.get("message"),false);
         }
         Inventory inv = new Inventory();
+        Branch b=new Branch();
+        b.setId(dto.getBranchId());
+        Organization org=new Organization();
+        org.setId(dto.getOrgId());
+        inv.setOrg(org);
+        inv.setBranch(b);
         BeanUtils.copyProperties(dto,inv);
+        if(dto.getId()==null){
+            inv.setCreateBy(CommonUtil.currentUser());
+        }else{
+            inv.setUpdateBy(CommonUtil.currentUser());
+        }
         inventoryRepo.save(inv);
         return new MsgResponse(dto.getId()==null?"Successfully created Inventory":"Successfully updated Inventory",true);
     }
