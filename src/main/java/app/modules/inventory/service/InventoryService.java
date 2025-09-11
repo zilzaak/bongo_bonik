@@ -148,7 +148,12 @@ public class InventoryService {
             List<Organization> orgs=userOrgRepository.getPermittedOrg(userRepository.findByUsername(CommonUtil.currentUser()));
             page = inventoryRepo.getList(orgs, dto.branchId,dto.id,pageable);
         }else{
-            page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,pageable);
+            if(dto.getDropDown()!=null){
+                page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,pageable);
+            }else{
+                Page<Map<String ,Object>> p = inventoryRepo.getListDrop(dto.orgId, dto.branchId,dto.id,pageable);
+                return CommonUtil.responseFromPage(p);
+            }
         }
         return CommonUtil.responseFromObjectPage(page);
     }
