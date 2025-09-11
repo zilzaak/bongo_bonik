@@ -49,9 +49,9 @@ public class PurchaseService {
         Map<String,Object> mp = new HashMap<>();
         mp.put("hasError",false);
 
-        if(dto.getInventoryId()==null){
+        if(dto.getInventoryId()==null || dto.getSupplierId()==null){
             mp.put("hasError",true);
-            mp.put("message","No inventory is selected");
+            mp.put("message","Inventory , Supplier is required field");
             return mp;
         }
         if(dto.getDtls().isEmpty()){
@@ -59,14 +59,15 @@ public class PurchaseService {
             mp.put("message","No item is selected");
             return mp;
         }
-        if(dto.getSupplierId()==null){
-            mp.put("hasError",true);
-            mp.put("message","No supplier is selected");
-            return mp;
-        }
 
         Inventory inv = inventoryService.getById(dto.getInventoryId());
         Supplier supplier = supplierService.getById(dto.getSupplierId());
+
+        if(!CommonUtil.validUserOrg(inv.getOrg().getId())){
+            mp.put("hasError",true);
+            mp.put("message","Invalid Organization");
+            return mp;
+        }
 
         if(!supplier.getOrgId().equals(inv.getOrg().getId())){
             mp.put("hasError",true);

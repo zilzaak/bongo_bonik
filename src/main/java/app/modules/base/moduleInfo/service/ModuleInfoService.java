@@ -76,29 +76,20 @@ public class ModuleInfoService {
                 menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiSeq));
             }
 
+            if(menu.getParentId()!=null && !hierarchyRepo.existsById(menu.getParentId())){
+                mp.put("hasError",true);
+                mp.put("message","The parent menu selected but not created yet");
+                return mp;
+            }
+
             if(menu.getId()==null){
-                if(menu.getParentId()!=null && !hierarchyRepo.existsById(menu.getParentId())){
-                    mp.put("hasError",true);
-                    mp.put("message","The parent menu selected but not created yet");
-                    return mp;
-                }
-                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenuAndParentMenu(menu.getMenu(),menu.getParentMenu())){
-                    mp.put("hasError",true);
-                    mp.put("message","Duplicate menu creation");
-                    return mp;
-                }
                if(hierarchyRepo.existsByApiSeqAndMenu(menu.getApiSeq(),menu.getMenu())){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
                }
            }else{
-                if(menu.getParentMenu()!=null && hierarchyRepo.existsByMenuAndParentMenuAndIdNotIn(menu.getMenu(),menu.getParentMenu(),Arrays.asList(menu.id))){
-                    mp.put("hasError",true);
-                    mp.put("message","Duplicate menu creation");
-                    return mp;
-                }
-               if(hierarchyRepo.existsByApiSeqAndMenuAndIdNotIn(menu.apiSeq,menu.getMenu(),Arrays.asList(menu.id))){
+                if(hierarchyRepo.existsByApiSeqAndMenuAndIdNotIn(menu.apiSeq,menu.getMenu(),Arrays.asList(menu.id))){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
