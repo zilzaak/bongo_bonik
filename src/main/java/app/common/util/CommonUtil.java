@@ -5,6 +5,8 @@ import app.common.dto.SearchParamDTO;
 import app.common.entity.*;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.user.repo.UserOrgRepository;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.security.Security;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -257,5 +260,26 @@ public class CommonUtil {
 
     public static List<String> permitAllList=Arrays.asList("/auth/getToken");
 
+    public static void sanitizeAllStrings(Object entity) {
+        for (Field field : entity.getClass().getDeclaredFields()) {
+            if (field.getType().equals(String.class)) {
+                field.setAccessible(true);
+                try {
+                    String value = (String) field.get(entity);
+                    if (value != null) {
+                        field.set(entity, CommonUtil.sanitize(value));
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
+    public static String sanitize(String input) {
+        if (input == null) return null;
+        return POLICY.sanitize(input);
+    }
 
 }
