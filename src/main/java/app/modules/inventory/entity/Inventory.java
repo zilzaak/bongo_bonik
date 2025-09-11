@@ -3,6 +3,7 @@ package app.modules.inventory.entity;
 import app.common.entity.BaseEntity;
 import app.common.entity.Branch;
 import app.modules.base.org.entity.Organization;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "inventory", uniqueConstraints = {
 @UniqueConstraint(columnNames = {"name", "branch_id"}
                 )})
@@ -22,10 +24,12 @@ public class Inventory  extends BaseEntity{
     @Column(nullable = false,name = "name")
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(nullable = false,name = "branch_id")
     private Branch branch;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Organization org;
     private String phone;
     private String others;
