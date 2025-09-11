@@ -2,6 +2,7 @@ package app.modules.purchase.service;
 
 import app.common.counter.service.CounterService;
 import app.common.dto.MsgResponse;
+import app.common.entity.Product;
 import app.common.util.CommonUtil;
 import app.common.util.CounterEnum;
 import app.modules.inventory.entity.Inventory;
@@ -112,7 +113,9 @@ public class PurchaseService {
             obj.setId(dtl.getId());
             obj.setAmount(dtl.getAmount());
             obj.setQuantity(dtl.getQuantity());
-            obj.setProductId(dtl.getProductId());
+            Product p=new Product();
+            p.setId(dtl.getProductId());
+            obj.setProduct(p);
             obj.setUnitPrice(dtl.getUnitPrice());
             obj.setAmount(dtl.getQuantity()*dtl.getUnitPrice());
             list.add(obj);
@@ -135,14 +138,10 @@ public class PurchaseService {
         if(dto.getId()!=null){
             purchase = purchaseRepo.findById(dto.getId()).get();
         }
-            purchase.setInventoryId(inv.getId());
-            purchase.setInventoryName(inv.getName());
+
+            purchase.setInventory(inv);
             purchase.setOrgId(inv.getOrg().getId());
             purchase.setBranchId(inv.getBranch().getId());
-            purchase.setOrgName(inv.getOrg().getName());
-            purchase.setBranchName(inv.getBranch().getName());
-            purchase.setInventoryName(inv.getName());
-
             List<PurchaseDetails> dtls =(List<PurchaseDetails>) mp.get("list");
 
 

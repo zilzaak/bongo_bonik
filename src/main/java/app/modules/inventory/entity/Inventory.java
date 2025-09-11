@@ -21,10 +21,10 @@ public class Inventory  extends BaseEntity{
 
     @Column(nullable = false,name = "name")
     private String name;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false,name = "branch_id")
     private Branch branch;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Organization org;
     private String phone;

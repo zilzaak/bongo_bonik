@@ -1,10 +1,12 @@
 package app.modules.purchase.entity;
 
 import app.common.entity.BaseEntity;
+import app.common.entity.Branch;
+import app.modules.base.org.entity.Organization;
+import app.modules.inventory.entity.Inventory;
+import app.modules.purchase.supplier.entity.Supplier;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,22 +22,25 @@ import java.util.List;
 @Entity
 public class Purchase  extends BaseEntity {
 
-  private Long orgId;
-  private Long branchId;
-  private Long inventoryId;
-  private Long supplierId;
+  private String code;
 
-  private String orgName;
-  private String branchName;
-  private String inventoryName;
+  @Column(nullable = false)
+  private Long orgId;
+
+  @Column(nullable = false)
+  private Long branchId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = false)
+  private Inventory inventory;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Supplier supplier;
 
   private Double totalBill;
   private Double dueAmount;
-  private String code;
 
-  @OneToMany(
-   mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true
-  )
+
+  @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonManagedReference
   private List<PurchaseDetails> details = new ArrayList<>();
 

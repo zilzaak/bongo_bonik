@@ -53,6 +53,4 @@ public class PurchaseController {
         MsgResponse response = new MsgResponse();
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
-
-
 }

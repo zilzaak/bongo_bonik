@@ -13,10 +13,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Supplier extends BaseEntity{
-
     private String name;
     private String phone;
     private String address;
     private Long orgId;
-
 }

@@ -42,7 +42,7 @@ private ProductRepo productRepo;
     public void saveStockAfterPurchase(Purchase purchase){
 
         for(PurchaseDetails dtl : purchase.getDetails()){
-            StockBalance balance = stockBalanceRepo.findByProductIdAndInventoryId(dtl.getProductId(),purchase.getInventoryId());
+            StockBalance balance = stockBalanceRepo.findByProductIdAndInventoryId(dtl.getProduct().getId(),purchase.getInventory().getId());
              if(dtl.getProductType().equals(ProductEnum.BARCODED_PRODUCT.name())){
                  Map<String, Object> attr = CommonUtil.counterAttribute(CounterEnum.BARCODE.name());
                  List<String> barCodes = counterService.getBarCode((String) attr.get("name"),(String) attr.get("prefix") , dtl.getQuantity(),
@@ -50,9 +50,9 @@ private ProductRepo productRepo;
                  if(balance==null){
                     balance = new StockBalance();
                      BeanUtils.copyProperties(purchase,balance,"id","created","updated");
-                     balance.setProductId(dtl.getProductId());
+                     balance.setProductId(dtl.getProduct().getId());
                      balance.setQuantity(dtl.getQuantity());
-                     balance.setProductName(productRepo.getProductName(dtl.getProductId()));
+                     balance.setProductName(productRepo.getProductName(dtl.getProduct().getId()));
                      balance.setUnitPrice(dtl.getUnitPrice());
                  }else{
                      balance.setQuantity(Optional.ofNullable(balance.getQuantity()).orElse(0)+dtl.getQuantity());
