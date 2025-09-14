@@ -112,13 +112,11 @@ public class PurchaseService {
 
             PurchaseDetails obj = new PurchaseDetails();
             obj.setId(dtl.getId());
-            obj.setAmount(dtl.getAmount());
             obj.setQuantity(dtl.getQuantity());
             Product p=new Product();
             p.setId(dtl.getProductId());
             obj.setProduct(p);
             obj.setUnitPrice(dtl.getUnitPrice());
-            obj.setAmount(dtl.getQuantity()*dtl.getUnitPrice());
             list.add(obj);
 
        }

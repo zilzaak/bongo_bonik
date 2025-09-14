@@ -23,8 +23,9 @@ public class PurchaseDetails extends BaseEntity{
     private Product product;
     private String productType;
     private Double unitPrice;
-    private Double amount;
-
+    private Double disAmount;
+    private Double vatAmount;
+    private Double totalAmount;// totalAmount=total price-discount+vatAmount
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonBackReference

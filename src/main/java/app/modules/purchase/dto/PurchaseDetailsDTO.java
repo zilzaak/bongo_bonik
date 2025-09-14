@@ -8,13 +8,14 @@ public class PurchaseDetailsDTO {
     private Long id;
     private Integer quantity;
     private Long productId;
-    private String productType;//barcoded or not barcoded
+    private String productType;
     private Double unitPrice;
-    private Double amount;
     private Long purchaseId;
-    //for view purpose added beloww two field
     private Long productName;
     private String productCode;
+    private Double disAmount;
+    private Double vatAmount;
+    private Double totalAmount;// totalAmount=total price-discount+vat
     public void setProductType(String productType) {
         this.productType = CommonUtil.removeHeadTailSpace(productType);
     }
