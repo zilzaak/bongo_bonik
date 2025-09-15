@@ -54,7 +54,7 @@ public class CommonUtil {
     public static List<String> prdctTypes = Arrays.asList("BARCODED_PRODUCT","NORMAL_PRODUCT");
 
     public static String removeHeadTailSpace(String input){
-        if(input==null || input.isBlank()){
+        if(input==null || input.isBlank() || input.equalsIgnoreCase("undefined")){
             return null;
         }
         input = input.trim();

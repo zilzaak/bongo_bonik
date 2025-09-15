@@ -47,7 +47,7 @@ public class SearchParamDTO {
    }
 
    public void setName(String name) {
-      this.name = name!=null? CommonUtil.removeHeadTailSpace(name):null;
+      this.name =CommonUtil.removeHeadTailSpace(name);
    }
 
    public String getCommonField() {

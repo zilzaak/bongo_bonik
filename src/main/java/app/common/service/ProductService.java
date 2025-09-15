@@ -392,10 +392,17 @@ public class ProductService {
     public MsgResponse getList(SearchParamDTO dto) {
 
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
-        Page<Map<String,Object>> page = productRepo.getList(dto.id,dto.orgId,dto.brandId,
-                dto.catId,dto.modelId,dto.getName(),pageable);
-        return CommonUtil.responseFromPage(page);
-
+        if(dto.getDropDown()!=null){
+            if(dto.getName()==null || (dto.getName().length()%2==0)){
+                Page<Map<String,Object>> page = productRepo.getList(dto.orgId,dto.getName(),pageable);
+                return CommonUtil.responseFromPage(page);
+            }
+                return new MsgResponse();
+        }else{
+            Page<Map<String,Object>> page = productRepo.getList(dto.id,dto.orgId,dto.brandId,
+                    dto.catId,dto.modelId,dto.getName(),pageable);
+            return CommonUtil.responseFromPage(page);
+        }
     }
 
     public Product getById(Long id) {

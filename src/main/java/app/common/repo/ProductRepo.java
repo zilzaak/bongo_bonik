@@ -73,6 +73,26 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
             Pageable pageable
     );
 
+    @Query("SELECT p.id as id, p.code as code ,"+
+            "  p.fullName as productName,"+
+            "  sp.defaultCostPrice as unitPrice,"+
+            "  sp.costBranchIds as costBranchIds , "+
+            "  sp.costPrices as costPrices "+
+            "  FROM Product p  "+
+            "  left join Pricing sp on sp.product=p "+
+            "  JOIN p.org org"+
+            "  WHERE  " +
+            "  org.id=:orgId and "+
+            "  ( cast(:searchTerm as string) IS NULL OR "+
+            "  UPPER(cast(p.fullName as string)) LIKE CONCAT('%', UPPER(cast(:searchTerm as string)), '%') OR "+
+            "  UPPER(cast(p.code as string)) = UPPER(cast(:searchTerm as string)) )  " +
+            " order by p.name asc ")
+    Page<Map<String,Object>> getList(
+            @Param("orgId") Long orgId,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
     boolean existsByBrandId(Long id);
 
     Product findTopByBrandId(Long id);
