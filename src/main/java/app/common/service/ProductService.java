@@ -88,7 +88,7 @@ public class ProductService {
         List<Map<String,Object>>  existProduct=productRepo.similarProduct(dto.getOrgId(),dto.getName(),catIds,dto.getId());
         if(compareAllCatIds){
             for(Map<String,Object> objm : existProduct){
-                if(objm.get("name").equals(dto.getName())){
+                if(objm.get("fullName").equals(dto.getFullName())){
                     mp.put("hasError",true);
                     mp.put("message","Duplicate Product found");
                     return true;
@@ -174,7 +174,7 @@ public class ProductService {
           ProductColor color = dto.getColorId()!=null?colorRepo.findById(dto.getColorId()).get():null;
           MadeWith madeWith = dto.getMadeWithId()!=null?madeWithRepo.findById(dto.getMadeWithId()).get():null;
 
-          if(dto.getQtyPerUnit()!=null  && ( dto.getUnitName()==null || !dto.getUnitName().isBlank())){
+          if(dto.getQtyPerUnit()!=null  && ( dto.getUnitName()==null || dto.getUnitName().isBlank())){
               mp.put("hasError",true);
               mp.put("message","Amount/quantity unit is not provided for amount"+dto.getQtyPerUnit());
               return mp;

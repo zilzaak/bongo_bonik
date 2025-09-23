@@ -150,7 +150,7 @@ public class ProductDTO {
     }
 
     public void setUnitName(String unitName) {
-        this.unitName = unitName!=null?unitName.trim().toUpperCase():null;
+        this.unitName = unitName!=null?unitName.trim().toLowerCase():null;
     }
 
     public void setQtyUnit(String qtyUnit) {
