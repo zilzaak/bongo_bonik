@@ -87,7 +87,7 @@ public class OrganizationController {
             }
             response = branchService.getList(dto);
         }
-        if(dto.getEntity().equalsIgnoreCase("Organization")){
+        else{
             response = orgService.getList(dto);
         }
         return new ResponseEntity<>(response , HttpStatus.OK);

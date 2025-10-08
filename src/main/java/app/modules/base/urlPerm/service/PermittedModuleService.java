@@ -126,7 +126,7 @@ public class PermittedModuleService {
             Map<String,Object> obj=new HashMap<>();
             obj.putAll(dbObj);
             index++;
-            String key=(String) obj.get("menuId")+obj.get("backendUrl");
+            String key=obj.get("menuId").toString()+obj.get("backendUrl");
             if(apiCache.containsKey(key)){
                      String[] existInfoInCache= ((String)apiCache.get(key)).split(">");
                      String users=existInfoInCache[0];
