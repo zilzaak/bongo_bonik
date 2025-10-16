@@ -22,10 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class InventoryService {
@@ -149,7 +146,7 @@ public class InventoryService {
             page = inventoryRepo.getList(orgs, dto.branchId,dto.id,pageable);
         }else{
             if(dto.getDropDown()!=null){
-                page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,pageable);
+                page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,dto.getCommonField(),pageable);
             }else{
                 Page<Map<String ,Object>> p = inventoryRepo.getListDrop(dto.orgId, dto.branchId,dto.id,pageable);
                 return CommonUtil.responseFromPage(p);

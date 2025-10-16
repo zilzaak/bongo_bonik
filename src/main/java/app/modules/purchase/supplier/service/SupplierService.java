@@ -83,16 +83,9 @@ public class SupplierService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable= CommonUtil.getPageable(dto);
-
-        if(dto.getDropDown()!=null && CommonUtil.validUserOrg(dto.orgId)){
-            Page<Object> page=supplierRepo.getList(dto.getOrgId(),pageable);
-            return CommonUtil.responseFromObjectPage(page);
-        }
-
         if(dto.getId()==null && !CommonUtil.validUserOrg(dto.orgId)){
            return new MsgResponse("Invalid user organization",false);
         }
-
         Page<Object> page=supplierRepo.getList(dto.getId(),dto.getOrgId(),dto.getCommonField()!=null?dto.getCommonField().toUpperCase():null,pageable);
         MsgResponse resp = CommonUtil.responseFromObjectPage(page);
         if(dto.getId()!=null){
