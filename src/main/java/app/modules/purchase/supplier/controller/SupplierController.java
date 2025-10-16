@@ -61,7 +61,7 @@ public class SupplierController {
     @GetMapping("/list")
     ResponseEntity<?> getList(SearchParamDTO dto)
             throws RuntimeException{
-        MsgResponse response = supplierService.getList(dto);;
+        MsgResponse response = supplierService.getList(dto);
         return new ResponseEntity<>(response ,HttpStatus.OK);
     }
 
