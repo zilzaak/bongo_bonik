@@ -393,8 +393,15 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
         if(dto.getDropDown()!=null){
-            if(dto.getName()==null || (dto.getName().length()%2==0)){
-                Page<Map<String,Object>> page = productRepo.getList(dto.orgId,dto.getName(),pageable);
+            if(dto.getName()==null || dto.getName().contentEquals("null") || dto.getName().length()%2==0){
+                String name="";
+                if(dto.getName()==null || dto.getName().contentEquals("null")){
+                     name=null;
+                }else{
+                    name=dto.getName();
+                }
+
+                Page<Map<String,Object>> page = productRepo.getList(dto.orgId,name,pageable);
                 return CommonUtil.responseFromPage(page);
             }
                 return new MsgResponse();
