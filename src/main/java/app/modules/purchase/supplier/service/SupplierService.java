@@ -1,15 +1,21 @@
 package app.modules.purchase.supplier.service;
 
 import app.common.dto.MsgResponse;
+import app.common.dto.SearchParamDTO;
+import app.common.util.CommonUtil;
 import app.modules.purchase.supplier.dto.SupplierDTO;
+import app.modules.purchase.supplier.dto.SupplierData;
 import app.modules.purchase.supplier.entity.Supplier;
 import app.modules.purchase.supplier.repo.SupplierRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,6 +34,12 @@ public class SupplierService {
             || dto.getPhone().isEmpty()){
             mp.put("hasError",true);
             mp.put("message","Name , phone , organization is required ");
+            return mp;
+        }
+
+        if(!CommonUtil.validUserOrg(dto.getOrgId())){
+            mp.put("hasError",true);
+            mp.put("message","The organization is invalid ");
             return mp;
         }
 
@@ -67,5 +79,21 @@ public class SupplierService {
 
     public Supplier getById(Long supplierId) {
         return supplierRepo.findById(supplierId).orElse(null);
+    }
+
+    public MsgResponse getList(SearchParamDTO dto) {
+        if(dto.getId()==null && !CommonUtil.validUserOrg(dto.orgId)){
+           return new MsgResponse("Invalid user organization",false);
+        }
+        Pageable pageable= CommonUtil.getPageable(dto);
+        Page<Object> page=supplierRepo.getList(dto.id,dto.getOrgId(),dto.getCommonField()!=null?dto.getCommonField().toUpperCase():null,pageable);
+        MsgResponse resp = CommonUtil.responseFromObjectPage(page);
+        if(dto.getId()!=null){
+            Map<String,Object> mp = (Map<String, Object>) resp.getData();
+          if(!CommonUtil.validUserOrg(((List<SupplierData>)mp.get("listData")).get(0).getOrgId())){
+              return new MsgResponse("Invalid user organization",false);
+          }
+        }
+        return resp;
     }
 }
