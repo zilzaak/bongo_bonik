@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/sales/product")
-@CrossOrigin(origins = "http://localhost:4200")
+
 public class SalesController {
     @Autowired
     private SalesService salesService;
