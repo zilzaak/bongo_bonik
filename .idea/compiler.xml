@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="bazarSodai" />
-        <module name="bongo_bonik" />
       </profile>
     </annotationProcessing>
   </component>
