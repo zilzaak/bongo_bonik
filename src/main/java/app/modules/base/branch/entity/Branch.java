@@ -1,5 +1,6 @@
-package app.common.entity;
+package app.modules.base.branch.entity;
 
+import app.common.entity.BaseEntity;
 import app.modules.base.org.entity.Organization;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;

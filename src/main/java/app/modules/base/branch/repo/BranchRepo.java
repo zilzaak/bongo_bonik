@@ -1,6 +1,6 @@
-package app.common.repo;
+package app.modules.base.branch.repo;
 
-import app.common.entity.Branch;
+import app.modules.base.branch.entity.Branch;
 import app.modules.base.org.entity.Organization;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

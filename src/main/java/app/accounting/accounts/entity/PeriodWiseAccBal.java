@@ -1,7 +1,7 @@
 package app.accounting.accounts.entity;
 
 import app.common.entity.BaseEntity;
-import app.common.entity.Branch;
+import app.modules.base.branch.entity.Branch;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;

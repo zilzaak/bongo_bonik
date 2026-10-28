@@ -2,7 +2,7 @@ package app.accounting.journal.entity;
 
 import app.accounting.accounts.entity.ChartOfAccount;
 import app.common.entity.BaseEntity;
-import app.common.entity.Branch;
+import app.modules.base.branch.entity.Branch;
 import app.modules.purchase.supplier.entity.Supplier;
 import app.modules.sales.customer.entity.Customer;
 import com.fasterxml.jackson.annotation.JsonFormat;

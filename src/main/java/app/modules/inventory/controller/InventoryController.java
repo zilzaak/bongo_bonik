@@ -3,8 +3,8 @@ package app.modules.inventory.controller;
 
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
-import app.common.entity.Branch;
-import app.common.repo.BranchRepo;
+import app.modules.base.branch.entity.Branch;
+import app.modules.base.branch.repo.BranchRepo;
 import app.common.util.CommonUtil;
 import app.modules.inventory.dto.InventoryDTO;
 import app.modules.inventory.service.InventoryService;

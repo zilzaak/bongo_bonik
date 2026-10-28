@@ -1,7 +1,7 @@
 package app.modules.inventory.entity;
 
 import app.common.entity.BaseEntity;
-import app.common.entity.Branch;
+import app.modules.base.branch.entity.Branch;
 import app.modules.base.org.entity.Organization;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

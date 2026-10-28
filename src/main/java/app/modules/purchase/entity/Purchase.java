@@ -1,8 +1,6 @@
 package app.modules.purchase.entity;
 
 import app.common.entity.BaseEntity;
-import app.common.entity.Branch;
-import app.modules.base.org.entity.Organization;
 import app.modules.inventory.entity.Inventory;
 import app.modules.purchase.supplier.entity.Supplier;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
