@@ -20,14 +20,11 @@ public class BranchController {
     @PostMapping("/create")
     ResponseEntity<?> create(@RequestBody CommonDTO dto)
             throws RuntimeException{
-
         MsgResponse response = new MsgResponse();
-        if(dto.getEntity().equalsIgnoreCase("Branch")){
             if(!CommonUtil.validUserOrg(dto.getOrgId())){
                 return new ResponseEntity<>(new MsgResponse("ORGANIZATION IS INVALID ",false) , HttpStatus.OK);
             }
             response = branchService.create(dto);
-        }
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
