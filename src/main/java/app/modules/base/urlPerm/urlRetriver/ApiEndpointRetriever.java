@@ -107,7 +107,7 @@ public class ApiEndpointRetriever {
             else if(m.getApiPattern().equals("/base/role/list")){
                 m.setFrontUrl("base/role/list");
             }
-            else if(m.getApiPattern().equals("/base/module/list")){
+            else if(m.getApiPattern().equals("/base/menu/list")){
                 m.setFrontUrl("base/menu/list");
             }
             else if(m.getApiPattern().equals("/base/permittedModule/list")){

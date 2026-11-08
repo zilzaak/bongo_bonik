@@ -30,20 +30,26 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
 
 
     @Query("select b.id as id , " +
-            " b.name as name , " +
-            " org.id as orgId , " +
+            "  b.name as name , " +
+            "  o.id as orgId , " +
             "  b.phone as phone , " +
             "  b.address as address , " +
             "  b.location as  location ," +
             "  b.created as created ," +
-            "   org.name as orgName , " +
+            "  o.name as orgName , " +
             "  b.createBy as createBy , " +
             "  b.updateBy as updateBy , " +
             "  b.updated as updated " +
-            " from Branch b join b.org org " +
-            " where ( :id is null or b.id=:id ) and ( :org is null or org.id=:org ) ")
+            " from Branch b left join b.org o " +
+            " where ( :id is null or b.id=:id )  " +
+            " and ( :org is null or o.id=:org )  " +
+            " and ( :commonField is null or b.name like concat('%',:commonField,'%')   " +
+            "  or b.phone like concat('%',:commonField,'%')   " +
+            "  or b.address like concat('%',:commonField,'%') )  " +
+            "")
     Page<Map<String, Object>> getList(@Param("id") Long id,
                                       @Param("org") Long org,
+                                      @Param("commonField") String commonField,
                                       Pageable pageable);
 
     boolean existsByOrgId(Long id);

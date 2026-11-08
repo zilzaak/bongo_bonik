@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/base/module")
+@RequestMapping("/base/menu")
 public class ModuleInfoController {
 
     @Autowired

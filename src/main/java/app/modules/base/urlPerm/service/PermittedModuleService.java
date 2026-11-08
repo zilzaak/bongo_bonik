@@ -224,6 +224,9 @@ public class PermittedModuleService {
         List<MenuHierarchyDTO> menuResponse=new ArrayList<>();
         Map<Long,Long> menuProcessed=new HashMap<>();
         for(PermittedApi api : permittedApis){
+            if(api.getBackendUrl().contains("/getMenu")){
+                continue;
+            }
             List<Long> menuIdHierarchyOfTheApi = CommonUtil.reverseOrderList(CommonUtil.strListToLong(CommonUtil.bulkStrToList(api.getMenuIdsHierarchy())));
             for(int i=0;i<menuIdHierarchyOfTheApi.size();i++){
                 MenuHierarchyDTO element = new MenuHierarchyDTO();

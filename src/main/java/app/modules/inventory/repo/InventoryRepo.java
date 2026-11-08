@@ -21,12 +21,18 @@ public interface InventoryRepo extends JpaRepository<Inventory,Long> {
 
     Inventory findTopByBranchId(Long id);
 
-    @Query("select x from Inventory x where ( ?1 is null or x.org.id=?1 ) and ( ?2 is null or x.branch.id=?2 ) " +
+    @Query("select x.name as name , x.branch.name as branchName , " +
+            " x.branch.id as branchId , x.org.name as orgName , " +
+            " x.org.id as orgId , x.phone as phone , x.others as others " +
+            " from Inventory x where ( ?1 is null or x.org.id=?1 ) and ( ?2 is null or x.branch.id=?2 ) " +
             " and ( ?3 is null or x.id=?3 )  and ( cast(?4 as string) is null or  cast(x.name as string) like concat('%', cast(?4 as string), '%')) ")
-    Page<Object> getList(Long orgId, Long branchId, Long id ,String commonField,Pageable pageable);
+    Page<Map<String,Object>> getList(Long orgId, Long branchId, Long id ,String commonField,Pageable pageable);
 
-    @Query("select x from Inventory x where  x.org in ?1  and ( ?2 is null or x.branch.id=?2 ) and ( ?3 is null or x.id=?3 ) ")
-    Page<Object> getList(List<Organization> orgs, Long branchId, Long id ,Pageable pageable);
+    @Query("select x.name as name , x.branch.name as branchName , " +
+            " x.branch.id as branchId , x.org.name as orgName , " +
+            " x.org.id as orgId , x.phone as phone , x.others as others " +
+            "  from Inventory x where  x.org in ?1  and ( ?2 is null or x.branch.id=?2 ) and ( ?3 is null or x.id=?3 ) ")
+    Page<Map<String,Object>> getList(List<Organization> orgs, Long branchId, Long id ,Pageable pageable);
 
     @Query("select x.id as id , x.name as name from Inventory x where ( ?1 is null or x.org.id=?1 ) and ( ?2 is null or x.branch.id=?2 ) " +
             " and ( ?3 is null or x.id=?3 ) ")

@@ -140,19 +140,19 @@ public class InventoryService {
             }
         }
         Pageable pageable = PageRequest.of((dto.pageNum-1),dto.pageSize, Sort.by(dto.sortField).descending());
-        Page<Object> page=null;
         if(dto.getOrgId()==null){
             List<Organization> orgs=userOrgRepository.getPermittedOrg(userRepository.findByUsername(CommonUtil.currentUser()));
-            page = inventoryRepo.getList(orgs, dto.branchId,dto.id,pageable);
+            return CommonUtil.responseFromPage(inventoryRepo.getList(orgs, dto.branchId,dto.id,pageable));
         }else{
-            if(dto.getDropDown()!=null){
-                page = inventoryRepo.getList(dto.orgId, dto.branchId,dto.id,dto.getCommonField(),pageable);
+            if(dto.getDropDown()==null){
+                return CommonUtil.responseFromPage(inventoryRepo.getList(dto.orgId,
+                        dto.branchId,dto.id,dto.getCommonField(),pageable));
             }else{
                 Page<Map<String ,Object>> p = inventoryRepo.getListDrop(dto.orgId, dto.branchId,dto.id,pageable);
                 return CommonUtil.responseFromPage(p);
             }
         }
-        return CommonUtil.responseFromObjectPage(page);
+
     }
 
 }

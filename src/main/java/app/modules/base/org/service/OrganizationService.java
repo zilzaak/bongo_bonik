@@ -129,7 +129,6 @@ public class OrganizationService {
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
-
         if(dto.getDropDown()!=null){
             Page<Map<String,Object>> p  = orgRepo.getListAsMenu(dto.commonField,pageable);
             return CommonUtil.responseFromPage(p);
@@ -137,7 +136,6 @@ public class OrganizationService {
             Page<Object> page= orgRepo.getList(dto.orgId,dto.commonField,pageable);
             return CommonUtil.responseFromObjectPage(page);
         }
-
     }
 
     public MsgResponse delete(CommonDTO dto) {

@@ -2,7 +2,7 @@ package app.modules.base.user.entity;
 
 
 import app.common.entity.BaseEntity;
-import app.modules.base.org.entity.Organization;;
+import app.modules.base.org.entity.Organization;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
