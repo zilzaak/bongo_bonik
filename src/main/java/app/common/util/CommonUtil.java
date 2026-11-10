@@ -80,6 +80,17 @@ public class CommonUtil {
         return false;
     }
 
+    public static boolean isFirstChar(String input,char ch){
+        if(input==null || input.isBlank()){
+            return false;
+        }
+        char firstCharacter = input.charAt(0);
+        if(firstCharacter==ch){
+            return true;
+        }
+        return false;
+    }
+
     //cat,brand,model,
     // madeWith,size,color,dto.getQtyPerUnit(),dto.getQtyUnit(),uom)
 

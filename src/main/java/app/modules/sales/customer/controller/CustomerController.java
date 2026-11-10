@@ -39,8 +39,8 @@ public class CustomerController {
     }
 
 
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> delete(@PathVariable Long id)
+    @DeleteMapping("/delete")
+    ResponseEntity<?> delete(@RequestBody Long id)
             throws RuntimeException{
         MsgResponse response = new MsgResponse();
         return new ResponseEntity<>(response ,HttpStatus.OK);

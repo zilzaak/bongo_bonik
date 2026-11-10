@@ -25,16 +25,21 @@ public interface OrgRepo extends JpaRepository<Organization,Long> {
             " ( upper(x.name) like concat('%', upper(:nm),'%')  or upper(x.name) like concat('%',upper(:nm),'%') ) and x.id not in :list  ")
     int checkExistNameEdit(@Param("nm") String nm, @Param("list") List<Long> list);
 
-    @Query("select b  "+
-            " from Organization b   " +
-            " where ( :oid is null or b.id=:oid ) and " +
-            "  ( cast(:cf as String)  is null or upper(cast(b.name as String) ) like concat('%', upper(cast(:cf as String)),'%') or " +
-            "  upper(cast(b.remarks as String)) like concat('%', upper(cast(:cf as String)),'%') or " +
-            "  upper(cast(b.address as String))  like concat('%', upper(cast(:cf as String)),'%') or " +
-            "  cast(b.phone as String) like concat('%', cast(:cf as String) ,'%') ) ")
-    Page<Object> getList(@Param("oid") Long oid,
-                                      @Param("cf") String cf,
-                                      Pageable pageable);
+    @Query("SELECT b " +
+            "FROM Organization b " +
+            "WHERE (:oid IS NULL OR b.id = :oid) " +
+            "AND (" +
+            "   :cf = '' OR " +
+            "   LOWER(b.name) LIKE LOWER(CONCAT('%', :cf, '%')) OR " +
+            "   LOWER(b.remarks) LIKE LOWER(CONCAT('%', :cf, '%')) OR " +
+            "   LOWER(b.address) LIKE LOWER(CONCAT('%', :cf, '%')) OR " +
+            "   b.phone LIKE CONCAT('%', :cf, '%')" +
+            ")")
+    Page<Object> getList(
+            @Param("oid") Long oid,
+            @Param("cf") String cf,
+            Pageable pageable
+    );
 
     @Query("select b.id as id , b.name as orgName   "+
             " from Organization b  " +

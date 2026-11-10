@@ -1,6 +1,5 @@
 package app.modules.inventory.controller;
 
-
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.modules.base.branch.entity.Branch;
@@ -13,10 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/inventory")
-
 public class InventoryController {
 
     @Autowired

@@ -9,10 +9,12 @@ import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
+import app.modules.base.urlPerm.service.PermittedModuleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.*;
@@ -20,14 +22,15 @@ import java.util.*;
 @Service
 public class ModuleInfoService {
 
-
     @Autowired
     private MenuHierarchyRepo hierarchyRepo;
 
     @Autowired
-    private PermittedApiRepository permittedApiRepository;
+    private PermittedModuleService permittedModuleService;
 
     private final RequestMappingHandlerMapping handlerMapping;
+    private CommonUtil commonUtil;
+
     public ModuleInfoService(RequestMappingHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
     }
@@ -42,18 +45,13 @@ public class ModuleInfoService {
             return mp;
         }
 
-
         for(MenuDTO menu : list){
             if(menu.menu==null || menu.getMenu().isBlank()){
                 mp.put("hasError",true);
                 mp.put("message","Menu is required");
                 return mp;
             }
-            if(menu.apiSeq==null || menu.getApiSeq().isBlank()){
-                mp.put("hasError",true);
-                mp.put("message","Api sequence is required");
-                return mp;
-            }
+
             if((menu.methodName!=null && !this.methods.contains(menu.methodName))){
                 mp.put("hasError",true);
                 mp.put("message","Method name is required");
@@ -72,10 +70,6 @@ public class ModuleInfoService {
                 return mp;
             }
 
-            if(menu.apiSeq.startsWith("/")){
-                menu.setApiSeq(CommonUtil.removeFirstChar(menu.apiSeq));
-            }
-
             if(menu.getParentId()!=null && !hierarchyRepo.existsById(menu.getParentId())){
                 mp.put("hasError",true);
                 mp.put("message","The parent menu selected but not created yet");
@@ -83,13 +77,13 @@ public class ModuleInfoService {
             }
 
             if(menu.getId()==null){
-               if(hierarchyRepo.existsByApiSeqAndMenu(menu.getApiSeq(),menu.getMenu())){
+               if(hierarchyRepo.duplicateMenuCheck(menu.getMenu(),menu.getParentId()) > 0){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
                }
            }else{
-                if(hierarchyRepo.existsByApiSeqAndMenuAndIdNotIn(menu.apiSeq,menu.getMenu(),Arrays.asList(menu.id))){
+                if(hierarchyRepo.duplicateMenuCheckEdit(menu.getMenu(),menu.getParentId(),menu.id) > 0){
                    mp.put("hasError",true);
                    mp.put("message","Menu already exist");
                    return mp;
@@ -101,6 +95,7 @@ public class ModuleInfoService {
 
     }
 
+    @Transactional
     public MsgResponse create(List<MenuDTO> list) {
         Map<String,Object> mp = validate(list);
         if((boolean)mp.get("hasError")){
@@ -109,54 +104,53 @@ public class ModuleInfoService {
 
         for(MenuDTO obj : list){
             if(obj.getId()!=null){
-                MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
-                Long oldParentId=Optional.ofNullable(menu.getParent()).map(MenuHierarchy::getId).orElse(null);
 
-                 BeanUtils.copyProperties(obj,menu,"details");
+                MenuHierarchy menu = hierarchyRepo.findById(obj.id).get();
+                PermittedApi permission = permittedModuleService.getByMenuId(menu.getId());
+
+                MenuHierarchy oldParent=null;
+                Long oldParentId=null;
+                if(menu.getParent()!=null){
+                    oldParent= menu.getParent();
+                    oldParentId=oldParent.getId();
+                }
+
+
+                 //parent not changed
                 if((oldParentId==null &&  obj.parentId==null) ||
                   (oldParentId!=null && obj.parentId!=null &&
                    oldParentId.equals(obj.parentId))){
-                    hierarchyRepo.save(menu);
-                }
+                    menu.setFrontUrl(obj.getFrontUrl());
+                    menu.setApiPattern(obj.getApiPattern());
+                    hierarchyRepo.saveAndFlush(menu);
+                    if(permission!=null){
+                        permission.setBackendUrl(obj.getApiPattern());
+                        permittedModuleService.save(permission);
+                    }
+                 }
+
+                //parent changed
                 else if((obj.parentId!=null && oldParentId!=null
                         && !obj.parentId.equals(oldParentId)) ||
                         (obj.parentMenu!=null && oldParentId==null) ||
                         (oldParentId!=null && obj.parentId==null)){
 
-                    if(menu.getParent()!=null && menu.getParent().getId().equals(menu.getId())){
-                        return new MsgResponse("A menu can not be parent itself",false);
-                    }
-
-
                     if(menu.getParent()!=null){
-                        MenuHierarchy toBeRemoveItem=null;
-                        for(MenuHierarchy x : menu.getParent().getDetails()){
-                            if(x.getId().equals(menu.getId())){
-                                toBeRemoveItem=x;
-                                break;
-                            }
-                        }
-
-                        if(toBeRemoveItem!=null) {
-                            menu.getParent().getDetails().remove(toBeRemoveItem);
-                            hierarchyRepo.save(menu.getParent());
-                        }
+                        menu.setParent(null);
+                        hierarchyRepo.saveAndFlush(menu);
                     }
-
 
                     MenuHierarchy updatedParent = null;
                     if(obj.parentId!=null){
                         updatedParent = hierarchyRepo.findById(obj.parentId).get();
                         menu.setParent(updatedParent);
+                        menu.setParentMenu(updatedParent.getMenu());
+                        menu.setApiPattern(obj.getApiPattern());
                         updatedParent.getDetails().add(menu);
-                        hierarchyRepo.save(updatedParent);
+                        hierarchyRepo.saveAndFlush(updatedParent);
                     }
-                }
+                    permittedModuleService.updateMenuHeirarchyForUpdatedMenuAndHisChilds(new HashMap<>(),menu);
 
-                PermittedApi permission = permittedApiRepository.findByMenuId(menu.getId());
-                if(permission!=null){
-                    permission.setBackendUrl(menu.getApiPattern());
-                    permittedApiRepository.save(permission);
                 }
 
             }else{
@@ -165,15 +159,14 @@ public class ModuleInfoService {
                     if(parentId!=null){
                         parentMenu=hierarchyRepo.findById(parentId).orElse(null);
                     }
-
                     MenuHierarchy child = new MenuHierarchy();
                     BeanUtils.copyProperties(obj,child);
                     if(parentMenu!=null){
                         child.setParent(parentMenu);
                         parentMenu.getDetails().add(child);
-                        hierarchyRepo.save(parentMenu);
+                        hierarchyRepo.saveAndFlush(parentMenu);
                     }else{
-                        hierarchyRepo.save(child);
+                        hierarchyRepo.saveAndFlush(child);
                     }
             }
         }

@@ -11,6 +11,9 @@ import app.modules.base.branch.entity.Branch;
 import app.modules.base.org.entity.Organization;
 import app.modules.base.branch.repo.BranchRepo;
 import app.modules.base.org.repo.OrgRepo;
+import app.modules.base.user.entity.User;
+import app.modules.base.user.entity.UserOrg;
+import app.modules.base.user.repo.UserOrgRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +55,8 @@ public class OrganizationService {
 
     @Autowired
     private MadeWithRepo madeWithRepo;
+    @Autowired
+    private UserOrgRepository userOrgRepository;
 
 
     Map<String,Object> validate(CommonDTO dto){
@@ -133,6 +138,7 @@ public class OrganizationService {
             Page<Map<String,Object>> p  = orgRepo.getListAsMenu(dto.commonField,pageable);
             return CommonUtil.responseFromPage(p);
         }else{
+            dto.commonField=dto.commonField==null?"":dto.commonField;
             Page<Object> page= orgRepo.getList(dto.orgId,dto.commonField,pageable);
             return CommonUtil.responseFromObjectPage(page);
         }
@@ -187,4 +193,26 @@ public class OrganizationService {
         return  new MsgResponse("Deleted successfully",true);
 
     }
+
+    public UserOrg createDefaultUsersOrganization(User admin) {
+        if(orgRepo.count() < 1){
+            Organization org = new Organization();
+            org.setName("system default organization");
+            org.setCreateBy("System");
+            org.setAddress("-");
+            org.setPhone("-");
+            org.setRemarks("create by system");
+            orgRepo.saveAndFlush(org);
+            UserOrg userOrg = new UserOrg();
+            userOrg.setUser(admin);
+            userOrg.setOrg(org);
+            userOrg.setCreateBy("system");
+            userOrg.setUpdateBy("system");
+            userOrgRepository.saveAndFlush(userOrg);
+            return  userOrg;
+        }
+        return  null;
+        }
+
+
 }

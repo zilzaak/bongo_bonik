@@ -4,6 +4,7 @@ import app.common.dto.CommonDTO;
 import app.common.dto.MsgResponse;
 import app.common.dto.SearchParamDTO;
 import app.common.util.CommonUtil;
+import app.modules.base.user.entity.UserOrg;
 import app.modules.inventory.entity.Inventory;
 import app.modules.inventory.repo.InventoryRepo;
 import app.modules.inventory.repo.StockBalanceRepo;
@@ -135,5 +136,21 @@ public class BranchService {
 
     public boolean validBranch(Long orgId, Long branchId) {
         return branchRepo.existsByIdAndOrgId(branchId,orgId);
+    }
+
+    public Branch createDefaultUsersBranch(UserOrg org) {
+        if(org!=null && !branchRepo.existsByOrgId(org.getId())){
+            Branch branch = new Branch();
+            branch.setAddress("-");
+            branch.setLocation("-");
+            branch.setName("demo branch");
+            branch.setPhone("-");
+            branch.setOrg(org.getOrg());
+            branch.setCreateBy("system");
+            branch.setUpdateBy("system");
+            branchRepo.save(branch);
+            return  branch;
+        }
+          return null;
     }
 }

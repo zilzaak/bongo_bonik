@@ -29,24 +29,26 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
 
 
 
-    @Query("select b.id as id , " +
-            "  b.name as name , " +
-            "  o.id as orgId , " +
-            "  b.phone as phone , " +
-            "  b.address as address , " +
-            "  b.location as  location ," +
-            "  b.created as created ," +
-            "  o.name as orgName , " +
-            "  b.createBy as createBy , " +
-            "  b.updateBy as updateBy , " +
-            "  b.updated as updated " +
-            " from Branch b left join b.org o " +
-            " where ( :id is null or b.id=:id )  " +
-            " and ( :org is null or o.id=:org )  " +
-            " and ( :commonField is null or b.name like concat('%',:commonField,'%')   " +
-            "  or b.phone like concat('%',:commonField,'%')   " +
-            "  or b.address like concat('%',:commonField,'%') )  " +
-            "")
+    @Query("SELECT b.id AS id, " +
+            "b.name AS name, " +
+            "o.id AS orgId, " +
+            "b.phone AS phone, " +
+            "b.address AS address, " +
+            "b.location AS location, " +
+            "b.created AS created, " +
+            "o.name AS orgName, " +
+            "b.createBy AS createBy, " +
+            "b.updateBy AS updateBy, " +
+            "b.updated AS updated " +
+            "FROM Branch b LEFT JOIN b.org o " +
+            "WHERE (:id IS NULL OR b.id = :id) " +
+            "AND (:org IS NULL OR o.id = :org) " +
+            "AND (" +
+            "CAST(:commonField AS string) IS NULL OR " +
+            "LOWER(b.name) LIKE LOWER(CONCAT('%', CAST(:commonField AS string), '%')) OR " +
+            "LOWER(b.phone) LIKE LOWER(CONCAT('%', CAST(:commonField AS string), '%')) OR " +
+            "LOWER(b.address) LIKE LOWER(CONCAT('%', CAST(:commonField AS string), '%'))" +
+            ")")
     Page<Map<String, Object>> getList(@Param("id") Long id,
                                       @Param("org") Long org,
                                       @Param("commonField") String commonField,
@@ -57,6 +59,7 @@ public interface BranchRepo extends JpaRepository<Branch,Long> {
     Branch findTopByOrgId(Long id);
 
     boolean existsByIdAndOrgId(Long id, Long orgId);
+
 
     interface OrgRepo extends JpaRepository<Organization,Long> {
 

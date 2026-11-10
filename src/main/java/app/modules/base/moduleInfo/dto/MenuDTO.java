@@ -1,20 +1,40 @@
 package app.modules.base.moduleInfo.dto;
 
 import app.common.util.CommonUtil;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
 public class MenuDTO {
     public Long id;
     public String frontUrl;
     public String menu;
     public String parentMenu;
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getParentMenu() {
+        return parentMenu;
+    }
+
+    public void setParentMenu(String parentMenu) {
+        this.parentMenu = parentMenu;
+    }
+
     public Long parentId;
     public String apiPattern;
     public String methodName;
-    public String apiSeq;
 
     public Long getId() {
         return id;
@@ -29,7 +49,13 @@ public class MenuDTO {
     }
 
     public void setFrontUrl(String frontUrl) {
-        this.frontUrl = CommonUtil.removeAllSpace(frontUrl);
+        if(frontUrl==null || frontUrl.isEmpty()){
+            frontUrl=null;
+        }
+        if(frontUrl!=null && !frontUrl.isEmpty() && CommonUtil.isFirstChar(frontUrl,'/')){
+            frontUrl=CommonUtil.removeFirstChar(frontUrl);
+        }
+        this.frontUrl = frontUrl;
     }
 
     public String getMenu() {
@@ -40,40 +66,11 @@ public class MenuDTO {
         this.menu = CommonUtil.removeAllSpace(menu);
     }
 
-    public String getParentMenu() {
-        return parentMenu;
-    }
-
-    public void setParentMenu(String parentMenu) {
-        this.parentMenu = CommonUtil.removeAllSpace(parentMenu);
-    }
-
     public String getApiPattern() {
         return apiPattern;
     }
 
     public void setApiPattern(String apiPattern) {
         this.apiPattern =  CommonUtil.removeAllSpace(apiPattern);
-        if(this.apiPattern!=null){
-            if(CommonUtil.isLastChar(this.apiPattern,'/')){
-               this.apiPattern=CommonUtil.removeLastCharacter(this.apiPattern);
-            }
-        }
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = CommonUtil.removeAllSpace(methodName);
-    }
-
-    public String getApiSeq() {
-        return apiSeq;
-    }
-
-    public void setApiSeq(String apiSeq) {
-        this.apiSeq = apiSeq;
     }
 }

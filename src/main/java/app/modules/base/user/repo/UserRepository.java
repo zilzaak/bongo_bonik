@@ -24,7 +24,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "x.email as email, " +
             "x.phone as phone , " +
             "x.address as address , " +
-            " og.name as orgName " +
+            " og.name as orgName ," +
+            " og.id as orgId  " +
             " from User x " +
              " left join UserOrg ug on ug.user=x  " +
             "  left join ug.org og" +

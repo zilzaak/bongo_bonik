@@ -25,6 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -48,6 +50,7 @@ public class PermittedModuleService {
     private Map<String, Object> validate(PrmttedApiDTO dto) {
 
         Map<String,Object> mp = new HashMap<>();
+
         mp.put("hasError",false);
         if(dto.getBackendUrl()==null){
             mp.put("hasError",true);
@@ -85,29 +88,38 @@ public class PermittedModuleService {
             return mp;
         }
 
-        MenuHierarchy menu = null;
-        if(dto.getBackendUrl()!=null){
-            menu =  apiAgainstModuleRepo.findById(dto.getMenuId()).orElse(null);
-        }
-        String menuIdsHierarchy=null;
-        while(menu!=null){
-          if(menuIdsHierarchy==null){
-              menuIdsHierarchy=menu.getId().toString();
-              dto.setMenuId(menu.getId());
-          }else{
-              menuIdsHierarchy=menuIdsHierarchy+","+menu.getId();
-          }
-              Long parentId = apiAgainstModuleRepo.findParentIdById(menu.getId());
-          if(parentId!=null){
-              menu = apiAgainstModuleRepo.findById(parentId).orElse(null);
-          }else{
-              menu=null;
-          }
-        }
-        dto.setMenuIdsHierarchy(menuIdsHierarchy);
-        return mp;
+        MenuHierarchy menu = apiAgainstModuleRepo.findById(dto.getMenuId()).orElse(null);
+            dto.setMenuId(menu.getId());
+            dto.setMenuIdsHierarchy(this.getMenuHierarchy(menu,new HashMap<>()));
+            return mp;
     }
 
+    public String getMenuHierarchy(MenuHierarchy menu,Map<Long,String> menuIdVsHierarchy){
+        String menuIdsHierarchy=null;
+        Long menuId = Long.valueOf(menu.getId().toString());
+        while(menu!=null){
+            if(menuIdsHierarchy==null){
+                menuIdsHierarchy=menu.getId().toString();
+            }else{
+                menuIdsHierarchy=menuIdsHierarchy+","+menu.getId();
+            }
+
+            Long parentId = apiAgainstModuleRepo.findParentIdById(menu.getId());
+
+            if(parentId!=null){
+                if(menuIdVsHierarchy.containsKey(parentId)){
+                    menuIdsHierarchy=menuIdsHierarchy+","+ menuIdVsHierarchy.get(parentId);
+                    break;
+                }else{
+                    menu = apiAgainstModuleRepo.findById(parentId).orElse(null);
+                }
+            }else{
+                menu=null;
+            }
+        }
+        menuIdVsHierarchy.put(menuId,menuIdsHierarchy);
+        return menuIdsHierarchy;
+    }
 
     public MsgResponse getList(SearchParamDTO dto) {
         Pageable pageable = CommonUtil.getPageable(dto);
@@ -196,6 +208,7 @@ public class PermittedModuleService {
                 edit=true;
                 obj=permittedApiRepository.findById(x.getId()).orElse(new PermittedApi());
             }
+
             BeanUtils.copyProperties(x,obj);
 
             if(x.getUser()!=null){
@@ -241,7 +254,6 @@ public class PermittedModuleService {
                     element.setMethodName(hr.getMethodName());
                     element.setApiPattern(hr.getApiPattern());
                     element.setFrontUrl(hr.getFrontUrl());
-                    element.setApiSeq(hr.getApiSeq());
                 }
                 if(menuResponse.size()<1){
                     menuResponse.add(element);
@@ -282,5 +294,32 @@ public class PermittedModuleService {
             }
            }
 
+           public PermittedApi getById(Long id){
+             return  permittedApiRepository.findById(id).orElse(null);
+           }
 
+          public PermittedApi save(PermittedApi permittedApi){
+            return  permittedApiRepository.saveAndFlush(permittedApi);
+          }
+
+        @Transactional(propagation = Propagation.REQUIRED)
+        public void updateMenuHeirarchyForUpdatedMenuAndHisChilds(Map<Long,String> menuIdVsHierarchy,MenuHierarchy updatedMenu) {
+        //check this menu is backend api containing menu or only for ui/frontend menu
+           if(updatedMenu.getApiPattern()!=null && !updatedMenu.getApiPattern().isBlank()){
+               PermittedApi permittedApi = this.getByMenuId(updatedMenu.getId());
+               permittedApi.setMenuIdsHierarchy(this.getMenuHierarchy(updatedMenu,menuIdVsHierarchy));
+               permittedApi.setBackendUrl(updatedMenu.getApiPattern());
+               this.save(permittedApi);
+           }
+           //update all child menus positional hierarchy if permission exist and if child menu is related to backend url
+           if(updatedMenu.getDetails()!=null && updatedMenu.getDetails().size()>0){
+               for(MenuHierarchy childElement : updatedMenu.getDetails()){
+                   this.updateMenuHeirarchyForUpdatedMenuAndHisChilds(menuIdVsHierarchy,childElement);
+               }
+           }
+          }
+
+    public PermittedApi getByMenuId(Long id) {
+        return permittedApiRepository.findByMenuId(id);
+    }
 }

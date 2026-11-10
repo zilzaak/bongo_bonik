@@ -21,8 +21,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  x.created as created ,  " +
             "  x.updated as updated ,"+
             " x.frontUrl as frontUrl , " +
-            " x.menu as moduleName , concat(x.apiSeq,'-',x.menu ) as urlCode ," +
-            " x.parentMenu as parentModule , x.apiSeq as apiSeq  " +
+            " x.menu as moduleName , concat(x.apiPattern,'-',x.menu ) as urlCode ," +
+            " x.parentMenu as parentModule , x.apiPattern as apiSeq  " +
             "  from MenuHierarchy x " +
             "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%')) " +
             "  and ( :url is null or   cast( x.apiPattern as String)  like  concat('%',cast(:url as String) ,'%'))"+
@@ -43,8 +43,7 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "x.methodName as methodName, " +
             "x.frontUrl as frontUrl, " +
             "x.menu as moduleName, " +
-            "x.parentMenu as parentModule, " +
-            " x.apiSeq as apiSeq " +
+            "x.parentMenu as parentModule " +
             " from MenuHierarchy x " +
             " left join x.parent parent " +
             "where (:parent is null or parent.id = :parent) " +
@@ -57,28 +56,13 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
                                             Pageable pageable);
 
     boolean existsByApiPattern(String backendUrl);
-    boolean existsByFrontUrl(String frontUrl);
 
-    MenuHierarchy findByApiPattern(String backendUrl);
-
-    MenuHierarchy findTopByMenu(String parentMenu);
 
     @Query(value="SELECT x.id as id , x.parent_id as parentId , x.menu as menu , x.method_name as methodName " +
             "FROM menu_hierarchy x " +
             "WHERE x.id IN ?1 ",nativeQuery = true)
     List<Map<String,Object>> getMenuNames(List<Long> menuIds);
 
-    boolean existsByApiSeqAndMenu(String apiSeq, String menu);
-
-    boolean existsByApiSeqAndMenuAndIdNotIn(String apiSeq, String menu, List<Long> asList);
-
-    boolean existsByParentMenu(String parentMenu);
-
-    boolean existsByMenu(String menu);
-
-    boolean existsByMenuAndIdNotIn(String menu, List<Long> asList);
-
-    MenuHierarchy findByMenuAndApiSeq(String parentMenu, String parentApiSeq);
     @Query("SELECT x FROM MenuHierarchy x " +
             "WHERE x.apiPattern is not null ")
     List<MenuHierarchy> getAllUrl();
@@ -92,13 +76,22 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  x.menu  , " +
             " x.parentMenu  , " +
             " x.apiPattern , " +
-            " x.methodName , " +
-            " x.apiSeq )  " +
+            " x.methodName )  " +
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     MenuData getData(Long id);
 
-    boolean existsByMenuAndParentMenuAndIdNotIn(String menu, String parentMenu, List<Long> asList);
 
-    boolean existsByMenuAndParentMenu(String menu, String parentMenu);
+    @Query(" select count(x.id) " +
+            "  from MenuHierarchy x " +
+            "  where ( ?1 is null or x.menu = ?1 ) " +
+            "  and ( ?2 is null or x.parent.id = ?2 )")
+    int duplicateMenuCheck(String menu, Long parentId);
+
+    @Query(" select count(x.id) " +
+            "  from MenuHierarchy x " +
+            "  where ( ?1 is null or x.menu = ?1 ) " +
+            "  and ( ?2 is null or x.parent.id = ?2 ) " +
+            " and x.id <> ?3 ")
+    int duplicateMenuCheckEdit(String menu, Long parentId , Long id);
 }

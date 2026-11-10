@@ -1,12 +1,18 @@
 package app.modules.base.urlPerm.urlRetriver;
 
 import app.common.util.CommonUtil;
+import app.modules.base.branch.entity.Branch;
+import app.modules.base.branch.service.BranchService;
 import app.modules.base.moduleInfo.entity.MenuHierarchy;
 import app.modules.base.moduleInfo.repo.MenuHierarchyRepo;
+import app.modules.base.org.entity.Organization;
+import app.modules.base.org.service.OrganizationService;
 import app.modules.base.role.entity.Role;
 import app.modules.base.role.repo.RoleRepository;
 import app.modules.base.urlPerm.entity.PermittedApi;
 import app.modules.base.urlPerm.repo.PermittedApiRepository;
+import app.modules.base.user.entity.User;
+import app.modules.base.user.entity.UserOrg;
 import app.modules.base.user.repo.UserRepository;
 import app.modules.base.user.service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -26,19 +32,25 @@ public class ApiEndpointRetriever {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserService userService;
+    private final OrganizationService organizationService;
+    private final BranchService branchService;
 
     public ApiEndpointRetriever(RequestMappingHandlerMapping mapping,
                                 MenuHierarchyRepo apiAgainstModuleRepo,
                                 PermittedApiRepository permittedApiRepository,
                                 UserRepository userRepository,
                                 RoleRepository roleRepository,
-                                UserService userService) {
+                                UserService userService,
+                                OrganizationService organizationService,
+                                BranchService branchService) {
         this.requestMappingHandlerMapping = mapping;
         this.apiAgainstModuleRepo = apiAgainstModuleRepo;
         this.permittedApiRepository=permittedApiRepository;
         this.userRepository=userRepository;
         this.roleRepository=roleRepository;
         this.userService=userService;
+        this.organizationService=organizationService;
+        this.branchService=branchService;
     }
 
     private String getMethod(String method) {
@@ -113,6 +125,12 @@ public class ApiEndpointRetriever {
             else if(m.getApiPattern().equals("/base/permittedModule/list")){
                 m.setFrontUrl("base/menuPerm/list");
             }
+            else if(m.getApiPattern().equals("/base/organization/list")){
+                m.setFrontUrl("base/organization/list");
+            }
+            else if(m.getApiPattern().equals("/base/branch/list")){
+                m.setFrontUrl("base/branch/list");
+            }
         }
         partTracker.put(track.apiSeq,track.apiSeq);
         return m;
@@ -122,6 +140,9 @@ public class ApiEndpointRetriever {
     @PostConstruct
     public void categoryIntoSubModuleOrMenu() {
         userService.createDefaultUser();
+        User admin = userRepository.findByUsername("admin");
+        UserOrg org = organizationService.createDefaultUsersOrganization(admin);
+        Branch branch = branchService.createDefaultUsersBranch(org);
         List<String[]> allApi = this.allUrlWithMethod();
         String[] apiUrls = allApi.get(0);
         String[] methods = allApi.get(1);
