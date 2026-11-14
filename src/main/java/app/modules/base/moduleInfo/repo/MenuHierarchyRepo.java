@@ -22,7 +22,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  x.updated as updated ,"+
             " x.frontUrl as frontUrl , " +
             " x.menu as moduleName , concat(x.apiPattern,'-',x.menu ) as urlCode ," +
-            " x.parentMenu as parentModule , x.apiPattern as apiSeq  " +
+            " x.parentMenu as parentModule , x.apiPattern as apiSeq , " +
+            " x.sidebarElement as sidebarElement " +
             "  from MenuHierarchy x " +
             "  where ( :menu is null or   cast( x.menu as String)  like  concat('%',cast(:menu as String) ,'%')) " +
             "  and ( :url is null or   cast( x.apiPattern as String)  like  concat('%',cast(:url as String) ,'%'))"+
@@ -43,7 +44,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "x.methodName as methodName, " +
             "x.frontUrl as frontUrl, " +
             "x.menu as moduleName, " +
-            "x.parentMenu as parentModule " +
+            "x.parentMenu as parentModule , " +
+            " x.sidebarElement as sidebarElement " +
             " from MenuHierarchy x " +
             " left join x.parent parent " +
             "where (:parent is null or parent.id = :parent) " +
@@ -76,7 +78,8 @@ public interface MenuHierarchyRepo extends JpaRepository<MenuHierarchy,Long> {
             "  x.menu  , " +
             " x.parentMenu  , " +
             " x.apiPattern , " +
-            " x.methodName )  " +
+            " x.methodName, " +
+            " x.sidebarElement )  " +
             "  from MenuHierarchy x " +
             "  where x.id=?1 ")
     MenuData getData(Long id);

@@ -196,7 +196,7 @@ public class ApiEndpointRetriever {
             }else{
                 x.setRole(permitAll);
             }
-            x.setBackendUrl(m.getApiPattern());
+           // x.setBackendUrl(m.getApiPattern());
             x.setMenuId(m.getId());
             String  ids=m.getId().toString();
 

@@ -18,5 +18,6 @@ public class MenuHierarchyDTO {
     public String apiPattern; //backendUrl
     public String methodName; //put , post , delete , update , patch
     public Long parentId;
+    public Boolean sidebarElement;
     private List<MenuHierarchyDTO> details = new ArrayList<>();
 }

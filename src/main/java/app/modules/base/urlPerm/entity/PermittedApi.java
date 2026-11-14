@@ -16,7 +16,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "api_permission")
 public class PermittedApi extends BaseEntity{
-    private String backendUrl;
+    //private String backendUrl;
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @ManyToOne(fetch = FetchType.EAGER)

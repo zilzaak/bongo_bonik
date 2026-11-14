@@ -23,11 +23,12 @@ public class MenuHierarchy extends BaseEntity {
     private String apiPattern; //backendUrl
     private String methodName; //put , post , delete , update , patch
     private String apiSeq;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id") // foreign key column
     @JsonBackReference
     private MenuHierarchy parent;
+
+    public Boolean sidebarElement;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference

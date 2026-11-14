@@ -13,13 +13,15 @@ public class MenuData {
     private String parentMenu;
     private String apiPattern; //backendUrl
     private String methodName; //put , post , delete , update , patch
-    //private String apiSeq;
+    private Boolean sidebarElement; //put , post , delete , update , patch
+
 
     public MenuData(String frontUrl,
                     String menu,
                     String parentMenu,
                     String apiPattern,
-                    String methodName
+                    String methodName,
+                    Boolean sidebarElement
                     //,String apiSeq
     ) {
         this.frontUrl = frontUrl;
@@ -27,6 +29,6 @@ public class MenuData {
         this.parentMenu = parentMenu;
         this.apiPattern = apiPattern;
         this.methodName = methodName;
-       // this.apiSeq = apiSeq;
+        this.sidebarElement = sidebarElement;
     }
 }

@@ -7,6 +7,15 @@ public class MenuDTO {
     public String frontUrl;
     public String menu;
     public String parentMenu;
+    public Boolean sidebarElement;
+
+    public Boolean getSidebarElement() {
+        return sidebarElement;
+    }
+
+    public void setSidebarElement(Boolean sidebarElement) {
+        this.sidebarElement = sidebarElement;
+    }
 
     public String getMethodName() {
         return methodName;

@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long> {
-    boolean existsByRoleIdAndUserIdAndBackendUrlAndMenuId(Long role,Long user, String backendUrl , Long menuId);
-    boolean existsByRoleIdAndUserIdAndBackendUrlAndAndMenuIdAndIdNotIn(Long role, Long user , String backendUrl, Long menuId,List<Long> asList);
+    boolean existsByRoleIdAndUserIdAndMenuId(Long role,Long user , Long menuId);
+    boolean existsByRoleIdAndUserIdAndAndMenuIdAndIdNotIn(Long role, Long user , Long menuId,List<Long> asList);
 
     @Query("select menu.menu as menu , " +
             " menu.id as menuId , " +
             " x.id as id , " +
-            " x.backendUrl as backendUrl , " +
+            " menu.apiPattern as backendUrl , " +
             " menu.methodName as methodName, " +
             " user.username as username , " +
             " role.id as roleId , user.id as userId , " +
@@ -28,14 +28,14 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
             " x.created as created , " +
             " x.updated as updated  " +
             " from PermittedApi x " +
+            " inner join MenuHierarchy menu on menu.id = x.menuId " +
             " left join x.user user " +
             " left join x.role role " +
-            " left join MenuHierarchy menu on menu.id=x.menuId " +
             " where ( :mid is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:mid as string) , ',%') ) " +
             " and ( :parentMenuId is null or concat(',',cast(x.menuIdsHierarchy as string),',') like concat('%,', cast(:parentMenuId as string) , ',%') )  " +
             " and ( :uid is null or user.id=:uid ) " +
             " and ( :rid is null or role.id=:rid ) " +
-            " and ( :id is null or x.id=:id ) order by x.backendUrl asc")
+            " and ( :id is null or x.id=:id ) order by menu.apiPattern asc")
     Page<Map<String, Object>> getList(
                                       @Param("id") Long id,
                                       @Param("parentMenuId") String parentMenuId,
@@ -45,17 +45,22 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
                                       Pageable pageable);
 
 
-    @Query("select  x from PermittedApi x " +
+    @Query("select  x.menuIdsHierarchy from PermittedApi x  " +
+            " inner join MenuHierarchy m on m.id = x.menuId " +
             " left join x.user user " +
             " left join x.role role  " +
-            " where user=:ud  " +
-            " or role in :rl order by x.id asc")
-    List<PermittedApi> getPermittedApis(@Param("ud") User ud ,
+            " where  m.sidebarElement = true   " +
+            " and m.apiPattern not like concat('%','getMenu','%') " +
+            " and ( " +
+            " user=:ud  " +
+            " or role in :rl ) order by x.id asc")
+    List<String> getPermittedApis(@Param("ud") User ud ,
                                         @Param("rl") Set<Role> rl);
 
     boolean existsByMenuId(Long id);
-    @Query("select x.backendUrl as apiPattern , r.authority as authority , u.username as username " +
-            " from PermittedApi x " +
+    @Query("select m.apiPattern as apiPattern , r.authority as authority , u.username as username " +
+            " from PermittedApi x  " +
+            " inner join MenuHierarchy m on m.id = x.menuId " +
             " left join x.role r  " +
             " left join x.user u  " +
             " where  " +
@@ -63,19 +68,21 @@ public interface PermittedApiRepository extends JpaRepository<PermittedApi,Long>
     List<Map<String, Object>> getUsersPermittedMenu(@Param("role") Set<Role> role );
 
 
-    @Query("select x.backendUrl as apiPattern , r.authority as authority , u.username as username  " +
+    @Query("select m.apiPattern as apiPattern , r.authority as authority , u.username as username  " +
             " from PermittedApi x " +
+            " inner join MenuHierarchy m on m.id = x.menuId  " +
             " left join x.role r  " +
             " left join x.user u  " +
             " where  " +
             "  u.id=:userid  order by x.id desc")
     List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") Long userid  );
 
-    @Query("select x.backendUrl as apiPattern , r.authority as authority , u.username as username  " +
+    @Query("select m.apiPattern as apiPattern , r.authority as authority , u.username as username  " +
             " from PermittedApi x " +
+            " inner join MenuHierarchy m on m.id = x.menuId  " +
             " left join x.role r  " +
             " left join x.user u  " +
-            " where  x.backendUrl is not null and  " +
+            " where  m.apiPattern is not null and  " +
             "  u=:userid " +
             "  or r in :role  order by x.id desc ")
     List<Map<String, Object>> getUsersPermittedMenu(@Param("userid") User userid , @Param("role") Set<Role> role );

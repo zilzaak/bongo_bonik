@@ -122,11 +122,8 @@ public class ModuleInfoService {
                    oldParentId.equals(obj.parentId))){
                     menu.setFrontUrl(obj.getFrontUrl());
                     menu.setApiPattern(obj.getApiPattern());
+                    menu.setSidebarElement(obj.sidebarElement);
                     hierarchyRepo.saveAndFlush(menu);
-                    if(permission!=null){
-                        permission.setBackendUrl(obj.getApiPattern());
-                        permittedModuleService.save(permission);
-                    }
                  }
 
                 //parent changed
@@ -146,6 +143,7 @@ public class ModuleInfoService {
                         menu.setParent(updatedParent);
                         menu.setParentMenu(updatedParent.getMenu());
                         menu.setApiPattern(obj.getApiPattern());
+                        menu.setSidebarElement(obj.sidebarElement);
                         updatedParent.getDetails().add(menu);
                         hierarchyRepo.saveAndFlush(updatedParent);
                     }
@@ -188,16 +186,22 @@ public class ModuleInfoService {
     }
 
     public MsgResponse getList(SearchParamDTO dto) {
+
         Pageable pageable = CommonUtil.getPageable(dto);
+
+
+        // search when loaded page in list
         if(dto.getParentMenuId()!=null || dto.getFrontendUrl()!=null || dto.getBackendUrlId()!=null){
             MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getListParent(dto.getParentMenuId(),dto.getBackendUrlId(),dto.getFrontendUrl(),pageable)) ;
             return resp;
         }
 
+        // search when  search by parameter from list page
         String url=null;
         String menu=null;
         String loadMenu=null;
         String loadMethod=null;
+
         if(dto.getLoadMethod()!=null){
             loadMethod="loadMethod";
             loadMenu=null;
@@ -212,8 +216,9 @@ public class ModuleInfoService {
             url=null;
         }
 
-        MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),menu,url,loadMethod,loadMenu,pageable)) ;
+     MsgResponse resp =CommonUtil.responseFromPage(hierarchyRepo.getList(dto.getModuleId(),menu,url,loadMethod,loadMenu,pageable)) ;
 
+         //search in edit mode find by id
         if(dto.getMenuDetails()!=null && dto.getModuleId()!=null){
           Map<String,Object> data = (Map<String, Object>) resp.getData();
           List<MenuHierarchy> childDetails=new ArrayList<>();

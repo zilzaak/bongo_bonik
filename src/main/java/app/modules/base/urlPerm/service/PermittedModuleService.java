@@ -76,13 +76,13 @@ public class PermittedModuleService {
         }
 
 
-        if(dto.getId()==null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrlAndMenuId(dto.getRole(),dto.getUser(),dto.getBackendUrl(),dto.getMenuId())){
+        if(dto.getId()==null && permittedApiRepository.existsByRoleIdAndUserIdAndMenuId(dto.getRole(),dto.getUser(),dto.getMenuId())){
             mp.put("hasError",true);
             mp.put("message","This Api permission already given for this role/user");
             return mp;
         }
-        else if(dto.getId()!=null && permittedApiRepository.existsByRoleIdAndUserIdAndBackendUrlAndAndMenuIdAndIdNotIn(dto.getRole(),dto.getUser(),
-                dto.getBackendUrl(),dto.getMenuId(),Arrays.asList(dto.getId()))){
+        else if(dto.getId()!=null && permittedApiRepository.existsByRoleIdAndUserIdAndAndMenuIdAndIdNotIn(dto.getRole(),dto.getUser()
+                ,dto.getMenuId(),Arrays.asList(dto.getId()))){
             mp.put("hasError",true);
             mp.put("message","This Api permission already given for this role/user");
             return mp;
@@ -233,14 +233,14 @@ public class PermittedModuleService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); // comes from the token subject
         User user = userRepository.findByUsername(username);
-        List<PermittedApi> permittedApis = permittedApiRepository.getPermittedApis(user,user.getRoles());
+        List<String> permittedApis = permittedApiRepository.getPermittedApis(user,user.getRoles());
         List<MenuHierarchyDTO> menuResponse=new ArrayList<>();
         Map<Long,Long> menuProcessed=new HashMap<>();
-        for(PermittedApi api : permittedApis){
-            if(api.getBackendUrl().contains("/getMenu")){
-                continue;
-            }
-            List<Long> menuIdHierarchyOfTheApi = CommonUtil.reverseOrderList(CommonUtil.strListToLong(CommonUtil.bulkStrToList(api.getMenuIdsHierarchy())));
+
+        for(String s : permittedApis){
+
+            List<Long> menuIdHierarchyOfTheApi = CommonUtil.reverseOrderList(CommonUtil.strListToLong(CommonUtil.bulkStrToList(s)));
+
             for(int i=0;i<menuIdHierarchyOfTheApi.size();i++){
                 MenuHierarchyDTO element = new MenuHierarchyDTO();
                 element.setId(menuIdHierarchyOfTheApi.get(i));
@@ -253,6 +253,7 @@ public class PermittedModuleService {
                     element.setParentMenu(hr.getParentMenu());
                     element.setMethodName(hr.getMethodName());
                     element.setApiPattern(hr.getApiPattern());
+                    element.setSidebarElement(hr.getSidebarElement());
                     element.setFrontUrl(hr.getFrontUrl());
                 }
                 if(menuResponse.size()<1){
@@ -269,7 +270,6 @@ public class PermittedModuleService {
                     }
                     menuProcessed.put(element.getId(), element.getId());
                 }
-
 
             }
 
@@ -308,7 +308,7 @@ public class PermittedModuleService {
            if(updatedMenu.getApiPattern()!=null && !updatedMenu.getApiPattern().isBlank()){
                PermittedApi permittedApi = this.getByMenuId(updatedMenu.getId());
                permittedApi.setMenuIdsHierarchy(this.getMenuHierarchy(updatedMenu,menuIdVsHierarchy));
-               permittedApi.setBackendUrl(updatedMenu.getApiPattern());
+               //permittedApi.setBackendUrl(updatedMenu.getApiPattern());
                this.save(permittedApi);
            }
            //update all child menus positional hierarchy if permission exist and if child menu is related to backend url
